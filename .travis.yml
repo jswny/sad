@@ -14,6 +14,9 @@ env:
     - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - DEPLOY_KEY_ENV_VAR_PREFIX='encrypted_dfdcfd5172af'
+    - DEPLOY_KEY="${DEPLOY_KEY_ENV_VAR_PREFIX}_key"
+    - DEPLOY_KEY_IV="${DEPLOY_KEY_ENV_VAR_PREFIX}_iv"
+    - DOCKER_IMAGE_SHELL="sh"
     - HADOLINT_VERSION="1.17.5"
     - HADOLINT="${HOME}/hadolint"
 
@@ -28,7 +31,7 @@ script:
   - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
   - ${HADOLINT} --ignore=DL3025 Dockerfile
   - docker build --target build --tag "$REPOSITORY" .
-  - docker run "$REPOSITORY" sh -c "$TEST_CMD"
+  - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
 
 deploy:
   - provider: script
