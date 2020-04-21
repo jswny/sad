@@ -1,0 +1,36 @@
+language: shell
+
+services:
+  - docker
+
+env:
+  global:
+    - TEST_CMD='echo simulated test!'
+    - SSH_KEY_TYPES='rsa,dsa,ecdsa'
+    - DEPLOY_ARTIFACTS_DIR='artifacts'
+    - DEPLOY_ROOT_DIR='/srv'
+    - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
+    - BETA_BRANCH='develop'
+    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
+    - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
+    - DEPLOY_KEY_ENV_VAR_PREFIX='encrypted_dfdcfd5172af'
+    - HADOLINT_VERSION="1.17.5"
+    - HADOLINT="${HOME}/hadolint"
+
+install:
+  - curl -sLo ${HADOLINT} "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-$(uname -s)-$(uname -m)" && chmod 700 ${HADOLINT}
+
+before_deploy:
+  - eval "$(ssh-agent -s)"
+  - bash "${DEPLOY_ARTIFACTS_DIR}"/setup_ssh.sh
+
+script:
+  - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
+  - ${HADOLINT} --ignore=DL3025 Dockerfile
+  - docker build --target build --tag "$REPOSITORY" .
+  - docker run "$REPOSITORY" bash -c "$TEST_CMD"
+
+deploy:
+  - provider: script
+    script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
+    all_branches: true
