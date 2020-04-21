@@ -15,8 +15,8 @@ env:
     - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
-    - DEPLOY_KEY="${encrypted_dfdcfd5172af_key}"
-    - DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
+    - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
+    - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
     - DOCKER_IMAGE_SHELL="sh"
     - HADOLINT_VERSION="1.17.5"
     - HADOLINT="${HOME}/hadolint"
