@@ -2,16 +2,16 @@
 
 if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
-  DEPLOY_VARIANT='beta'
+  DEPLOY_CHANNEL='beta'
 elif [ "$BRANCH" = 'master' ]
 then
-  DEPLOY_VARIANT='stable'
+  DEPLOY_CHANNEL='stable'
 else
   echo "ERROR: unsupported branch $BRANCH" 1>&2
   exit 1
 fi
 
-DISCORD_TOKEN_VARIABLE=$(echo "DISCORD_TOKEN_${DEPLOY_VARIANT}" | tr '[:lower:]' '[:upper:]')
+DISCORD_TOKEN_VARIABLE=$(echo "DISCORD_TOKEN_${DEPLOY_CHANNEL}" | tr '[:lower:]' '[:upper:]')
 DISCORD_TOKEN="${!DISCORD_TOKEN_VARIABLE}"
 
 if [ -z "$DISCORD_TOKEN" ]
@@ -20,7 +20,7 @@ then
   exit 1
 fi
 
-DEPLOY_DIR="${DEPLOY_ROOT_DIR}"/"${REPOSITORY}"-"$DEPLOY_VARIANT"
+DEPLOY_DIR="${DEPLOY_ROOT_DIR}"/"${REPOSITORY}"-"$DEPLOY_CHANNEL"
 
 ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" mkdir "$DEPLOY_DIR"
 
