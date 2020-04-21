@@ -3,8 +3,11 @@
 if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
   DEPLOY_VARIANT='beta'
-else
+elif [ "$BRANCH" = 'master' ]
   DEPLOY_VARIANT='stable'
+else
+  echo "ERROR: unsupported branch $BRANCH" 1>&2
+  exit 1
 fi
 
 DISCORD_TOKEN_VARIABLE=$(echo "DISCORD_TOKEN_${DEPLOY_VARIANT}" | tr '[:lower:]' '[:upper:]')
