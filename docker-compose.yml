@@ -5,4 +5,4 @@ services:
     image: "jswny/discord-bot-deploy-test:${TAG:-beta}"
     container_name: "discord-bot-deploy-test-${TAG:-beta}"
     environment:
-      - EXAMPLE_VAR=${EXAMPLE_VAR}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
