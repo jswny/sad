@@ -16,9 +16,13 @@ A pluggable set of scripts which can be dropped into a Discord bot repository to
 **Note**: currently only Travis CI is supported, but porting this to other CI services should be easy, it is just a matter of modifying the configuration file.
 
 1. Clone this repository into your Discord bot repository (or include it as a Git submodule)
-2. Create the following secret environment variables in your CI service so that they won't be leaked:
-   1. 
-3. 
+2. Encrypt your private deployment key into your CI service, so that you have the key and the IV stored. For Travis CI this is `travis encrypt-file [--pro] ./deploy_key`, which will automatically add the two environment variables to your repository settings.
+3. Create the following secret environment variables in your CI service so that they won't be leaked:
+TODO: finish
+3. Create a `Dockerfile` for your app
+4. Copy the default `docker-compose.yml` file
+5. Copy the example configuration, and modify the following environment variables:
+TODO: finish
 
 ## Example Travis CI Configuration
 ```yaml
@@ -48,7 +52,7 @@ before_deploy:
   - bash "${DEPLOY_ARTIFACTS_DIR}"/setup_ssh.sh
 
 script:
-  - docker build --target build --tag "$REPOSITORY" .
+  - docker build --tag "$REPOSITORY" .
   - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
 
 deploy:
