@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-openssl aes-256-cbc -K "${DEPLOY_KEY}" -iv "${DEPLOY_KEY_IV}" -in "${DEPLOY_ARTIFACTS_DIR}"/deploy_key.enc -out "${DEPLOY_ARTIFACTS_DIR}"/deploy_key -d
+openssl aes-256-cbc -K "${DEPLOY_KEY}" -iv "${DEPLOY_KEY_IV}" -in "${ENCRYPTED_DEPLOY_KEY_PATH}" -out "${DEPLOY_ARTIFACTS_DIR}"/deploy_key -d
 
 chmod 600 "${DEPLOY_ARTIFACTS_DIR}"/deploy_key
 
