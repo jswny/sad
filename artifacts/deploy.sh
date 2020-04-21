@@ -4,6 +4,7 @@ if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
   DEPLOY_VARIANT='beta'
 elif [ "$BRANCH" = 'master' ]
+then
   DEPLOY_VARIANT='stable'
 else
   echo "ERROR: unsupported branch $BRANCH" 1>&2
