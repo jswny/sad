@@ -7,12 +7,12 @@ env:
   global:
     - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
-    - DEPLOY_ARTIFACTS_DIR='artifacts'
+    - DEPLOY_ARTIFACTS_PATH='artifacts'
     - DEPLOY_ROOT_DIR='/srv'
     - REPOSITORY="$(basename $TRAVIS_REPO_SLUG)"
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
-    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
+    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
@@ -26,7 +26,7 @@ install:
 
 before_deploy:
   - eval "$(ssh-agent -s)"
-  - bash "${DEPLOY_ARTIFACTS_DIR}"/setup_ssh.sh
+  - bash "${DEPLOY_ARTIFACTS_PATH}"/setup_ssh.sh
 
 script:
   - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
@@ -36,13 +36,13 @@ script:
 
 deploy:
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
     skip_cleanup: true
     on:
       all_branches: true
 
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/deploy.sh
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
     skip_cleanup: true
     on:
       all_branches: true
