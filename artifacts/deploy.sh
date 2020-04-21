@@ -24,6 +24,8 @@ scp docker-compose.yml "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
 
 echo "DISCORD_TOKEN=${DISCORD_TOKEN}" >> ".env"
 echo "TAG=${DOCKER_IMAGE_TAG}" >> ".env"
+echo "DOCKER_USERNAME=${DOCKER_USERNAME}" >> ".env"
+echo "REPOSITORY=${REPOSITORY}" >> ".env"
 scp ".env" "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
 
 ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" "docker pull '${DOCKER_IMAGE_NAME}'"
