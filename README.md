@@ -23,12 +23,21 @@ A pluggable set of scripts which can be dropped into a Discord bot repository to
     - `DISCORD_TOKEN_BETA`: the Discord token to be used for the beta channel of the bot
     - `DISCORD_TOKEN_STABLE`: the Discord token to be used for the stable channel of the bot
     - `DOCKER_PASSWORD`: password for the Docker account
-    - `DOCKER_USERNAME`: usernmae for the Docker account
+    - `DOCKER_USERNAME`: username for the Docker account
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: The encrypted deploy key cypher key
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_IV`: The encrypted deploy key cypher initialization vector
-4. Create a `Dockerfile` for your app
+4. Create a `Dockerfile` for your bot
 5. Copy the default `docker-compose.yml` file
-6. Copy the example configuration, and modify the following environment variables:
+6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
+    - `TEST_CMD`: the command to run the tests for the bot (if any, you can always just compile it)
+    - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
+    - `REPOSITORY` (**optional**): the repository name
+    - `BRANCH` (**optional**): the git branch
+    - `BETA_BRANCH`: the git branch for the beta bot
+    - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
+    - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
+    - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
+    - `DOCKER_IMAGE_SHELL`: the shell to be used to run commands inside the Docker container, this depends on which distribution you are using for your base image. Usually `sh` will work
 7. If you are not using a [multistage build](https://docs.docker.com/develop/develop-images/multistage-build/), you should remove the `--target build` from the `docker build` command. You can also just mark your only step as `build` if you don't have multiple steps.
 
 ## How it Works
@@ -42,7 +51,7 @@ A pluggable set of scripts which can be dropped into a Discord bot repository to
 8. Creates a directory for the appropriate bot channel using the provided deploy root directory.
 9. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
 10. Pulls the Docker image on the remote server.
-11. Brings the app up with Docker Compose in detatched mode. This will automatically restart the bot if the image has changed.
+11. Brings the bot up with Docker Compose in detatched mode. This will automatically restart the bot if the image has changed.
 
 ## Example Travis CI Configuration
 ```yaml
@@ -55,12 +64,12 @@ env:
   global:
     - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
-    - DEPLOY_ARTIFACTS_DIR='artifacts'
+    - DEPLOY_ARTIFACTS_PATH='discord-bot-deploy/artifacts'
     - DEPLOY_ROOT_DIR='/srv'
     - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
-    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
+    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
@@ -69,7 +78,7 @@ env:
 
 before_deploy:
   - eval "$(ssh-agent -s)"
-  - bash "${DEPLOY_ARTIFACTS_DIR}"/setup_ssh.sh
+  - bash "${DEPLOY_ARTIFACTS_PATH}"/setup_ssh.sh
 
 script:
   - docker build --target build --tag "$REPOSITORY" .
@@ -77,25 +86,25 @@ script:
 
 deploy:
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
     skip_cleanup: true
     on:
       branch: ${BETA_BRANCH}
   
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
     skip_cleanup: true
     on:
       branch: master
   
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/deploy.sh
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
     skip_cleanup: true
     on:
       branch: ${BETA_BRANCH}
 
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/deploy.sh
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
     skip_cleanup: true
     on:
       branch: master
