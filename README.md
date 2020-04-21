@@ -33,7 +33,8 @@ env:
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
     - DEPLOY_ARTIFACTS_DIR='artifacts'
     - DEPLOY_ROOT_DIR='/srv'
-    - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
+    - REPOSITORY="$(basename "$TRAVIS_REPO_SLUG")"
+    - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
     - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
@@ -55,19 +56,19 @@ deploy:
     script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
     skip_cleanup: true
     on:
-      branch: develop
+      branch: ${BETA_BRANCH}
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
     skip_cleanup: true
     on:
-      branch: maseter
+      branch: master
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_DIR}"/deploy.sh
     skip_cleanup: true
     on:
-      branch: develop
+      branch: ${BETA_BRANCH}
 
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_DIR}"/deploy.sh

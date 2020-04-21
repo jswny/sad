@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ "$TRAVIS_BRANCH" = "$BETA_BRANCH" ]
+if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
   DEPLOY_VARIANT='beta'
 else
