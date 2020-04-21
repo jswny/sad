@@ -31,7 +31,7 @@ before_deploy:
 script:
   - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
   - ${HADOLINT} --ignore=DL3025 Dockerfile
-  - docker build --target build --tag "$REPOSITORY" .
+  - docker build --tag "$REPOSITORY" .
   - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
 
 deploy:
