@@ -40,9 +40,10 @@ TODO: finish
 5. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel bot or `latest` for the stable channel bot.
 6. Pushes the image to Docker Hub.
 7. Populates a `.env` file with the appropriate Discord token depending on the bot channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided. These are needed to correctly populate the Discord token for the bot, and the information needed for the correct bot channel in the Docker Compose file.
-8. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
-9. Pulls the Docker image on the remote server.
-10. Brings the app up with Docker Compose in detatched mode. This will automatically restart the bot if the image has changed.
+8. Creates a directory for the appropriate bot channel using the provided deploy root directory.
+9. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
+10. Pulls the Docker image on the remote server.
+11. Brings the app up with Docker Compose in detatched mode. This will automatically restart the bot if the image has changed.
 
 ## Example Travis CI Configuration
 ```yaml
