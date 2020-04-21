@@ -18,14 +18,14 @@ A pluggable set of scripts which can be dropped into a Discord bot repository to
 1. Clone this repository into your Discord bot repository (or include it as a Git submodule)
 2. Encrypt your private deployment key into your CI service using OpenSSL `aes-256-cbc`, so that you have the encrypted key, the cypher key and the IV stored. For Travis CI this is `travis encrypt-file [--pro] ./deploy_key`, which will automatically add the two environment variables to your repository settings, and the local encrypted key file to the local filesystem.
 3. Create the following secret environment variables in your CI service so that they won't be leaked:
-  - `DEPLOY_SERVER`: the SSH-enabled server to deploy the bot to
-  - `DEPLOY_USERNAME`: the user to SSH into the server with (no password needed as)
-  - `DISCORD_TOKEN_BETA`: the Discord token to be used for the beta channel of the bot
-  - `DISCORD_TOKEN_STABLE`: the Discord token to be used for the stable channel of the bot
-  - `DOCKER_PASSWORD`: password for the Docker account
-  - `DOCKER_USERNAME`: usernmae for the Docker account
-  - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: The encrypted deploy key cypher key
-  - `ENCRYPTED_DEPLOY_KEY_CYPHER_IV`: The encrypted deploy key cypher initialization vector
+    - `DEPLOY_SERVER`: the SSH-enabled server to deploy the bot to
+    - `DEPLOY_USERNAME`: the user to SSH into the server with (no password needed as)
+    - `DISCORD_TOKEN_BETA`: the Discord token to be used for the beta channel of the bot
+    - `DISCORD_TOKEN_STABLE`: the Discord token to be used for the stable channel of the bot
+    - `DOCKER_PASSWORD`: password for the Docker account
+    - `DOCKER_USERNAME`: usernmae for the Docker account
+    - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: The encrypted deploy key cypher key
+    - `ENCRYPTED_DEPLOY_KEY_CYPHER_IV`: The encrypted deploy key cypher initialization vector
 4. Create a `Dockerfile` for your app
 5. Copy the default `docker-compose.yml` file
 6. Copy the example configuration, and modify the following environment variables:
