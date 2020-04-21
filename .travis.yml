@@ -28,7 +28,7 @@ script:
   - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
   - ${HADOLINT} --ignore=DL3025 Dockerfile
   - docker build --target build --tag "$REPOSITORY" .
-  - docker run "$REPOSITORY" bash -c "$TEST_CMD"
+  - docker run "$REPOSITORY" sh -c "$TEST_CMD"
 
 deploy:
   - provider: script
