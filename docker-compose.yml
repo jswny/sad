@@ -1,7 +1,7 @@
 version: '3'
 services:
   echo:
-    image: "jswny/discord-bot-deploy-test:${TAG:-beta}"
-    container_name: "discord-bot-deploy-test-${TAG:-beta}"
+    image: "jswny/discord-bot-deploy:${TAG:-beta}"
+    container_name: "discord-bot-deploy-${TAG:-beta}"
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
