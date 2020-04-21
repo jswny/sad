@@ -1,7 +1,6 @@
 version: '3'
 services:
   echo:
-    build: .
     image: "jswny/discord-bot-deploy-test:${TAG:-beta}"
     container_name: "discord-bot-deploy-test-${TAG:-beta}"
     environment:
