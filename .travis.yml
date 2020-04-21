@@ -36,4 +36,5 @@ script:
 deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
-    all_branches: true
+    on:
+      all_branches: true
