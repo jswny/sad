@@ -33,7 +33,7 @@ env:
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
     - DEPLOY_ARTIFACTS_DIR='artifacts'
     - DEPLOY_ROOT_DIR='/srv'
-    - REPOSITORY="$(basename "$TRAVIS_REPO_SLUG")"
+    - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
     - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
