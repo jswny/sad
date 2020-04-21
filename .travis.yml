@@ -36,5 +36,6 @@ script:
 deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
+    skip_cleanup: true
     on:
       all_branches: true
