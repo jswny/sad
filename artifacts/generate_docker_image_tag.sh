@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+verify_var_set 'BRANCH'
+verify_var_set 'BETA_BRANCH'
+
 if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
   DOCKER_IMAGE_TAG='beta'
