@@ -27,7 +27,7 @@ A pluggable set of scripts which can be dropped into a Discord bot repository to
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: The encrypted deploy key cypher key
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_IV`: The encrypted deploy key cypher initialization vector
 4. Create a `Dockerfile` for your bot
-5. Copy the default `docker-compose.yml` file
+5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used to grab the right image, and that any environment variables you need to pass through to your various services are included under the `environment:` key.
 6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
     - `TEST_CMD`: the command to run the tests for the bot (if any, you can always just compile it)
     - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
