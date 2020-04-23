@@ -7,7 +7,7 @@ elif [ "$BRANCH" = 'master' ]
 then
   DEPLOY_CHANNEL='stable'
 else
-  echo "ERROR: unsupported branch $BRANCH" 1>&2
+  echo "[ERROR] Unsupported branch $BRANCH" 1>&2
   exit 1
 fi
 
@@ -16,7 +16,7 @@ DISCORD_TOKEN="${!DISCORD_TOKEN_VARIABLE}"
 
 if [ -z "$DISCORD_TOKEN" ]
 then
-  echo "$DISCORD_TOKEN_VARIABLE is blank or unset! Exiting..."
+  echo "[ERROR] $DISCORD_TOKEN_VARIABLE is blank or unset! Exiting..."
   exit 1
 fi
 

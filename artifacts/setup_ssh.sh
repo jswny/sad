@@ -2,25 +2,25 @@
 
 if [ -z "$ENCRYPTED_DEPLOY_KEY_CYPHER_KEY" ]
 then
-  echo '$ENCRYPTED_DEPLOY_KEY_CYPHER_KEY is blank or unset! Exiting...'
+  echo '[ERROR] ENCRYPTED_DEPLOY_KEY_CYPHER_KEY is blank or unset! Exiting...' 1>&2
   exit 1
 fi
 
 if [ -z "$ENCRYPTED_DEPLOY_KEY_IV" ]
 then
-  echo '$ENCRYPTED_DEPLOY_KEY_IV is blank or unset! Exiting...'
+  echo '[ERROR] ENCRYPTED_DEPLOY_KEY_IV is blank or unset! Exiting...' 1>&2
   exit 1
 fi
 
 if [ -z "$ENCRYPTED_DEPLOY_KEY_PATH" ]
 then
-  echo '$ENCRYPTED_DEPLOY_KEY_PATH is blank or unset! Exiting...'
+  echo '[ERROR] ENCRYPTED_DEPLOY_KEY_PATH is blank or unset! Exiting...' 1>&2
   exit 1
 fi
 
 if [ -z "$DEPLOY_ARTIFACTS_PATH" ]
 then
-  echo '$ENCRYPTED_DEPLOY_KEY_PATH is blank or unset! Exiting...'
+  echo '[ERROR] ENCRYPTED_DEPLOY_KEY_PATH is blank or unset! Exiting...' 1>&2
   exit 1
 fi
 
@@ -32,13 +32,13 @@ ssh-add "${DEPLOY_ARTIFACTS_PATH}"/deploy_key
 
 if [ -z "$SSH_KEY_TYPES" ]
 then
-  echo '$SSH_KEY_TYPES is blank or unset! Exiting...'
+  echo '[ERROR] SSH_KEY_TYPES is blank or unset! Exiting...' 1>&2
   exit 1
 fi
 
 if [ -z "$DEPLOY_SERVER" ]
 then
-  echo '$DEPLOY_SERVER is blank or unset! Exiting...'
+  echo '[ERROR] DEPLOY_SERVER is blank or unset! Exiting...' 1>&2
   exit 1
 fi
 
