@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck source=artifacts/utils.sh
-source $(dirname "$0")/utils.sh
+source "$(dirname "$0")"/utils.sh
 
 verify_var_set 'ENCRYPTED_DEPLOY_KEY_CYPHER_KEY'
 
