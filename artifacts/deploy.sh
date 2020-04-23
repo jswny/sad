@@ -16,7 +16,7 @@ DISCORD_TOKEN="${!DISCORD_TOKEN_VARIABLE}"
 
 if [ -z "$DISCORD_TOKEN" ]
 then
-  echo "[ERROR] $DISCORD_TOKEN_VARIABLE is blank or unset! Exiting..."
+  echo "[ERROR] $DISCORD_TOKEN_VARIABLE is blank or unset! Exiting..." 1>&2
   exit 1
 fi
 
