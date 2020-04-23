@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -z "$ENCRYPTED_DEPLOY_KEY_CYPHER_KEY" ]
-then
-  echo '[ERROR] ENCRYPTED_DEPLOY_KEY_CYPHER_KEY is blank or unset! Exiting...' 1>&2
-  exit 1
-fi
+source ./utils.sh
+
+verify_var_set 'ENCRYPTED_DEPLOY_KEY_CYPHER_KEY'
 
 if [ -z "$ENCRYPTED_DEPLOY_KEY_IV" ]
 then
