@@ -37,7 +37,14 @@ script:
 notifications:
   slack:
     rooms:
-      secure: "HqsnZztxfGTIbd+tfLbq772BD4Jz8A7cUndnbB/D6TLBzq61rnmm4XUDojJZsBTReJt3cPZJwKiBDWntoCCfbFxkX3ajRsS29qWFrXDDzRGJ/PSBciVBdbzRFQTsbR//ns3puUPTo2ON+YnTBfNenTUbUt3I6P2ouniQTh791zPoL49mPjV5FIMEaqQSsTM2ycWnAQ1/UFBJ9c782usQ+3YegpaaXn243cj9rrwW5Mb0BKH5YnZda7aKOLyjerest+DbnhssWZRT0kxu7NHWlWqUJ5gDSxZsq/dQ9ldaCfrvnLZqT9CGn950v3qdsfWuP4b/Mthkay9Ok3NZ2vzIzivQnIzwoqXrIhW0t7WsnMcLbcdnQQYsyh7seHmBWQ3Obx2eCu+o1TvfuXuFtOP/TB5b4Z60PfnOSrtFxIhqM6yBKl9OJDQmqUH93Dky4TDfszOj7I0FEYB3c1b6Ca7XSqalbrnzz73QTs0mpjxk+NjPNKM0whDUTNsPfNjVLsHIY1mJaRXUU5Qqx72aPVdjQzH0+oFPDjGyLVZvwODCufxKDeAje9T3io4uBsVCZSzpm1GOaxP4UdUa4qbFLlVZQPNiA+ohl7XQC8xRuarh0K1WwW1wtE6qB2ITplRAc3VtBTZ4tJupnLoLZoV66ZsmT9LvHxCboJHBIFPquHd00iM="
+      secure: EhN4lKAg/s1Ud2uNxY53UJCC6/Wxy7RAyjA+x+5gZK2kzx9mrYj89RFh0iouwpf6EBhpiIQain
+      7H/GUd/YJ6hIp8LyuBMw4iLdTsvbzlVWUc5c2FehXj7Rhyg/4tiDO5VsBeuDVIPrSRne0H/R+gcWu/eaIjXIP4gn
+      xHieFUSrox/u+z9yiiTFSBO0eZ99x9KcIY2VL0ZNEv1yrcRlBgmtiXPrz2lJydOo6TGxHGtzPfcFjB8ixbC1ZssQ
+      vfZEkI+oQlxAwJAvC6ct6iH7g9Yt9LnJxT8U7nMgEVUIum4GzG0R3zdFEcnbnXZgFqdxoi8t7PsWrzNCnffK41tH
+      aMl+Hr6A5yTPanwUkxevyFdPWZ/6UWzyzDXwhOINOmi4oJbntMQ+45FW+QH1i15lEu/bvw9Tly6IB+8CJWmCP1dx
+      ZPEp91hwDgD0F5jLOJOJ+fYP28OvK7km/oyP2KrDwJpkFrVzXhvuyABGisgXvhmxlgDrUsOYP/ndHKQ9shy1ViSd
+      5s9ecGxcV7E1QSj6b/4D4ruCzlFqFFqpTIbd5gmovnsY3Cx9Vpdi5stWsj/Sh/bIT42au8G5X+F2+usmzPuH5QTK
+      V41/RiEYWQtNFEVzQ4nG5H82LT7wjuTnX5IyiFKirN9m2X6MxKAZH7zLa4i51w/lNUM8NgvuRmcLN5nWc=
     on_success: never
   email: false
 
