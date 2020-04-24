@@ -3,6 +3,8 @@
 # shellcheck source=artifacts/utils.sh
 source "$(dirname "$0")"/utils.sh
 
+eval "$(ssh-agent -s)"
+
 verify_var_set 'ENCRYPTED_DEPLOY_KEY_CYPHER_KEY'
 verify_var_set 'ENCRYPTED_DEPLOY_KEY_IV'
 verify_var_set 'ENCRYPTED_DEPLOY_KEY_PATH'
