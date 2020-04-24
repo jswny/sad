@@ -25,6 +25,7 @@ install:
   - curl -sLo ${HADOLINT} "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-$(uname -s)-$(uname -m)" && chmod 700 ${HADOLINT}
 
 before_deploy:
+  - eval "$(ssh-agent -s)"
   - bash "${DEPLOY_ARTIFACTS_PATH}"/setup_ssh.sh
 
 script:
