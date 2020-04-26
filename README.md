@@ -87,25 +87,21 @@ script:
 deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
-    skip_cleanup: true
     on:
       branch: ${BETA_BRANCH}
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
-    skip_cleanup: true
     on:
       branch: master
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
-    skip_cleanup: true
     on:
       branch: ${BETA_BRANCH}
 
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
-    skip_cleanup: true
     on:
       branch: master
 
