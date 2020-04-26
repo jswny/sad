@@ -1,29 +1,46 @@
 #!/usr/bin/env bash
 
-if [ "$TRAVIS_BRANCH" = "$BETA_BRANCH" ]
+# shellcheck source=artifacts/utils.sh
+source "$(dirname "$0")"/utils.sh
+
+verify_var_set 'BRANCH'
+verify_var_set 'BETA_BRANCH'
+
+if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
-  DEPLOY_VARIANT='beta'
+  DEPLOY_CHANNEL='beta'
+elif [ "$BRANCH" = 'master' ]
+then
+  DEPLOY_CHANNEL='stable'
 else
-  DEPLOY_VARIANT='stable'
-fi
-
-DISCORD_TOKEN_VARIABLE=$(echo "DISCORD_TOKEN_${DEPLOY_VARIANT}" | tr '[:lower:]' '[:upper:]')
-DISCORD_TOKEN="${!DISCORD_TOKEN_VARIABLE}"
-
-if [ -z "$DISCORD_TOKEN" ]
-then
-  echo 'DISCORD_TOKEN is empty! Exiting...'
+  echo "[ERROR] Unsupported branch $BRANCH" 1>&2
   exit 1
 fi
+verify_var_set 'DEPLOY_CHANNEL'
 
-DEPLOY_DIR="${DEPLOY_ROOT_DIR}"/"${REPOSITORY}"_"$DEPLOY_VARIANT"
+DISCORD_TOKEN_VARIABLE=$(echo "DISCORD_TOKEN_${DEPLOY_CHANNEL}" | tr '[:lower:]' '[:upper:]')
+DISCORD_TOKEN="${!DISCORD_TOKEN_VARIABLE}"
 
+verify_var_set 'DEPLOY_ROOT_DIR'
+verify_var_set 'REPOSITORY'
+
+DEPLOY_DIR="${DEPLOY_ROOT_DIR}"/"${REPOSITORY}"-"${DEPLOY_CHANNEL}"
+
+verify_var_set 'DEPLOY_USERNAME'
+verify_var_set 'DEPLOY_SERVER'
+verify_var_set 'DEPLOY_DIR'
 ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" mkdir "$DEPLOY_DIR"
 
 scp docker-compose.yml "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
 
-echo "DISCORD_TOKEN=${DISCORD_TOKEN}" >> ".env"
-echo "TAG=${DOCKER_IMAGE_TAG}" >> ".env"
+verify_var_set 'DISCORD_TOKEN'
+verify_var_set 'DOCKER_IMAGE_TAG'
+{
+  echo "DISCORD_TOKEN=${DISCORD_TOKEN}"
+  echo "TAG=${DOCKER_IMAGE_TAG}"
+  echo "DOCKER_USERNAME=${DOCKER_USERNAME}"
+  echo "REPOSITORY=${REPOSITORY}"
+} >> ".env"
 scp ".env" "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
 
 ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" "docker pull '${DOCKER_IMAGE_NAME}'"

@@ -7,13 +7,17 @@ env:
   global:
     - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
-    - DEPLOY_ARTIFACTS_DIR='artifacts'
+    - DEPLOY_ARTIFACTS_PATH='artifacts'
     - DEPLOY_ROOT_DIR='/srv'
-    - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
+    - REPOSITORY="$(basename $TRAVIS_REPO_SLUG)"
+    - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
-    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_DIR}"/generate_docker_image_tag.sh)
+    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
-    - DEPLOY_KEY_ENV_VAR_PREFIX='encrypted_dfdcfd5172af'
+    - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
+    - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
+    - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
+    - DOCKER_IMAGE_SHELL="sh"
     - HADOLINT_VERSION="1.17.5"
     - HADOLINT="${HOME}/hadolint"
 
@@ -22,15 +26,28 @@ install:
 
 before_deploy:
   - eval "$(ssh-agent -s)"
-  - bash "${DEPLOY_ARTIFACTS_DIR}"/setup_ssh.sh
+  - bash "${DEPLOY_ARTIFACTS_PATH}"/setup_ssh.sh
 
 script:
   - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
   - ${HADOLINT} --ignore=DL3025 Dockerfile
   - docker build --target build --tag "$REPOSITORY" .
-  - docker run "$REPOSITORY" bash -c "$TEST_CMD"
+  - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
+
+notifications:
+  slack:
+    secure: "HqsnZztxfGTIbd+tfLbq772BD4Jz8A7cUndnbB/D6TLBzq61rnmm4XUDojJZsBTReJt3cPZJwKiBDWntoCCfbFxkX3ajRsS29qWFrXDDzRGJ/PSBciVBdbzRFQTsbR//ns3puUPTo2ON+YnTBfNenTUbUt3I6P2ouniQTh791zPoL49mPjV5FIMEaqQSsTM2ycWnAQ1/UFBJ9c782usQ+3YegpaaXn243cj9rrwW5Mb0BKH5YnZda7aKOLyjerest+DbnhssWZRT0kxu7NHWlWqUJ5gDSxZsq/dQ9ldaCfrvnLZqT9CGn950v3qdsfWuP4b/Mthkay9Ok3NZ2vzIzivQnIzwoqXrIhW0t7WsnMcLbcdnQQYsyh7seHmBWQ3Obx2eCu+o1TvfuXuFtOP/TB5b4Z60PfnOSrtFxIhqM6yBKl9OJDQmqUH93Dky4TDfszOj7I0FEYB3c1b6Ca7XSqalbrnzz73QTs0mpjxk+NjPNKM0whDUTNsPfNjVLsHIY1mJaRXUU5Qqx72aPVdjQzH0+oFPDjGyLVZvwODCufxKDeAje9T3io4uBsVCZSzpm1GOaxP4UdUa4qbFLlVZQPNiA+ohl7XQC8xRuarh0K1WwW1wtE6qB2ITplRAc3VtBTZ4tJupnLoLZoV66ZsmT9LvHxCboJHBIFPquHd00iM="
+  email: false
 
 deploy:
   - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_DIR}"/docker_push.sh
-    all_branches: true
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
+    skip_cleanup: true
+    on:
+      all_branches: true
+
+  - provider: script
+    script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
+    skip_cleanup: true
+    on:
+      all_branches: true

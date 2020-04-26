@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 
-DEPLOY_KEY_VARIABLE="${DEPLOY_KEY_ENV_VAR_PREFIX}_key"
-DEPLOY_IV_VARIABLE="${DEPLOY_KEY_ENV_VAR_PREFIX}_iv"
+# shellcheck source=artifacts/utils.sh
+source "$(dirname "$0")"/utils.sh
 
-openssl aes-256-cbc -K "${!DEPLOY_KEY_VARIABLE}" -iv "${!DEPLOY_IV_VARIABLE}" -in "${DEPLOY_ARTIFACTS_DIR}"/deploy_key.enc -out "${DEPLOY_ARTIFACTS_DIR}"/deploy_key -d
+verify_var_set 'ENCRYPTED_DEPLOY_KEY_CYPHER_KEY'
+verify_var_set 'ENCRYPTED_DEPLOY_KEY_IV'
+verify_var_set 'ENCRYPTED_DEPLOY_KEY_PATH'
+verify_var_set 'DEPLOY_ARTIFACTS_PATH'
 
-chmod 600 "${DEPLOY_ARTIFACTS_DIR}"/deploy_key
+openssl aes-256-cbc -K "${ENCRYPTED_DEPLOY_KEY_CYPHER_KEY}" -iv "${ENCRYPTED_DEPLOY_KEY_IV}" -in "${ENCRYPTED_DEPLOY_KEY_PATH}" -out "${DEPLOY_ARTIFACTS_PATH}"/deploy_key -d
 
-ssh-add "${DEPLOY_ARTIFACTS_DIR}"/deploy_key
+chmod 600 "${DEPLOY_ARTIFACTS_PATH}"/deploy_key
+
+ssh-add "${DEPLOY_ARTIFACTS_PATH}"/deploy_key
+
+verify_var_set 'SSH_KEY_TYPES'
+verify_var_set 'DEPLOY_SERVER'
 
 { ssh-keyscan -t "$SSH_KEY_TYPES" -H "$DEPLOY_SERVER" >> "${TRAVIS_HOME}"/.ssh/known_hosts; } 2>&1

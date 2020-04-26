@@ -2,7 +2,7 @@ version: '3'
 services:
   echo:
     build: .
-    image: "jswny/deploy:${TAG:-beta}"
-    container_name: "deploy-${TAG:-beta}"
+    image: "${DOCKER_USERNAME}/${REPOSITORY}:${TAG:-beta}"
+    container_name: "${REPOSITORY}-${TAG:-beta}"
     environment:
-      - EXAMPLE_VAR=${EXAMPLE_VAR}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}

@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
 
-if [ "$TRAVIS_BRANCH" = "$BETA_BRANCH" ]
+# shellcheck source=artifacts/utils.sh
+source "$(dirname "$0")"/utils.sh
+
+verify_var_set 'BRANCH'
+verify_var_set 'BETA_BRANCH'
+
+if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
   DOCKER_IMAGE_TAG='beta'
-else
+elif [ "$BRANCH" = 'master' ]
+then
   DOCKER_IMAGE_TAG='latest'
+else
+  echo "[ERROR] Unsupported branch $BRANCH" 1>&2
+  exit 1
 fi
 
 echo "$DOCKER_IMAGE_TAG"
