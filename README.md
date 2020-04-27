@@ -1,39 +1,39 @@
 # Deploy [![Build Status](https://travis-ci.com/jswny/deploy.svg?branch=master)](https://travis-ci.com/jswny/deploy)
-A pluggable set of scripts which can be dropped into a Discord bot repository to automatically deploy it.
+A drop-in set of scripts to deploy apps using Docker and SSH.
 
 ## Features
-- Automatic deployment
-- Containerized deployment
-- Supports separate deployments for beta/stable bot channels
-- Uses only SSH and Docker for deployment
+- Automatic deployment from CI
+- Containerized deployments
+- Supports separate deployments for beta/stable channels
+- Uses only SSH and Docker
 
 ## Requirements
-- **A server with SSH, Docker, and Docker Compose** for the bot to be deployed to
+- **A server with SSH, Docker, and Docker Compose** for the app to be deployed to
   - An SSH key to be used for deployment which has been added to an appropriate user on the server. The key can **not** have a password.
 - **A [Docker](https://hub.docker.com/) account** to push/pull the images from
 - **A CI service** to execute the deployments
   - **Note**: currently only Travis CI is supported, but porting this to other CI services should be easy, it is just a matter of modifying the configuration file.
 
 ## Usage
-1. Clone this repository into your Discord bot repository (or include it as a Git submodule)
-2. Encrypt your private deployment key into your CI service using OpenSSL `aes-256-cbc`, so that you have the encrypted key, the cypher key and the IV stored. For Travis CI this is `travis encrypt-file [--pro] ./deploy_key`, which will automatically add the two environment variables to your repository settings, and the local encrypted key file to the local filesystem.
+1. Include this repository as a git submodule inside your repository
+2. Encrypt your private deployment SSH key into using OpenSSL `aes-256-cbc`, so that you have the encrypted key, the cypher key and the IV stored. For Travis CI this is `travis encrypt-file [--pro] ./deploy_key`, which will automatically add the two environment variables to your CI repository settings, and the local encrypted key file to the local filesystem.
 3. Create the following secret environment variables in your CI service so that they won't be leaked:
-    - `DEPLOY_SERVER`: the SSH-enabled server to deploy the bot to
+    - `DEPLOY_SERVER`: the SSH-enabled server to deploy the app to
     - `DEPLOY_USERNAME`: the user to SSH into the server with (no password needed as)
-    - `DISCORD_TOKEN_BETA`: the Discord token to be used for the beta channel of the bot
-    - `DISCORD_TOKEN_STABLE`: the Discord token to be used for the stable channel of the bot
     - `DOCKER_PASSWORD`: password for the Docker account
     - `DOCKER_USERNAME`: username for the Docker account
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: The encrypted deploy key cypher key
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_IV`: The encrypted deploy key cypher initialization vector
-4. Create a `Dockerfile` for your bot
-5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used to grab the right image, and that any environment variables you need to pass through to your various services are included under the `environment:` key.
+    - One pair of environment variables for each variable which your app requires. Each one should have the same prefix, and either `_STABLE` or `_BETA` after the prefix to indicate which channel the variable corresponds to. For example, you should set `DEBUG_STABLE=false` and `DEBUG_BETA=true` if you want the variable `$DEBUG` to be available for your app.
+4. Create a `Dockerfile` for your app
+5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used to grab the right image, and that any environment variables you need to pass through to your various app services are included under the `environment:` key.
 6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
-    - `TEST_CMD`: the command to run the tests for the bot (if any, you can always just compile it)
+    - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
     - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
     - `REPOSITORY` (**optional**): the repository name
     - `BRANCH` (**optional**): the git branch
-    - `BETA_BRANCH`: the git branch for the beta bot
+    - `BETA_BRANCH`: the git branch for the beta channel (`master` will be treated as the branch for the stable channel, and all other branches will not work)
+    - `DEPLOY_CHANNEL_VAR_PREFIXES`: the environment variable prefixes for the variables required by your app (see step 3 above for more information)
     - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
     - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
@@ -45,13 +45,13 @@ A pluggable set of scripts which can be dropped into a Discord bot repository to
 2. Builds the Docker image from the provided `Dockerfile`, only to the `build` step of a multistage build (so that the buiild tools needed for testing are available).
 3. Runs the provided test command inside the built image
 4. Fully builds the Docker image.
-5. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel bot or `latest` for the stable channel bot.
+5. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel or `latest` for the stable channel.
 6. Pushes the image to Docker Hub.
-7. Populates a `.env` file with the appropriate Discord token depending on the bot channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided. These are needed to correctly populate the Discord token for the bot, and the information needed for the correct bot channel in the Docker Compose file.
-8. Creates a directory for the appropriate bot channel using the provided deploy root directory.
+7. Populates a `.env` file with the appropriate environment variables required by your app depending on the deploy channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided.
+8. Creates a directory on the remote server for the app given the current deploy channel using the provided deploy root directory.
 9. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
 10. Pulls the Docker image on the remote server.
-11. Brings the bot up with Docker Compose in detatched mode. This will automatically restart the bot if the image has changed.
+11. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
 
 ## Example Travis CI Configuration
 ```yaml
@@ -64,13 +64,14 @@ env:
   global:
     - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
-    - DEPLOY_ARTIFACTS_PATH='discord-bot-deploy/artifacts'
+    - DEPLOY_ARTIFACTS_PATH='deploy/artifacts'
     - DEPLOY_ROOT_DIR='/srv'
     - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
     - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
+    - DEPLOY_CHANNEL_VAR_PREFIXES="TOKEN,DEBUG"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
     - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
