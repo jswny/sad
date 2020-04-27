@@ -1,4 +1,4 @@
-# Discord Bot Deploy [![Build Status](https://travis-ci.com/jswny/discord-bot-deploy.svg?branch=master)](https://travis-ci.com/jswny/discord-bot-deploy)
+# Deploy [![Build Status](https://travis-ci.com/jswny/deploy.svg?branch=master)](https://travis-ci.com/jswny/deploy)
 A pluggable set of scripts which can be dropped into a Discord bot repository to automatically deploy it.
 
 ## Features
