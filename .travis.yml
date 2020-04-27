@@ -14,7 +14,7 @@ env:
     - BETA_BRANCH='develop'
     - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
     - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
-    - DEPLOY_CHANNEL_VAR_PREFIXES="DISCORD_TOKEN"
+    - DEPLOY_CHANNEL_VAR_PREFIXES="DISCORD_TOKEN,DEBUG"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
     - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"

@@ -6,3 +6,4 @@ services:
     container_name: "${REPOSITORY}-${TAG:-beta}"
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DEBUG=${DEBUG:-}
