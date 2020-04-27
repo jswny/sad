@@ -26,7 +26,8 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_IV`: The encrypted deploy key cypher initialization vector
     - One pair of environment variables for each variable which your app requires. Each one should have the same prefix, and either `_STABLE` or `_BETA` after the prefix to indicate which channel the variable corresponds to. For example, you should set `DEBUG_STABLE=false` and `DEBUG_BETA=true` if you want the variable `$DEBUG` to be available for your app.
 4. Create a `Dockerfile` for your app
-5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used to grab the right image, and that any environment variables you need to pass through to your various app services are included under the `environment:` key.
+5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used in the actual image definition to grab the right image, and that any environment variables you need to pass through to your various app services are included under the `environment` key. 
+  - **Note:** To use your Docker Compose file locally, simply create a local `.env` file and fill it in with the environment variables that your app needs (the same ones you listed under the `environment` key in your Compose File). You can also directly set those environment variables from the command line before using `docker-compose`.
 6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
     - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
     - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
