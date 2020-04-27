@@ -32,9 +32,6 @@ ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" mkdir "$DEPLOY_DIR"
 
 scp docker-compose.yml "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
 
-verify_var_set 'DEPLOY_CHANNEL_VAR_PREFIXES'
-IFS=', ' read -r -a DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY <<< "$DEPLOY_CHANNEL_VAR_PREFIXES"
-
 verify_var_set 'DOCKER_IMAGE_TAG'
 {
   echo "TAG=${DOCKER_IMAGE_TAG}"
@@ -42,9 +39,13 @@ verify_var_set 'DOCKER_IMAGE_TAG'
   echo "REPOSITORY=${REPOSITORY}"
 } >> ".env"
 
+
+verify_var_set 'DEPLOY_CHANNEL_VAR_PREFIXES'
+IFS=', ' read -r -a DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY <<< "$DEPLOY_CHANNEL_VAR_PREFIXES"
+
 for VAR_PREFIX in "${DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY[@]}"
 do
-  VAR_NAME=$(echo "DISCORD_TOKEN_${DEPLOY_CHANNEL}" | tr '[:lower:]' '[:upper:]')
+  VAR_NAME=$(echo "${VAR_PREFIX}_${DEPLOY_CHANNEL}" | tr '[:lower:]' '[:upper:]')
   VAR_VALUE="${!VAR_NAME}"
   verify_var_set 'VAR_VALUE'
   echo "Setting deploy variable $VAR_NAME..."
