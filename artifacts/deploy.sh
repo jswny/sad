@@ -47,7 +47,7 @@ for VAR_PREFIX in "${DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY[@]}"
 do
   VAR_NAME=$(echo "${VAR_PREFIX}_${DEPLOY_CHANNEL}" | tr '[:lower:]' '[:upper:]')
   VAR_VALUE="${!VAR_NAME}"
-  verify_var_set 'VAR_VALUE'
+  verify_var_set "${!VAR_NAME}"
   echo "Setting deploy variable $VAR_NAME..."
   echo "${VAR_PREFIX}=${VAR_VALUE}" >> ".env"
 done
