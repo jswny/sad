@@ -51,7 +51,7 @@ do
   echo "${VAR_PREFIX}=${VAR_VALUE}" >> ".env"
 done
 
-scp ".env" "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
+scp '.env' "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER":"$DEPLOY_DIR"
 
 ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" "docker pull '${DOCKER_IMAGE_NAME}'"
 ssh "${DEPLOY_USERNAME}"@"$DEPLOY_SERVER" "cd '${DEPLOY_DIR}' && docker-compose up -d"
