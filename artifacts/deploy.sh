@@ -39,7 +39,6 @@ verify_var_set 'DOCKER_IMAGE_TAG'
   echo "REPOSITORY=${REPOSITORY}"
 } >> ".env"
 
-
 verify_var_set 'DEPLOY_CHANNEL_VAR_PREFIXES'
 IFS=', ' read -r -a DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY <<< "$DEPLOY_CHANNEL_VAR_PREFIXES"
 
@@ -47,7 +46,7 @@ for VAR_PREFIX in "${DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY[@]}"
 do
   VAR_NAME=$(echo "${VAR_PREFIX}_${DEPLOY_CHANNEL}" | tr '[:lower:]' '[:upper:]')
   VAR_VALUE="${!VAR_NAME}"
-  verify_var_set "${!VAR_NAME}"
+  verify_var_set "$VAR_NAME"
   echo "Setting deploy variable $VAR_NAME..."
   echo "${VAR_PREFIX}=${VAR_VALUE}" >> ".env"
 done
