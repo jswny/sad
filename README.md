@@ -30,16 +30,15 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
   - **Note:** to use your Docker Compose file locally, simply create a local `.env` file and fill it in with the environment variables that your app needs (the same ones you listed under the `environment` key in your Compose File). You can also directly set those environment variables from the command line before using `docker-compose`.
   - **Note:** you can fill in the `$DOCKER_USERNAME` and `$REPOSITORY` environment variables with static values if you want to decrease the amount of variables required to run the app via Docker Compose.
 6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
-    - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
-    - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
-    - `REPOSITORY` (**optional**): the repository name
-    - `BRANCH` (**optional**): the git branch
-    - `BETA_BRANCH`: the git branch for the beta channel (`master` will be treated as the branch for the stable channel, and all other branches will not work)
-    - `DEPLOY_CHANNEL_VAR_PREFIXES`: the environment variable prefixes for the variables required by your app (see step 3 above for more information)
-    - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
-    - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
-    - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
-7. If you are not using a [multistage build](https://docs.docker.com/develop/develop-images/multistage-build/), you should remove the `--target build` from the `docker build` command. You can also just mark your only step as `build` if you don't have multiple steps.
+  - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
+  - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
+  - `REPOSITORY` (**optional**): the repository name
+  - `BRANCH` (**optional**): the git branch
+  - `BETA_BRANCH`: the git branch for the beta channel (`master` will be treated as the branch for the stable channel, and all other branches will not work)
+  - `DEPLOY_CHANNEL_VAR_PREFIXES`: the environment variable prefixes for the variables required by your app (see step 3 above for more information)
+  - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
+  - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
+  - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
 
 ## How it Works
 1. Sets up the SSH agent inside the CI server from the provided encypted key.
