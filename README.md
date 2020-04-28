@@ -42,16 +42,14 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
 
 ## How it Works
 1. Sets up the SSH agent inside the CI server from the provided encypted key.
-2. Builds the Docker image from the provided `Dockerfile`, only to the `build` step of a multistage build (so that the buiild tools needed for testing are available).
-3. Runs the provided test command inside the built image
-4. Fully builds the Docker image.
-5. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel or `latest` for the stable channel.
-6. Pushes the image to Docker Hub.
-7. Populates a `.env` file with the appropriate environment variables required by your app depending on the deploy channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided.
-8. Creates a directory on the remote server for the app given the current deploy channel using the provided deploy root directory.
-9. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
-10. Pulls the Docker image on the remote server.
-11. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
+2. Fully builds the Docker image.
+3. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel or `latest` for the stable channel.
+4. Pushes the image to Docker Hub.
+5. Populates a `.env` file with the appropriate environment variables required by your app depending on the deploy channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided.
+6. Creates a directory on the remote server for the app given the current deploy channel using the provided deploy root directory.
+7. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
+8. Pulls the Docker image on the remote server.
+9. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
 
 ## Example Travis CI Configuration
 ```yaml
