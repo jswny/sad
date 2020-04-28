@@ -39,7 +39,6 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
     - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
     - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
-    - `DOCKER_IMAGE_SHELL`: the shell to be used to run commands inside the Docker container, this depends on which distribution you are using for your base image. Usually `sh` will work
 7. If you are not using a [multistage build](https://docs.docker.com/develop/develop-images/multistage-build/), you should remove the `--target build` from the `docker build` command. You can also just mark your only step as `build` if you don't have multiple steps.
 
 ## How it Works
@@ -64,28 +63,24 @@ services:
 
 env:
   global:
-    - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
     - DEPLOY_ARTIFACTS_PATH='deploy/artifacts'
     - DEPLOY_ROOT_DIR='/srv'
     - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
-    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
-    - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - DEPLOY_CHANNEL_VAR_PREFIXES="TOKEN,DEBUG"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
     - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
     - DOCKER_IMAGE_SHELL="sh"
 
+script:
+  - 'echo simulated test!'
+
 before_deploy:
   - eval "$(ssh-agent -s)"
   - bash "${DEPLOY_ARTIFACTS_PATH}"/setup_ssh.sh
-
-script:
-  - docker build --target build --tag "$REPOSITORY" .
-  - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
 
 deploy:
   - provider: script
