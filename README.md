@@ -86,7 +86,7 @@ deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
     on:
-      branch: ${BETA_BRANCH}
+      branch: "${BETA_BRANCH}"
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
@@ -96,7 +96,7 @@ deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
     on:
-      branch: ${BETA_BRANCH}
+      branch: "${BETA_BRANCH}"
 
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
