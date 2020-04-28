@@ -37,7 +37,7 @@ verify_var_set 'DOCKER_IMAGE_TAG'
   echo "TAG=${DOCKER_IMAGE_TAG}"
   echo "DOCKER_USERNAME=${DOCKER_USERNAME}"
   echo "REPOSITORY=${REPOSITORY}"
-} >> ".env"
+} >> '.env'
 
 verify_var_set 'DEPLOY_CHANNEL_VAR_PREFIXES'
 IFS=', ' read -r -a DEPLOY_CHANNEL_VAR_PREFIXES_ARRAY <<< "$DEPLOY_CHANNEL_VAR_PREFIXES"
