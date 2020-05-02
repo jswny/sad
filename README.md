@@ -27,18 +27,18 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
     - One pair of environment variables for each variable which your app requires. Each one should have the same prefix, and either `_STABLE` or `_BETA` after the prefix to indicate which channel the variable corresponds to. For example, you should set `DEBUG_STABLE=false` and `DEBUG_BETA=true` if you want the variable `$DEBUG` to be available for your app.
 4. Create a `Dockerfile` for your app
 5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used in the actual image definition to grab the right image, and that any environment variables you need to pass through to your various app services are included under the `environment` key. 
-  - **Note:** to use your Docker Compose file locally, simply create a local `.env` file and fill it in with the environment variables that your app needs (the same ones you listed under the `environment` key in your Compose File). You can also directly set those environment variables from the command line before using `docker-compose`.
-  - **Note:** you can fill in the `$DOCKER_USERNAME` and `$REPOSITORY` environment variables with static values if you want to decrease the amount of variables required to run the app via Docker Compose.
+    - **Note:** to use your Docker Compose file locally, simply create a local `.env` file and fill it in with the environment variables that your app needs (the same ones you listed under the `environment` key in your Compose File). You can also directly set those environment variables from the command line before using `docker-compose`.
+    - **Note:** you can fill in the `$DOCKER_USERNAME` and `$REPOSITORY` environment variables with static values if you want to decrease the amount of variables required to run the app via Docker Compose.
 6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
-  - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
-  - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
-  - `REPOSITORY` (**optional**): the repository name
-  - `BRANCH` (**optional**): the git branch
-  - `BETA_BRANCH`: the git branch for the beta channel (`master` will be treated as the branch for the stable channel, and all other branches will not work)
-  - `DEPLOY_CHANNEL_VAR_PREFIXES`: the environment variable prefixes for the variables required by your app (see step 3 above for more information)
-  - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
-  - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
-  - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
+    - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
+    - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
+    - `REPOSITORY` (**optional**): the repository name
+    - `BRANCH` (**optional**): the git branch
+    - `BETA_BRANCH`: the git branch for the beta channel (`master` will be treated as the branch for the stable channel, and all other branches will not work)
+    - `DEPLOY_CHANNEL_VAR_PREFIXES`: the environment variable prefixes for the variables required by your app (see step 3 above for more information)
+    - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
+    - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
+    - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
 
 ## How it Works
 1. Sets up the SSH agent inside the CI server from the provided encypted key.
