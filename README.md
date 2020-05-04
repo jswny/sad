@@ -27,8 +27,8 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
     - One pair of environment variables for each variable which your app requires. Each one should have the same prefix, and either `_STABLE` or `_BETA` after the prefix to indicate which channel the variable corresponds to. For example, you should set `DEBUG_STABLE=false` and `DEBUG_BETA=true` if you want the variable `$DEBUG` to be available for your app.
 4. Create a `Dockerfile` for your app
 5. Copy the default `docker-compose.yml` file. You can use your own Compose file, or add to the default one. Just make sure that the `$TAG` variable is used in the actual image definition to grab the right image, and that any environment variables you need to pass through to your various app services are included under the `environment` key. 
-  - **Note:** to use your Docker Compose file locally, simply create a local `.env` file and fill it in with the environment variables that your app needs (the same ones you listed under the `environment` key in your Compose File). You can also directly set those environment variables from the command line before using `docker-compose`.
-  - **Note:** you can fill in the `$DOCKER_USERNAME` and `$REPOSITORY` environment variables with static values if you want to decrease the amount of variables required to run the app via Docker Compose.
+    - **Note:** to use your Docker Compose file locally, simply create a local `.env` file and fill it in with the environment variables that your app needs (the same ones you listed under the `environment` key in your Compose File). You can also directly set those environment variables from the command line before using `docker-compose`.
+    - **Note:** you can fill in the `$DOCKER_USERNAME` and `$REPOSITORY` environment variables with static values if you want to decrease the amount of variables required to run the app via Docker Compose.
 6. Copy the example configuration, and modify the following environment variables (all paths relative to the configuration file, optional variables should work without modification):
     - `TEST_CMD`: the command to run the tests for the app (if any, you can always just compile it)
     - `DEPLOY_ARTIFACTS_PATH`: the path of the `artifacts/` directory contained in this respository
@@ -39,21 +39,17 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
     - `ENCRYPTED_DEPLOY_KEY_PATH`: the path to the encrypted deploy key
     - `ENCRYPTED_DEPLOY_KEY_CYPHER_KEY`: the encrypted deploy key cypher key
     - `ENCRYPTED_DEPLOY_KEY_IV`: the encrpyted deploy key initialization vector
-    - `DOCKER_IMAGE_SHELL`: the shell to be used to run commands inside the Docker container, this depends on which distribution you are using for your base image. Usually `sh` will work
-7. If you are not using a [multistage build](https://docs.docker.com/develop/develop-images/multistage-build/), you should remove the `--target build` from the `docker build` command. You can also just mark your only step as `build` if you don't have multiple steps.
 
 ## How it Works
 1. Sets up the SSH agent inside the CI server from the provided encypted key.
-2. Builds the Docker image from the provided `Dockerfile`, only to the `build` step of a multistage build (so that the buiild tools needed for testing are available).
-3. Runs the provided test command inside the built image
-4. Fully builds the Docker image.
-5. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel or `latest` for the stable channel.
-6. Pushes the image to Docker Hub.
-7. Populates a `.env` file with the appropriate environment variables required by your app depending on the deploy channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided.
-8. Creates a directory on the remote server for the app given the current deploy channel using the provided deploy root directory.
-9. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
-10. Pulls the Docker image on the remote server.
-11. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
+2. Fully builds the Docker image.
+3. Tags the image using the provided Docker username, repository name, and either `beta` for the beta channel or `latest` for the stable channel.
+4. Pushes the image to Docker Hub.
+5. Populates a `.env` file with the appropriate environment variables required by your app depending on the deploy channel (beta or stable), the appropriate Docker image tag as noted above, the Docker username as provided, and the repository as provided.
+6. Creates a directory on the remote server for the app given the current deploy channel using the provided deploy root directory.
+7. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server using the provded SSH credentials.
+8. Pulls the Docker image on the remote server.
+9. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
 
 ## Example Travis CI Configuration
 ```yaml
@@ -64,34 +60,30 @@ services:
 
 env:
   global:
-    - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
     - DEPLOY_ARTIFACTS_PATH='deploy/artifacts'
     - DEPLOY_ROOT_DIR='/srv'
     - REPOSITORY=$(basename "$TRAVIS_REPO_SLUG")
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
-    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
-    - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - DEPLOY_CHANNEL_VAR_PREFIXES="TOKEN,DEBUG"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
     - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
     - DOCKER_IMAGE_SHELL="sh"
 
+script:
+  - 'echo simulated test!'
+
 before_deploy:
   - eval "$(ssh-agent -s)"
   - bash "${DEPLOY_ARTIFACTS_PATH}"/setup_ssh.sh
-
-script:
-  - docker build --target build --tag "$REPOSITORY" .
-  - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
 
 deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
     on:
-      branch: ${BETA_BRANCH}
+      branch: "${BETA_BRANCH}"
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
@@ -101,7 +93,7 @@ deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
     on:
-      branch: ${BETA_BRANCH}
+      branch: "${BETA_BRANCH}"
 
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh

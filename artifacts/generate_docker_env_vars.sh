@@ -8,13 +8,13 @@ verify_var_set 'BETA_BRANCH'
 
 if [ "$BRANCH" = "$BETA_BRANCH" ]
 then
-  DOCKER_IMAGE_TAG='beta'
+  export DOCKER_IMAGE_TAG='beta'
 elif [ "$BRANCH" = 'master' ]
 then
-  DOCKER_IMAGE_TAG='latest'
+  export DOCKER_IMAGE_TAG='latest'
 else
   echo "[ERROR] Unsupported branch $BRANCH" 1>&2
   exit 1
 fi
 
-echo "$DOCKER_IMAGE_TAG"
+export DOCKER_IMAGE_NAME="${DOCKER_USERNAME}/${REPOSITORY}:${DOCKER_IMAGE_TAG}"

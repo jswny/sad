@@ -3,6 +3,8 @@
 # shellcheck source=artifacts/utils.sh
 source "$(dirname "$0")"/utils.sh
 
+source "$(dirname "$0")"/generate_docker_env_vars.sh
+
 verify_var_set 'DOCKER_PASSWORD'
 verify_var_set 'DOCKER_USERNAME'
 

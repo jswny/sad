@@ -5,20 +5,16 @@ services:
 
 env:
   global:
-    - TEST_CMD='echo simulated test!'
     - SSH_KEY_TYPES='rsa,dsa,ecdsa'
     - DEPLOY_ARTIFACTS_PATH='artifacts'
     - DEPLOY_ROOT_DIR='/srv'
     - REPOSITORY="$(basename $TRAVIS_REPO_SLUG)"
     - BRANCH="${TRAVIS_BRANCH}"
     - BETA_BRANCH='develop'
-    - DOCKER_IMAGE_TAG=$(bash "${DEPLOY_ARTIFACTS_PATH}"/generate_docker_image_tag.sh)
-    - DOCKER_IMAGE_NAME="${DOCKER_USERNAME}"/"${REPOSITORY}":"${DOCKER_IMAGE_TAG}"
     - DEPLOY_CHANNEL_VAR_PREFIXES="DISCORD_TOKEN,DEBUG"
     - ENCRYPTED_DEPLOY_KEY_PATH="deploy_key.enc"
     - ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="${encrypted_dfdcfd5172af_key}"
     - ENCRYPTED_DEPLOY_KEY_IV="${encrypted_dfdcfd5172af_iv}"
-    - DOCKER_IMAGE_SHELL="sh"
     - HADOLINT_VERSION="1.17.5"
     - HADOLINT="${HOME}/hadolint"
 
@@ -32,8 +28,7 @@ before_deploy:
 script:
   - bash -c 'shopt -s globstar nullglob; shellcheck --exclude=SC2029 artifacts/*.{sh,ksh,bash}'
   - ${HADOLINT} --ignore=DL3025 Dockerfile
-  - docker build --target build --tag "$REPOSITORY" .
-  - docker run "$REPOSITORY" ${DOCKER_IMAGE_SHELL} -c "$TEST_CMD"
+  - echo simulated test!
 
 notifications:
   slack:
