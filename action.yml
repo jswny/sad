@@ -1,0 +1,15 @@
+name: 'Deploy'
+description: 'Deploy Docker Compose app via SSH'
+inputs:
+  test:
+    description: 'Test input'
+    required: true
+    default: 'Hello'
+outputs:
+  time:
+    description: 'The time of the execution'
+runs:
+  using: 'docker'
+  image: 'Dockerfile.action'
+  args:
+    - ${{ inputs.who-to-greet }}
