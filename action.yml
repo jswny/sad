@@ -10,6 +10,6 @@ outputs:
     description: 'The time of the execution'
 runs:
   using: 'docker'
-  image: 'Dockerfile.action'
+  image: 'Dockerfile'
   args:
     - ${{ inputs.who-to-greet }}
