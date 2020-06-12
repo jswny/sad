@@ -83,21 +83,13 @@ deploy:
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
     on:
-      branch: "${BETA_BRANCH}"
-  
-  - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_PATH}"/docker_push.sh
-    on:
-      branch: master
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master|"$BETA_BRANCH")$
   
   - provider: script
     script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
     on:
-      branch: "${BETA_BRANCH}"
-
-  - provider: script
-    script: bash "${DEPLOY_ARTIFACTS_PATH}"/deploy.sh
-    on:
-      branch: master
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master|"$BETA_BRANCH")$
 
 ```
