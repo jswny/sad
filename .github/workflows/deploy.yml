@@ -1,7 +1,8 @@
 name: Deploy
 on: [push]
 
-
+env:
+  FOOBAR: hello!
 
 jobs:
   deploy:
@@ -9,7 +10,7 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v2
-      - run: echo "::set-env name=FOOBAR::Hi"
+      # - run: echo "::set-env name=FOOBAR::Hi"
       - name: Deploy
         uses: ./
         id: deploy
