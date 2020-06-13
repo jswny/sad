@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM docker:19.03
 
 COPY entrypoint.sh /entrypoint.sh
 
