@@ -15,7 +15,7 @@ jobs:
           repository: jswny/test
           push: false
           path: 'app'
-          tag_with_ref:true
+          tag_with_ref: true
       - name: Deploy
         uses: ./
         id: deploy
