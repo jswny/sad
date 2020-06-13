@@ -1,9 +1,6 @@
 name: Deploy
 on: [push]
 
-env:
-  FOOBAR: hello!
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
