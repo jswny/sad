@@ -3,6 +3,16 @@
 # Exit on any error, undefined variable, or pipe failure 
 set -euo pipefail
 
+# Translate input environment variables
+DEPLOY_SERVER="$INPUT_DEPLOY_SERVER"
+DEPLOY_USERNAME="$INPUT_DEPLOY_USERNAME"
+DEPLOY_PASSWORD="$INPUT_DEPLOY_PASSWORD"
+DEPLOY_ROOT_DIR="$INPUT_DEPLOY_ROOT_DIR"
+ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_KEY"
+ENCRYPTED_DEPLOY_KEY_CYPHER_IV="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_IV"
+APP_PATH="$INPUT_PATH"
+DEBUG="$INPUT_DEBUG"
+
 log() {
   local prefix_spacer="-----"
   local component="Deploy"
@@ -22,15 +32,12 @@ log() {
   fi
 }
 
-# Translate input environment variables
-DEPLOY_SERVER="$INPUT_DEPLOY_SERVER"
-DEPLOY_USERNAME="$INPUT_DEPLOY_USERNAME"
-DEPLOY_PASSWORD="$INPUT_DEPLOY_PASSWORD"
-DEPLOY_ROOT_DIR="$INPUT_DEPLOY_ROOT_DIR"
-ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_KEY"
-ENCRYPTED_DEPLOY_KEY_CYPHER_IV="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_IV"
-APP_PATH="$INPUT_PATH"
-DEBUG="$INPUT_DEBUG"
+verify_var_set() {
+  if [ -z "${!1}" ]; then
+    log 'error' "$1 is blank or unset!"
+    exit 1
+  fi
+}
 
 cat "/github/workspace/$APP_PATH/.gitignore"
 
@@ -44,5 +51,3 @@ if [[ "$LOCAL_IMAGE_ID" == "" ]]; then
 fi
 
 log 'debug' "Local Docker image ID: $LOCAL_IMAGE_ID"
-
-

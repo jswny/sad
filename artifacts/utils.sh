@@ -6,4 +6,4 @@ verify_var_set() {
     echo "[ERROR] $1 is blank or unset! Exiting..." 1>&2
     exit 1
   fi
-} 
+}
