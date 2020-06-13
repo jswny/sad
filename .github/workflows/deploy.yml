@@ -10,11 +10,13 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v2
-      # - run: echo "::set-env name=FOOBAR::Hi"
       - name: Deploy
         uses: ./
         id: deploy
         with:
-          test: 'Foo'
-      - name: Time
-        run: echo "The time was ${{ steps.deploy.outputs.time }}"
+          deploy_server: '1.1.1.1'
+          deploy_username: 'user1'
+          deploy_password: 'password123'
+          encrypted_deploy_key_cypher_key: '1234'
+          encrypted_deploy_key_cypher_iv: 'abcd'
+          encrypted_deploy_key_path: 'app/deploy_key.enc'

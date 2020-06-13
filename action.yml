@@ -1,15 +1,33 @@
 name: 'Deploy'
 description: 'Deploy Docker Compose app via SSH'
 inputs:
-  test:
-    description: 'Test input'
+  deploy_server:
+    description: 'The SSH-enabled server to deploy to'
     required: true
-    default: 'Hello'
+  deploy_username:
+    description: 'The deploy server username to SSH with'
+    required: true
+  deploy_password:
+    description: 'The deploy server password to SSH with'
+    required: true
+  encrypted_deploy_key_cypher_key:
+    description: 'The encrypted SSH key cypher key for the deploy server'
+    required: true
+  encrypted_deploy_key_cypher_iv:
+    description: 'The encrypted SSH key initialization vector for the deploy server'
+    required: true
+  encrypted_deploy_key_path:
+    description: 'The path to the encrypted SSH key for the deploy server'
+    required: false
+    default: 'deploy_key.enc'
+  beta_branch:
+    description: 'The branch which represents the beta version of the app'
+    required: false
+    default: 'develop'
 outputs:
   time:
     description: 'The time of the execution'
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.who-to-greet }}
+
