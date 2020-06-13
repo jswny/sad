@@ -10,6 +10,9 @@ inputs:
   deploy_password:
     description: 'The deploy server password to SSH with'
     required: true
+  deploy_root_dir:
+    description: 'The deploy server root directory to create the deployed repository directory under'
+    required: true
   encrypted_deploy_key_cypher_key:
     description: 'The encrypted SSH key cypher key for the deploy server'
     required: true
@@ -24,9 +27,6 @@ inputs:
     description: 'The branch which represents the beta version of the app'
     required: false
     default: 'develop'
-outputs:
-  time:
-    description: 'The time of the execution'
 runs:
   using: 'docker'
   image: 'Dockerfile'
