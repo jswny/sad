@@ -19,8 +19,8 @@ inputs:
   encrypted_deploy_key_cypher_iv:
     description: 'The encrypted SSH key initialization vector for the deploy server'
     required: true
-  encrypted_deploy_key_path:
-    description: 'The path to the encrypted SSH key for the deploy server'
+  path:
+    description: 'The path to the directory containing your app (Docker Compose file, encrypted SSH deploy key)'
     required: false
     default: 'deploy_key.enc'
   beta_branch:
