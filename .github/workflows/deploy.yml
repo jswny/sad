@@ -24,3 +24,4 @@ jobs:
           encrypted_deploy_key_cypher_key: '1234'
           encrypted_deploy_key_cypher_iv: 'abcd'
           path: 'app'
+          debug: 1
