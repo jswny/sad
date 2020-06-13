@@ -12,9 +12,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
         with:
-          repository: ${{ github.repository }}
+          repository: jswny/test
           push: false
           path: 'app'
+          tag_with_ref:true
       - name: Deploy
         uses: ./
         id: deploy
