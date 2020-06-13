@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Translate input environment variables
 DEPLOY_SERVER="$INPUT_DEPLOY_SERVER"
