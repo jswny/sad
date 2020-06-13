@@ -4,14 +4,14 @@
 set -euo pipefail
 
 # Translate input environment variables
-DEPLOY_SERVER="$INPUT_DEPLOY_SERVER"
-DEPLOY_USERNAME="$INPUT_DEPLOY_USERNAME"
-DEPLOY_PASSWORD="$INPUT_DEPLOY_PASSWORD"
-DEPLOY_ROOT_DIR="$INPUT_DEPLOY_ROOT_DIR"
-ENCRYPTED_DEPLOY_KEY_CYPHER_KEY="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_KEY"
-ENCRYPTED_DEPLOY_KEY_CYPHER_IV="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_IV"
-APP_PATH="$INPUT_PATH"
-DEBUG="$INPUT_DEBUG"
+deploy_server="$INPUT_DEPLOY_SERVER"
+deploy_username="$INPUT_DEPLOY_USERNAME"
+deploy_password="$INPUT_DEPLOY_PASSWORD"
+deploy_root_dir="$INPUT_DEPLOY_ROOT_DIR"
+encrypted_deploy_key_cypher_key="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_KEY"
+encrypted_deploy_key_cypher_iv="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_IV"
+app_path="$INPUT_PATH"
+debug="$INPUT_DEBUG"
 
 log() {
   local prefix_spacer="-----"
@@ -39,7 +39,7 @@ verify_var_set() {
   fi
 }
 
-cat "/github/workspace/$APP_PATH/.gitignore"
+cat "/github/workspace/$app_path/.gitignore"
 
 docker images
 
