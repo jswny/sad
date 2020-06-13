@@ -1,17 +1,19 @@
 name: Deploy
 on: [push]
 
+
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
       - uses: actions/checkout@v2
-      - run: echo "::set-env name=test::Hi"
+      - run: echo "::set-env name=FOOBAR::Hi"
       - name: Deploy
         uses: ./
         id: deploy
-        # with:
-        #   test: 'Foo'
+        with:
+          test: 'Foo'
       - name: Time
         run: echo "The time was ${{ steps.deploy.outputs.time }}"
