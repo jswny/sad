@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
-      with:
-        repository: ${{ github.repository }}
-        push: false
-        path: 'app'
+        with:
+          repository: ${{ github.repository }}
+          push: false
+          path: 'app'
       - name: Deploy
         uses: ./
         id: deploy
