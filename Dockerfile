@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM docker:19.03
 
 RUN apt-get update \
   && apt-get install --no-install-recommends -y docker
