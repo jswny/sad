@@ -41,6 +41,8 @@ check_exists_file() {
       log 'error' "File \"$1\" does not exist!"
     fi
     exit 1
+  else
+    log 'debug' "File \"$1\" exists!"
   fi
 }
 
