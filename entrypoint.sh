@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Exit on any error, undefined variable, or pipe failure 
-set -euo pipefail
+set -eo pipefail
 
 verify_var_set() {
   if [ -z "${!1}" ]; then
