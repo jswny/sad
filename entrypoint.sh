@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Exit on any error, undefined variable, or pipe failure 
 set -euo pipefail
