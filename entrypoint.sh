@@ -88,6 +88,8 @@ openssl enc -aes-256-cbc -d -in "${encrypted_deploy_key_path}" -out deploy_key -
 
 chmod 600 'deploy_key'
 
+eval `ssh-agent -s`
+
 ssh-add 'deploy_key'
 
 { ssh-keyscan -t "${ssh_key_types}" -H "$deploy_server" >> "${HOME}/.ssh/known_hosts"; } 2>&1
