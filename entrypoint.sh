@@ -43,6 +43,7 @@ app_path="${INPUT_PATH}"
 debug="${INPUT_DEBUG}"
 
 ssh_key_types='rsa,dsa,ecdsa'
+repo_path='/github/workspace'
 
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
@@ -52,8 +53,7 @@ verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
 verify_var_set 'ssh_key_types'
-
-cat "/github/workspace/${app_path}/.gitignore"
+verify_var_set 'repo_path'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"
 
@@ -67,7 +67,7 @@ verify_var_set 'local_image' 'Could not find the local Docker image name and tag
 
 log 'debug' "Local Docker image name and tag: ${local_image}"
 
-openssl enc -aes-256-cbc -d -in "${app_path}/deploy_key.enc" -out deploy_key -k "${encrypted_deploy_key_encryption_key}"
+openssl enc -aes-256-cbc -d -in "${repo_path}/${app_path}/deploy_key.enc" -out deploy_key -k "${encrypted_deploy_key_encryption_key}"
 
 chmod 600 'deploy_key'
 
