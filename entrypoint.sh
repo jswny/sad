@@ -92,8 +92,8 @@ eval `ssh-agent -s`
 
 ssh-add 'deploy_key'
 
-known_hosts_path="${HOME}/.ssh/known_hosts"
+ssh_path="${HOME}/.ssh"
 verify_var_set 'known_hosts_path'
-mkdir "${known_hosts_path}"
+mkdir -R "${ssh_path}"
 
-{ ssh-keyscan -t "${ssh_key_types}" -H "$deploy_server" >> "${known_hosts_path}"; } 2>&1
+{ ssh-keyscan -t "${ssh_key_types}" -H "$deploy_server" >> "${known_hosts_path}/known_hosts"; } 2>&1
