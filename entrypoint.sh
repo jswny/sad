@@ -34,7 +34,11 @@ log() {
 
 verify_var_set() {
   if [ -z "${!1}" ]; then
-    log 'error' "$1 is blank or unset!"
+    if [ -z "$2" ]; then
+      log 'error' "$1 is blank or unset!"
+    else
+      log 'error' "$2"
+    fi
     exit 1
   fi
 }
@@ -45,18 +49,12 @@ docker images
 
 local_image_id="$(docker images -q "$GITHUB_REPOSITORY" 2> /dev/null)"
 
-if [[ "$local_image_id" == "" ]]; then
-  log 'error' 'No local Docker image detected for this repository! Please build a local image first before deploying!'
-  exit 1
-fi
+verify_var_set 'local_image_id' 'No local Docker image detected for this repository! Please build a local image first before deploying!'
 
 log 'debug' "Local Docker image ID: $local_image_id"
 
 local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' $local_image_id 2> /dev/null)"
 
-if [[ "$local_image" == "" ]]; then
-  log 'error' 'Could not find the local Docker image name and tag!'
-  exit 1
-fi
+verify_var_set 'local_image' 'Could not find the local Docker image name and tag!'
 
 log 'debug' "Local Docker image name and tag: $local_image"
