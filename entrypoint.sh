@@ -3,6 +3,25 @@
 # Exit on any error, undefined variable, or pipe failure 
 set -eo pipefail
 
+log() {
+  local prefix_spacer="-----"
+  local component="Deploy"
+  local prefix="$prefix_spacer [$component]"
+  if [ "$1" = 'debug' ]; then
+    if [ "$debug" = 1 ]; then
+      echo "$prefix DEBUG: $2"
+    fi
+  elif [ "$1" = 'info' ]; then
+    echo "$prefix INFO: $2"
+  elif [ "$1" = 'warn' ]; then
+    echo "$prefix WARN: $2" >&2
+  elif [ "$1" = 'error' ]; then
+    echo "$prefix ERROR: $2" >&2
+  else
+    echo "$prefix INTERNAL ERROR: invalid option \"$1\" for log() with message \"$2\"" >&2 "" >&2
+  fi
+}
+
 verify_var_set() {
   if [ -z "${!1}" ]; then
     if [ -z "$2" ]; then
@@ -35,25 +54,6 @@ verify_var_set 'encrypted_deploy_key_cypher_iv'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
 verify_var_set 'ssh_key_types'
-
-log() {
-  local prefix_spacer="-----"
-  local component="Deploy"
-  local prefix="$prefix_spacer [$component]"
-  if [ "$1" = 'debug' ]; then
-    if [ "$debug" = 1 ]; then
-      echo "$prefix DEBUG: $2"
-    fi
-  elif [ "$1" = 'info' ]; then
-    echo "$prefix INFO: $2"
-  elif [ "$1" = 'warn' ]; then
-    echo "$prefix WARN: $2" >&2
-  elif [ "$1" = 'error' ]; then
-    echo "$prefix ERROR: $2" >&2
-  else
-    echo "$prefix INTERNAL ERROR: invalid option \"$1\" for log() with message \"$2\"" >&2 "" >&2
-  fi
-}
 
 cat "/github/workspace/${app_path}/.gitignore"
 
