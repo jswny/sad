@@ -52,11 +52,11 @@ fi
 
 log 'debug' "Local Docker image ID: $local_image_id"
 
-local_image_name_and_tag="$(docker inspect --format='{{ (index .RepoTags 0) }}' $local_image_id 2> /dev/null)"
+local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' $local_image_id 2> /dev/null)"
 
-if [[ "$local_image_name_and_tag" == "" ]]; then
+if [[ "$local_image" == "" ]]; then
   log 'error' 'Could not find the local Docker image name and tag!'
   exit 1
 fi
 
-log 'debug' "Local Docker image name and tag: $local_image_name_and_tag"
+log 'debug' "Local Docker image name and tag: $local_image"
