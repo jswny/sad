@@ -16,7 +16,7 @@ inputs:
   encrypted_deploy_key_cypher_key:
     description: 'The encrypted SSH key cypher key for the deploy server'
     required: true
-  encrypted_deploy_key_cypher_iv:
+  encrypted_deploy_key_iv:
     description: 'The encrypted SSH key initialization vector for the deploy server'
     required: true
   path:

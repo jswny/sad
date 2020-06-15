@@ -20,7 +20,7 @@ deploy_username="$INPUT_DEPLOY_USERNAME"
 deploy_password="$INPUT_DEPLOY_PASSWORD"
 deploy_root_dir="$INPUT_DEPLOY_ROOT_DIR"
 encrypted_deploy_key_cypher_key="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_KEY"
-encrypted_deploy_key_cypher_iv="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_IV"
+encrypted_deploy_key_iv="$INPUT_ENCRYPTED_DEPLOY_KEY_IV"
 app_path="$INPUT_PATH"
 debug="$INPUT_DEBUG"
 
