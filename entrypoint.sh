@@ -61,9 +61,9 @@ local_image_id="$(docker images -q "$GITHUB_REPOSITORY" 2> /dev/null)"
 
 verify_var_set 'local_image_id' 'No local Docker image detected for this repository! Please build a local image first before deploying!'
 
-log 'debug' "Local Docker image ID: $local_image_id"
+log 'debug' "Local Docker image ID: \"$local_image_id\""
 
-local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' $local_image_id 2> /dev/null)"
+local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' "$local_image_id" 2> /dev/null)"
 
 verify_var_set 'local_image' 'Could not find the local Docker image name and tag!'
 
