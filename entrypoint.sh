@@ -33,6 +33,17 @@ verify_var_set() {
   fi
 }
 
+check_exists_file() {
+  if [ ! -f "$1" ]; then
+    if [ -e "$1" ]; then
+      log 'error' "Item at path \"$1\" exists, but it is not a file!"
+    else
+      log 'error' "File \"$1\" does not exist!"
+    fi
+    exit 1
+  fi
+}
+
 # Translate input environment variables
 deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
@@ -67,7 +78,11 @@ verify_var_set 'local_image' 'Could not find the local Docker image name and tag
 
 log 'debug' "Local Docker image name and tag: ${local_image}"
 
-openssl enc -aes-256-cbc -d -in "${repo_path}/${app_path}/deploy_key.enc" -out deploy_key -k "${encrypted_deploy_key_encryption_key}"
+encrypted_deploy_key_path="${repo_path}/${app_path}/deploy_key.enc"
+verify_var_set 'encrypted_deploy_key_path'
+check_exists_file "${encrypted_deploy_key_path}"
+
+openssl enc -aes-256-cbc -d -in "${encrypted_deploy_key_path}" -out deploy_key -k "${encrypted_deploy_key_encryption_key}"
 
 chmod 600 'deploy_key'
 
