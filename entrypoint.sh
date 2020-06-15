@@ -13,6 +13,18 @@ encrypted_deploy_key_cypher_iv="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_IV"
 app_path="$INPUT_PATH"
 debug="$INPUT_DEBUG"
 
+ssh_key_types='rsa,dsa,ecdsa'
+
+verify_var_set 'deploy_server'
+verify_var_set 'deploy_username'
+verify_var_set 'deploy_password'
+verify_var_set 'deploy_root_dir'
+verify_var_set 'encrypted_deploy_key_cypher_key'
+verify_var_set 'encrypted_deploy_key_cypher_iv'
+verify_var_set 'app_path' 'path is blank or unset!'
+verify_var_set 'debug'
+verify_var_set 'ssh_key_types'
+
 log() {
   local prefix_spacer="-----"
   local component="Deploy"
@@ -35,7 +47,7 @@ log() {
 verify_var_set() {
   if [ -z "${!1}" ]; then
     if [ -z "$2" ]; then
-      log 'error' "$1 is blank or unset!"
+      log 'error' "\"$1\" is blank or unset!"
     else
       log 'error' "$2"
     fi
@@ -43,9 +55,7 @@ verify_var_set() {
   fi
 }
 
-cat "/github/workspace/$app_path/.gitignore"
-
-docker images
+cat "/github/workspace/${app_path}/.gitignore"
 
 local_image_id="$(docker images -q "$GITHUB_REPOSITORY" 2> /dev/null)"
 
@@ -58,3 +68,11 @@ local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' $local_image_
 verify_var_set 'local_image' 'Could not find the local Docker image name and tag!'
 
 log 'debug' "Local Docker image name and tag: $local_image"
+
+openssl aes-256-cbc -K "$encrypted_deploy_key_cypher_key" -iv "$encrypted_deploy_key_iv" -in "$app_path/deploy_key.enc" -out "deploy_key" -d
+
+chmod 600 'deploy_key'
+
+ssh-add 'deploy_key'
+
+{ ssh-keyscan -t "$ssh_key_types" -H "$deploy_server" >> "${HOME}/.ssh/known_hosts"; } 2>&1
