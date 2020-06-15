@@ -1,4 +1,4 @@
-# Deploy ![Deploy](https://github.com/jswny/deploy/workflows/Deploy/badge.svg)
+# Deploy ![Deploy](https://github.com/jswny/deploy/workflows/CI/badge.svg)
 A drop-in set of scripts to deploy apps using Docker and SSH.
 
 ## Features
