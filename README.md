@@ -1,4 +1,4 @@
-# Deploy [![Build Status](https://travis-ci.com/jswny/deploy.svg?branch=master)](https://travis-ci.com/jswny/deploy)
+# Deploy ![Deploy](https://github.com/jswny/deploy/workflows/Deploy/badge.svg)
 A drop-in set of scripts to deploy apps using Docker and SSH.
 
 ## Features
