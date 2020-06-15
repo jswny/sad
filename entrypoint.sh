@@ -49,7 +49,6 @@ check_exists_file() {
 # Translate input environment variables
 deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
-deploy_password="${INPUT_DEPLOY_PASSWORD}"
 deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
 encrypted_deploy_key_encryption_key="${INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY}"
 app_path="${INPUT_PATH}"
@@ -60,7 +59,6 @@ repo_path='/github/workspace'
 
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
-verify_var_set 'deploy_password'
 verify_var_set 'deploy_root_dir'
 verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'

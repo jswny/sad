@@ -1,2 +1,3 @@
 # Local environment variables
 .env
+app/.env
