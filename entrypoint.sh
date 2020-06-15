@@ -3,6 +3,17 @@
 # Exit on any error, undefined variable, or pipe failure 
 set -euo pipefail
 
+verify_var_set() {
+  if [ -z "${!1}" ]; then
+    if [ -z "$2" ]; then
+      log 'error' "\"$1\" is blank or unset!"
+    else
+      log 'error' "$2"
+    fi
+    exit 1
+  fi
+}
+
 # Translate input environment variables
 deploy_server="$INPUT_DEPLOY_SERVER"
 deploy_username="$INPUT_DEPLOY_USERNAME"
@@ -41,17 +52,6 @@ log() {
     echo "$prefix ERROR: $2" >&2
   else
     echo "$prefix INTERNAL ERROR: invalid option \"$1\" for log() with message \"$2\"" >&2 "" >&2
-  fi
-}
-
-verify_var_set() {
-  if [ -z "${!1}" ]; then
-    if [ -z "$2" ]; then
-      log 'error' "\"$1\" is blank or unset!"
-    else
-      log 'error' "$2"
-    fi
-    exit 1
   fi
 }
 
