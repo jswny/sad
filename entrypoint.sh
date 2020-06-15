@@ -38,8 +38,7 @@ deploy_server="$INPUT_DEPLOY_SERVER"
 deploy_username="$INPUT_DEPLOY_USERNAME"
 deploy_password="$INPUT_DEPLOY_PASSWORD"
 deploy_root_dir="$INPUT_DEPLOY_ROOT_DIR"
-encrypted_deploy_key_cypher_key="$INPUT_ENCRYPTED_DEPLOY_KEY_CYPHER_KEY"
-encrypted_deploy_key_iv="$INPUT_ENCRYPTED_DEPLOY_KEY_IV"
+encrypted_deploy_key_encryption_key="$INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY"
 app_path="$INPUT_PATH"
 debug="$INPUT_DEBUG"
 
@@ -69,7 +68,7 @@ verify_var_set 'local_image' 'Could not find the local Docker image name and tag
 
 log 'debug' "Local Docker image name and tag: $local_image"
 
-openssl aes-256-cbc -K "$encrypted_deploy_key_cypher_key" -iv "$encrypted_deploy_key_iv" -in "$app_path/deploy_key.enc" -out "deploy_key" -d
+openssl enc -aes-256-cbc -d -in "${app_path}/deploy_key.enc" -out deploy_key -k "${encrypted_deploy_key_encryption_key}"
 
 chmod 600 'deploy_key'
 

@@ -13,11 +13,8 @@ inputs:
   deploy_root_dir:
     description: 'The deploy server root directory to create the deployed repository directory under'
     required: true
-  encrypted_deploy_key_cypher_key:
-    description: 'The encrypted SSH key cypher key for the deploy server'
-    required: true
-  encrypted_deploy_key_iv:
-    description: 'The encrypted SSH key initialization vector for the deploy server'
+  encrypted_deploy_key_encryption_key:
+    description: 'The encryption key for the deploy server SSH key'
     required: true
   path:
     description: 'The path to the directory containing your app (Docker Compose file, encrypted SSH deploy key)'
