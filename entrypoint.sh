@@ -94,6 +94,6 @@ ssh-add 'deploy_key'
 
 ssh_path="${HOME}/.ssh"
 verify_var_set 'ssh_path'
-mkdir -R "${ssh_path}"
+mkdir -p "${ssh_path}"
 
 { ssh-keyscan -t "${ssh_key_types}" -H "$deploy_server" >> "${known_hosts_path}/known_hosts"; } 2>&1
