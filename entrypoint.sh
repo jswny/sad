@@ -63,6 +63,7 @@ verify_var_set 'deploy_root_dir'
 verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
+verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 verify_var_set 'ssh_key_types'
 verify_var_set 'repo_path'
 
