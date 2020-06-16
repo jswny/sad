@@ -56,8 +56,7 @@ debug="${INPUT_DEBUG}"
 
 repository="${GITHUB_REPOSITORY}"
 
-ssh_key_types='rsa,dsa,ecdsa'
-repo_path='/github/workspace'
+repository_path='/github/workspace'
 
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
@@ -66,8 +65,7 @@ verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
-verify_var_set 'ssh_key_types'
-verify_var_set 'repo_path'
+verify_var_set 'repository_path'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"
 
@@ -86,7 +84,7 @@ verify_var_set 'local_image' 'Could not find the local Docker image name and tag
 
 log 'debug' "Local Docker image name and tag: ${local_image}"
 
-encrypted_deploy_key_path="${repo_path}/${app_path}/deploy_key.enc"
+encrypted_deploy_key_path="${repository_path}/${app_path}/deploy_key.enc"
 verify_var_set 'encrypted_deploy_key_path'
 check_exists_file "${encrypted_deploy_key_path}"
 
@@ -104,6 +102,8 @@ mkdir -p "${ssh_path}"
 
 log 'debug' "Scanning for keys..."
 
-# ssh-keyscan -H "${deploy_server}"
+{ ssh-keyscan -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
 
-# { ssh-keyscan -t "${ssh_key_types}" -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
+if [ ! "$?" -eq 1 ]; then
+  log 'error' 'Could not find an SSH key associated with the specified deploy server to add to known hosts!'
+fi
