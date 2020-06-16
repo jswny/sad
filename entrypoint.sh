@@ -54,6 +54,8 @@ encrypted_deploy_key_encryption_key="${INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY
 app_path="${INPUT_PATH}"
 debug="${INPUT_DEBUG}"
 
+repository="${GITHUB_REPOSITORY}"
+
 ssh_key_types='rsa,dsa,ecdsa'
 repo_path='/github/workspace'
 
@@ -69,9 +71,14 @@ verify_var_set 'repo_path'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"
 
-verify_var_set 'local_image_id' 'No local Docker image detected for this repository! Please build a local image first before deploying!'
+verify_var_set 'local_image_id' "No local Docker image detected for this repository! Please build a local image first before deploying, and ensure it is tagged with the name of this repository \"$repository\"."
 
-log 'debug' "Local Docker image ID: \"${local_image_id}\""
+log 'debug' "Local Docker image ID(s) detected: \"${local_image_id}\""
+
+if [ $(echo "${local_image_id}" | grep -c '$') -gt 1 ]; then
+  log 'error' $"Detected multiple Docker image IDs for this repository! Make sure there is only one Docker image tagged with the name of this repository \"${repository}\"."
+  exit 1
+fi
 
 local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' "${local_image_id}" 2> /dev/null)"
 
@@ -95,4 +102,4 @@ ssh_path="${HOME}/.ssh"
 verify_var_set 'ssh_path'
 mkdir -p "${ssh_path}"
 
-{ ssh-keyscan -t "${ssh_key_types}" -H "$deploy_server" >> "${known_hosts_path}/known_hosts"; } 2>&1
+{ ssh-keyscan -t "${ssh_key_types}" -H "${deploy_server}" >> "${known_hosts_path}/known_hosts"; } 2>&1
