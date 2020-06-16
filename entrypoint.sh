@@ -104,6 +104,6 @@ mkdir -p "${ssh_path}"
 
 log 'debug' "Scanning for keys..."
 
-ssh-keyscan -H "${deploy_server}"
+# ssh-keyscan -H "${deploy_server}"
 
 # { ssh-keyscan -t "${ssh_key_types}" -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
