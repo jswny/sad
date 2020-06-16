@@ -102,6 +102,7 @@ ssh_path="${HOME}/.ssh"
 verify_var_set 'ssh_path'
 mkdir -p "${ssh_path}"
 
-ssh-keyscan -t "${ssh_key_types}" -H "${deploy_server}"
+ssh-keyscan -t "${ssh_key_types}" "${deploy_server}"
+ssh-keyscan -H
 
 { ssh-keyscan -t "${ssh_key_types}" -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
