@@ -16,7 +16,7 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
 
 ## Usage
 1. Include this repository as a git submodule inside your repository
-2. Encrypt your private deployment SSH key into using OpenSSL `aes-256-cbc`, so that you have the encrypted key, the cypher key and the IV stored. For Travis CI this is `travis encrypt-file [--pro] ./deploy_key`, which will automatically add the two environment variables to your CI repository settings, and the local encrypted key file to the local filesystem.
+2. Encrypt your private deployment SSH key into using OpenSSL `aes-256-cbc`: `openssl enc -aes-256-cbc -salt -in deploy_key -out deploy_key.enc -k "<encryption key>`. You can decrypt it if needed with `openssl enc -aes-256-cbc -d -in deploy_key.enc -out deploy_key -k "<encryption key>"`.
 3. Create the following secret environment variables in your CI service so that they won't be leaked:
     - `DEPLOY_SERVER`: the SSH-enabled server to deploy the app to
     - `DEPLOY_USERNAME`: the user to SSH into the server with (no password needed as)
