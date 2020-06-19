@@ -2,8 +2,8 @@ version: '3'
 services:
   echo:
     build: .
-    image: "${DOCKER_USERNAME}/${REPOSITORY}:${TAG:-beta}"
-    container_name: "${REPOSITORY}-${TAG:-beta}"
+    image: "${DOCKER_IMAGE}"
+    container_name: "${DOCKER_CONTAINER_NAME}"
     environment:
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - DEBUG=${DEBUG:-}
+      - TOKEN=${TOKEN}
+      - DEBUG=${DEBUG}
