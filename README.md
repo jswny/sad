@@ -51,6 +51,27 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
 8. Pulls the Docker image on the remote server.
 9. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
 
+## Running Locally
+You can run the action locally to simulate the action.
+1. Build the demo Docker image from `app/`:
+```shell
+docker build --tag jswny/deploy app/
+```
+2. Create a `.env` file with the required environment variables:
+```shell
+INPUT_DEPLOY_SERVER=1.1.1.1
+INPUT_DEPLOY_USERNAME=user1
+INPUT_DEPLOY_ROOT_DIR=/srv
+INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY=abc123
+INPUT_PATH=app
+INPUT_DEBUG=1
+GITHUB_REPOSITORY=jswny/deploy
+```
+3. Build and the Action Docker image:
+```shell
+docker build --tag jswny/deploy-action . && docker run -e CI=true -v "<local path to this repository>":"/github/workspace" -v "/var/run/docker.sock":"/var/run/docker.sock" --env-file=.env jswny/deploy-action
+```
+
 ## Example Travis CI Configuration
 ```yaml
 language: shell
