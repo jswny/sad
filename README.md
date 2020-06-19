@@ -52,7 +52,7 @@ A drop-in set of scripts to deploy apps using Docker and SSH.
 9. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
 
 ## Running Locally
-You can run the action locally to simulate the action.
+You can simulate running the action locally by manually building and running the appropriate Docker images.
 1. Build the demo Docker image from `app/`:
 ```shell
 docker build --tag jswny/deploy app/
