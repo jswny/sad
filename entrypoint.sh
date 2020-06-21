@@ -55,6 +55,13 @@ app_path="${INPUT_PATH}"
 debug="${INPUT_DEBUG}"
 
 repository="${GITHUB_REPOSITORY}"
+ref="${GITHUB_REF}"
+
+verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
+if grep -qE '^refs\/(tags|remote)\/'; then
+  log 'error' "Unsupported Git ref \"${ref}\""
+  exit 1
+fi
 
 repository_path='/github/workspace'
 
