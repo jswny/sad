@@ -63,6 +63,10 @@ if grep -qE '^refs\/(tags|remote)\/'; then
   exit 1
 fi
 
+branch=$(echo "${ref}" | sed -E 's/refs\/(heads|tags|remote)\///')
+
+log 'debug' "Branch detected: \"${branch}\""
+
 repository_path='/github/workspace'
 
 verify_var_set 'deploy_server'
@@ -72,6 +76,7 @@ verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
+verify_var_set 'branch' 'Could not extract a proper supported Git ref!'
 verify_var_set 'repository_path'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"

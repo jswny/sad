@@ -66,6 +66,7 @@ INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY=abc123
 INPUT_PATH=app
 INPUT_DEBUG=1
 GITHUB_REPOSITORY=jswny/deploy
+GITHUB_REF=refs/heads/master
 ```
 3. Create a `.env` file with the required environment variables for the demo app:
 ```shell
