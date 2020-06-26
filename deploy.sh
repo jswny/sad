@@ -46,6 +46,8 @@ check_exists_file() {
   fi
 }
 
+any_branch_identifier='ANY'
+
 # Translate input environment variables
 deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
@@ -83,9 +85,9 @@ if [ "$ref_type" = 'tag/remote' ]; then
   log 'error' "Unsupported ref \"${ref}\" with detected ref type \"${ref_type}\""
   exit 1
 elif [ "$ref_type" = 'branch' ]; then
-  if [ "$ref_name" = "$stable_branch" ]; then
+  if [ "$ref_name" = "$stable_branch" ] || [ "$stable_branch" = "$any_branch_identifier" ]; then
     channel='stable'
-  elif [ "$ref_name" = "$beta_branch" ]; then 
+  elif [ "$ref_name" = "$beta_branch" ] || [ "$beta_branch" = "$any_branch_identifier" ]; then 
     channel='beta'
   fi
 fi
