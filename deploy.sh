@@ -52,20 +52,47 @@ deploy_username="${INPUT_DEPLOY_USERNAME}"
 deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
 encrypted_deploy_key_encryption_key="${INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY}"
 app_path="${INPUT_PATH}"
+stable_branch="${INPUT_STABLE_BRANCH}"
+beta_branch="${INPUT_BETA_BRANCH}"
 debug="${INPUT_DEBUG}"
 
 repository="${GITHUB_REPOSITORY}"
 ref="${GITHUB_REF}"
 
 verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
+verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
+
+verify_var_set 'stable_branch'
+verify_var_set 'beta_branch'
+
 if grep -qE '^refs\/(tags|remote)\/'; then
-  log 'error' "Unsupported Git ref \"${ref}\""
-  exit 1
+  ref_type='tag/remote'
+elif grep -qE '^refs\/heads\/'; then
+  ref_type='branch'
 fi
 
-branch=$(echo "${ref}" | sed -E 's/refs\/(heads|tags|remote)\///')
+verify_var_set 'ref_type' "Could not detect valid ref type from ref \"${ref}\""
 
-log 'debug' "Branch detected: \"${branch}\""
+ref_name=$(echo "${ref}" | sed -E 's/refs\/(heads|tags|remote)\///')
+
+verify_var_set 'ref_name' 'Could not extract a proper supported Git ref name!'
+
+log 'debug' "Ref type detected \"${ref_type}\" with name \"${ref_name}\""
+
+if [ "$ref_type" = 'tag/remote' ]; then
+  log 'error' "Unsupported ref \"${ref}\" with detected ref type \"${ref_type}\""
+  exit 1
+elif [ "$ref_type" = 'branch' ]; then
+  if [ "$ref_name" = "$stable_branch" ]; then
+    channel='stable'
+  elif [ "$ref_name" = "$beta_branch" ]; 
+    channel='beta'
+  fi
+fi
+
+verify_var_set 'channel' "Could not detect release channel from ref type \"${ref_type}\" and ref name \"${ref_name}\""
+
+log 'debug' "Detected release channel \"${channel}\""
 
 repository_path='/github/workspace'
 
@@ -75,8 +102,6 @@ verify_var_set 'deploy_root_dir'
 verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
-verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
-verify_var_set 'branch' 'Could not extract a proper supported Git ref!'
 verify_var_set 'repository_path'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"
