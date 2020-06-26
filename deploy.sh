@@ -65,9 +65,9 @@ verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 verify_var_set 'stable_branch'
 verify_var_set 'beta_branch'
 
-if grep -qE '^refs\/(tags|remote)\/'; then
+if echo "$ref" | grep -qE '^refs\/(tags|remote)\/'; then
   ref_type='tag/remote'
-elif grep -qE '^refs\/heads\/'; then
+elif echo "$ref" | grep -qE '^refs\/heads\/'; then
   ref_type='branch'
 fi
 
