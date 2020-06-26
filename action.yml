@@ -20,6 +20,10 @@ inputs:
     description: 'The path to the directory containing your app (Docker Compose file, encrypted SSH deploy key)'
     required: false
     default: 'deploy_key.enc'
+  stable_branch:
+    description: 'The branch which represents the stable version of the app'
+    required: false
+    default: 'master'
   beta_branch:
     description: 'The branch which represents the beta version of the app'
     required: false
