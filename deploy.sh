@@ -85,7 +85,7 @@ if [ "$ref_type" = 'tag/remote' ]; then
 elif [ "$ref_type" = 'branch' ]; then
   if [ "$ref_name" = "$stable_branch" ]; then
     channel='stable'
-  elif [ "$ref_name" = "$beta_branch" ]; 
+  elif [ "$ref_name" = "$beta_branch" ]; then 
     channel='beta'
   fi
 fi
