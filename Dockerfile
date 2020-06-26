@@ -10,6 +10,6 @@ RUN apk add --no-cache \
   openssl=${OPENSSL_VERSION} \
   openssh=${OPENSSH_VERSION}
 
-COPY entrypoint.sh /entrypoint.sh
+COPY deploy.sh /deploy.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/deploy.sh"]
