@@ -131,7 +131,7 @@ log 'debug' "Detected local Docker image name and tag: ${local_image}"
 
 local_image_name="$(echo "${local_image}" | sed -E 's/^.*\///' | sed -E 's/:.*$//')"
 
-verify_var_set 'local_image_base' "Could not parse local image name (without tag or username) from full image name ${local_image_name}!"
+verify_var_set 'local_image_name' "Could not parse local image name (without tag or username) from full image name ${local_image_name}!"
 
 log 'debug' "Parsed local image name \"${local_image_name}\""
 
