@@ -125,9 +125,20 @@ fi
 
 local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' "${local_image_id}" 2> /dev/null)"
 
-verify_var_set 'local_image' 'Could not find the local Docker image name and tag!'
+verify_var_set 'local_image' 'Could not detect the local Docker image name and tag!'
 
 log 'debug' "Detected local Docker image name and tag: ${local_image}"
+
+local_image_name="$(echo "${local_image}" | sed -E 's/^.*\///' | sed -E 's/:.*$//')"
+
+verify_var_set 'local_image_base' "Could not parse local image name (without tag or username) from full image name ${local_image_name}!"
+
+log 'debug' "Parsed local image name \"${local_image_name}\""
+
+container_name="${local_image_name}-${channel}"
+verify_var_set 'container_name' 'Could not generate container name for deployment!'
+
+log 'info' "Generated container name for deployment ${container_name}"
 
 log 'info' 'Scanning for SSH keys...'
 
@@ -150,3 +161,13 @@ mkdir -p "${ssh_path}"
 log 'info' 'Adding SSH key(s) to known hosts...'
 
 { ssh-keyscan -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
+
+log 'info' 'Generating .env file for deployment...'
+
+{
+  echo "IMAGE=${local_image}"
+  echo "CONTAINER_NAME=${container_name}"
+} >> '.env'
+
+log 'debug' 'Generated .env file:'
+log 'debug' "$(cat .env)"
