@@ -67,6 +67,8 @@ verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 verify_var_set 'stable_branch'
 verify_var_set 'beta_branch'
 
+log 'info' 'Detecting Git and release info...'
+
 if echo "$ref" | grep -qE '^refs\/(tags|remote)\/'; then
   ref_type='tag/remote'
 elif echo "$ref" | grep -qE '^refs\/heads\/'; then
@@ -98,6 +100,8 @@ log 'debug' "Detected release channel \"${channel}\""
 
 repository_path='/github/workspace'
 
+log 'info' 'Verifying action inputs...'
+
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
@@ -105,6 +109,8 @@ verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
 verify_var_set 'repository_path'
+
+log 'info' 'Detecting local Docker image...'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"
 
@@ -123,6 +129,8 @@ verify_var_set 'local_image' 'Could not find the local Docker image name and tag
 
 log 'debug' "Local Docker image name and tag: ${local_image}"
 
+log 'info' 'Scanning for SSH keys...'
+
 encrypted_deploy_key_path="${repository_path}/${app_path}/deploy_key.enc"
 verify_var_set 'encrypted_deploy_key_path'
 check_exists_file "${encrypted_deploy_key_path}"
@@ -139,6 +147,6 @@ ssh_path="${HOME}/.ssh"
 verify_var_set 'ssh_path'
 mkdir -p "${ssh_path}"
 
-log 'debug' "Scanning for keys..."
+log 'info' 'Adding SSH key(s) to known hosts...'
 
 { ssh-keyscan -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
