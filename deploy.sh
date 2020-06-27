@@ -96,11 +96,11 @@ fi
 
 verify_var_set 'channel' "Could not detect release channel from ref type \"${ref_type}\" and ref name \"${ref_name}\""
 
-log 'debug' "Detected release channel \"${channel}\""
-
-repository_path='/github/workspace'
+log 'info' "Detected release channel \"${channel}\""
 
 log 'info' 'Verifying action inputs...'
+
+repository_path='/github/workspace'
 
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
@@ -127,7 +127,7 @@ local_image="$(docker inspect --format='{{ (index .RepoTags 0) }}' "${local_imag
 
 verify_var_set 'local_image' 'Could not find the local Docker image name and tag!'
 
-log 'debug' "Local Docker image name and tag: ${local_image}"
+log 'debug' "Detected local Docker image name and tag: ${local_image}"
 
 log 'info' 'Scanning for SSH keys...'
 
