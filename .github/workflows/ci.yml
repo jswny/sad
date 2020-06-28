@@ -1,6 +1,9 @@
 name: CI
 on: [push]
 
+env:
+
+
 jobs:
   shellcheck:
     name: ShellCheck
@@ -46,3 +49,6 @@ jobs:
           beta_branch: 'ANY'
           debug: 1
           env_var_prefixes: 'FOO,BAR'
+        env:
+          foo_beta: ${{ secrets.foo_beta }}
+          bar_beta: ${{ secrets.bar_beta }}
