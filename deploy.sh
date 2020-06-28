@@ -163,7 +163,7 @@ log 'info' 'Adding SSH key(s) to known hosts...'
 
 { ssh-keyscan -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
 
-log 'info' 'Generating .env file for deployment...'
+log 'info' 'Generating ".env" file for deployment...'
 
 {
   echo "IMAGE=${local_image}"
@@ -182,3 +182,7 @@ else
     echo "${env_var_prefix}=${env_var_value}" >> ".env"
   done
 fi
+
+debug 'info' 'Sending ".env" file to deploy server...'
+
+scp '.env' "${deploy_username}"@"${deploy_server}":"${deploy_root_dir}"
