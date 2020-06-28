@@ -170,7 +170,7 @@ log 'info' 'Generating .env file for deployment...'
   echo "CONTAINER_NAME=${container_name}"
 } >> '.env'
 
-if [ -z "${!1}" ]; then
+if [ -z "${env_var_prefixes}" ]; then
   log 'info' 'No custom environment variables found to inject into the deployment. See the "env_var_prefixes" input to add some.'
 else
   IFS=', ' read -r -a env_var_prefixes_array <<< "${env_var_prefixes}"
