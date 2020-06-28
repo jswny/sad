@@ -183,6 +183,6 @@ else
   done
 fi
 
-debug 'info' 'Sending ".env" file to deploy server...'
+log 'info' 'Sending ".env" file to deploy server...'
 
 scp '.env' "${deploy_username}"@"${deploy_server}":"${deploy_root_dir}"
