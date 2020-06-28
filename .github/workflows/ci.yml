@@ -47,5 +47,5 @@ jobs:
           debug: 1
           env_var_prefixes: 'FOO,BAR'
         env:
-          foo_beta: ${{ secrets.foo_beta }}
-          bar_beta: ${{ secrets.bar_beta }}
+          FOO_BETA: ${{ secrets.foo_beta }}
+          BAR_BETA: ${{ secrets.bar_beta }}
