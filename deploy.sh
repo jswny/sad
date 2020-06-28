@@ -170,14 +170,16 @@ log 'info' 'Generating .env file for deployment...'
   echo "CONTAINER_NAME=${container_name}"
 } >> '.env'
 
+echo "${DEPLOY_SERVER}"
+
 if [ -z "${env_var_prefixes}" ]; then
   log 'info' 'No custom environment variables found to inject into the deployment. See the "env_var_prefixes" input to add some.'
 else
   IFS=', ' read -r -a env_var_prefixes_array <<< "${env_var_prefixes}"
   for env_var_prefix in "${env_var_prefixes_array[@]}"; do
     env_var_name=$(echo "${env_var_prefix}_${channel}" | tr '[:lower:]' '[:upper:]')
-    env_var_value="${!env_var_name}"
     verify_var_set "$env_var_name" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
+    env_var_value="${!env_var_name}"
     log 'debug' "Setting deploy environment variable ${env_var_name}"
     echo "${env_var_prefix}=${env_var_value}" >> ".env"
   done
