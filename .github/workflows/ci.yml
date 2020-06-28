@@ -1,9 +1,6 @@
 name: CI
 on: [push]
 
-env:
-
-
 jobs:
   shellcheck:
     name: ShellCheck
