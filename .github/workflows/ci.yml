@@ -45,3 +45,4 @@ jobs:
           path: 'app'
           beta_branch: 'ANY'
           debug: 1
+          env_var_prefixes: 'FOO,BAR'

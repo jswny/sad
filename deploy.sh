@@ -57,6 +57,7 @@ app_path="${INPUT_PATH}"
 stable_branch="${INPUT_STABLE_BRANCH}"
 beta_branch="${INPUT_BETA_BRANCH}"
 debug="${INPUT_DEBUG}"
+env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
 
 repository="${GITHUB_REPOSITORY}"
 ref="${GITHUB_REF}"
@@ -102,13 +103,13 @@ log 'info' 'Verifying action inputs...'
 
 repository_path='/github/workspace'
 
+verify_var_set 'repository_path'
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
 verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
-verify_var_set 'repository_path'
 
 log 'info' 'Detecting local Docker image...'
 
@@ -169,5 +170,15 @@ log 'info' 'Generating .env file for deployment...'
   echo "CONTAINER_NAME=${container_name}"
 } >> '.env'
 
-log 'debug' 'Generated .env file:'
-log 'debug' "$(cat .env)"
+if [ -z "${!1}" ]; then
+  log 'info' 'No custom environment variables found to inject into the deployment. See the "env_var_prefixes" input to add some.'
+else
+  IFS=', ' read -r -a env_var_prefixes_array <<< "${env_var_prefixes}"
+  for env_var_prefix in "${env_var_prefixes_array[@]}"; do
+    env_var_name=$(echo "${env_var_prefix}_${channel}" | tr '[:lower:]' '[:upper:]')
+    env_var_value="${!env_var_name}"
+    verify_var_set "$env_var_name" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
+    log 'debug' "Setting deploy environment variable ${env_var_name}"
+    echo "${env_var_prefix}=${env_var_value}" >> ".env"
+  done
+fi
