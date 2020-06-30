@@ -161,7 +161,7 @@ mkdir -p "${ssh_path}"
 
 log 'info' 'Adding SSH key(s) to known hosts...'
 
-{ ssh-keyscan -H "${deploy_server}" >> "${ssh_path}/known_hosts"; } 2>&1
+ssh-keyscan "${deploy_server}" >> "${ssh_path}/known_hosts"
 
 cat "${ssh_path}/known_hosts"
 
