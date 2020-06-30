@@ -62,6 +62,8 @@ env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
 repository="${GITHUB_REPOSITORY}"
 ref="${GITHUB_REF}"
 
+home_path="/root"
+
 verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 
@@ -155,7 +157,7 @@ eval "$(ssh-agent -s)"
 
 ssh-add 'deploy_key'
 
-ssh_path="${HOME}/.ssh"
+ssh_path="${home_path}/.ssh"
 verify_var_set 'ssh_path'
 mkdir -p "${ssh_path}"
 
@@ -163,9 +165,10 @@ log 'info' 'Adding SSH key(s) to known hosts...'
 
 ssh-keyscan "${deploy_server}" >> "${ssh_path}/known_hosts"
 
+log 'debug' "~: $ssh_path"
 log 'debug' "HOME: $HOME"
 
-cat "${ssh_path}/known_hosts"
+# cat "${ssh_path}/known_hosts"
 
 log 'info' 'Generating ".env" file for deployment...'
 
