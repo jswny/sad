@@ -194,8 +194,8 @@ verify_var_set 'deploy_dir' 'Could not generate deploy directory path!'
 
 log 'info' 'Sending ".env" file to deploy server...'
 
-scp -v "${env_file_path}" "${deploy_username}@${deploy_server}":"${deploy_dir}"
+scp -v "${env_file_path}" "${deploy_username}@${deploy_server}:${deploy_dir}"
 
 log 'info' 'Sending "docker-compose.yml" file to deploy server...'
 
-scp -v "${full_app_path}/docker-compose.yml" "${deploy_username}@${deploy_server}":"${deploy_dir}"
+scp -v "${full_app_path}/docker-compose.yml" "${deploy_username}@${deploy_server}:${deploy_dir}"
