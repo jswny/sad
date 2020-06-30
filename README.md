@@ -61,6 +61,8 @@ docker build --tag jswny/deploy app/
 ```shell
 GITHUB_REPOSITORY=jswny/deploy
 GITHUB_REF=refs/heads/master
+HOME=/github/HOME
+CI=true
 INPUT_DEPLOY_SERVER=1.1.1.1
 INPUT_DEPLOY_USERNAME=user1
 INPUT_DEPLOY_ROOT_DIR=/srv
@@ -82,7 +84,7 @@ DEBUG=1
 ```
 4. Build and run the Action Docker image:
 ```shell
-docker build --tag jswny/deploy-action . && docker run -e CI=true -v "<local path to this repository>":"/github/workspace" -v "/var/run/docker.sock":"/var/run/docker.sock" --env-file=.env jswny/deploy-action
+docker build --tag jswny/deploy-action . && docker run -v "<local path to this repository>":"/github/workspace" -v "/var/run/docker.sock":"/var/run/docker.sock" --env-file=.env jswny/deploy-action
 ```
 
 ## Example Travis CI Configuration
