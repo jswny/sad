@@ -206,6 +206,8 @@ ssh "${deploy_username}@${deploy_server}" "docker pull '${local_image}'"
 
 log 'info' "Bringing app up on deploy server with Docker Compose..."
 
-ssh "${deploy_username}@${deploy_server}" "cd '${DEPLOY_DIR}' && docker-compose up -d"
+ssh "${deploy_username}@${deploy_server}" "cd '${deploy_dir}' && docker-compose up -d"
 
 log 'info' 'Done!'
+
+log 'debug' "Workspace: $GITHUB_WORKSPACE"
