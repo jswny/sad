@@ -189,6 +189,8 @@ else
   done
 fi
 
+log 'debug' "Workspace: $GITHUB_WORKSPACE"
+
 deploy_dir="${deploy_root_dir}/${container_name}"
 verify_var_set 'deploy_dir' 'Could not generate deploy directory path!'
 
@@ -209,5 +211,3 @@ log 'info' "Bringing app up on deploy server with Docker Compose..."
 ssh "${deploy_username}@${deploy_server}" "cd '${deploy_dir}' && docker-compose up -d"
 
 log 'info' 'Done!'
-
-log 'debug' "Workspace: $GITHUB_WORKSPACE"

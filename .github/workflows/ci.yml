@@ -33,7 +33,6 @@ jobs:
       - uses: docker/build-push-action@v1
         with:
           repository: ${{ github.repository }}
-          push: false
           path: 'app'
           tag_with_ref: true
       - name: Deploy
