@@ -5,5 +5,5 @@ services:
     image: "${DOCKER_IMAGE}"
     container_name: "${DOCKER_CONTAINER_NAME}"
     environment:
-      - TOKEN=${TOKEN}
-      - DEBUG=${DEBUG}
+      - FOO=${FOO}
+      - BAR=${BAR}
