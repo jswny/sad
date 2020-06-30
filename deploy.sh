@@ -165,11 +165,6 @@ log 'info' 'Adding SSH key(s) to known hosts...'
 
 ssh-keyscan "${deploy_server}" >> "${ssh_path}/known_hosts"
 
-log 'debug' "~: $ssh_path"
-log 'debug' "HOME: $HOME"
-
-# cat "${ssh_path}/known_hosts"
-
 log 'info' 'Generating ".env" file for deployment...'
 
 {
