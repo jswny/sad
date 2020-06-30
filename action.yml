@@ -17,9 +17,9 @@ inputs:
     description: 'The encryption key for the deploy server SSH key'
     required: true
   path:
-    description: 'The path to the directory containing your app (Docker Compose file, encrypted SSH deploy key)'
+    description: 'The path to the directory containing your app relative to the current directory of your repository'
     required: false
-    default: 'deploy_key.enc'
+    default: '.'
   stable_branch:
     description: 'The branch which represents the stable version of the app. Use "ANY" to specify any branch.'
     required: false
@@ -33,7 +33,7 @@ inputs:
     required: false
     default: 0
   env_var_prefixes:
-    description: 'A comma-separated string list of environment variable prefixes which, when suffixed with the deploy channel, represent the environment variables required to be injected into the app.'
+    description: 'A comma-separated string list of environment variable prefixes which, when suffixed with the deploy channel, represent the environment variables required to be injected into the app'
     required: false
     default: ''
 runs:

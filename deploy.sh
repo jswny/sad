@@ -62,8 +62,6 @@ env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
 repository="${GITHUB_REPOSITORY}"
 ref="${GITHUB_REF}"
 
-home_path="/root"
-
 verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 
@@ -103,6 +101,7 @@ log 'info' "Detected release channel \"${channel}\""
 
 log 'info' 'Verifying action inputs...'
 
+home_path="/root"
 repository_path='/github/workspace'
 
 verify_var_set 'repository_path'
@@ -112,6 +111,9 @@ verify_var_set 'deploy_root_dir'
 verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
+
+full_app_path="${repository_path}/${app_path}"
+verify_var_set 'full_app_path' 'Could not generate full app path based on provided app path!'
 
 log 'info' 'Detecting local Docker image...'
 
@@ -145,7 +147,7 @@ log 'info' "Generated container name for deployment ${container_name}"
 
 log 'info' 'Scanning for SSH keys...'
 
-encrypted_deploy_key_path="${repository_path}/${app_path}/deploy_key.enc"
+encrypted_deploy_key_path="${full_app_path}/deploy_key.enc"
 verify_var_set 'encrypted_deploy_key_path'
 check_exists_file "${encrypted_deploy_key_path}"
 
@@ -167,7 +169,7 @@ ssh-keyscan "${deploy_server}" >> "${ssh_path}/known_hosts"
 
 log 'info' 'Generating ".env" file for deployment...'
 
-env_file_path="${repository_path}/${app_path}/.env"
+env_file_path="${full_app_path}/.env"
 
 {
   echo "IMAGE=${local_image}"
@@ -188,8 +190,8 @@ else
 fi
 
 deploy_dir="${deploy_root_dir}/${container_name}"
+verify_var_set 'deploy_dir' 'Could not generate deploy directory path!'
 
 log 'info' 'Sending ".env" file to deploy server...'
 
 scp -v "${env_file_path}" "${deploy_username}"@"${deploy_server}":"${deploy_dir}"
-
