@@ -167,10 +167,12 @@ ssh-keyscan "${deploy_server}" >> "${ssh_path}/known_hosts"
 
 log 'info' 'Generating ".env" file for deployment...'
 
+env_file_path="${repository_path}/${app_path}/.env"
+
 {
   echo "IMAGE=${local_image}"
   echo "CONTAINER_NAME=${container_name}"
-} >> '.env'
+} >> "${env_file_path}"
 
 if [ -z "${env_var_prefixes}" ]; then
   log 'info' 'No custom environment variables found to inject into the deployment. See the "env_var_prefixes" input to add some.'
@@ -181,7 +183,7 @@ else
     verify_var_set "$env_var_name" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
     env_var_value="${!env_var_name}"
     log 'debug' "Setting deploy environment variable ${env_var_name}"
-    echo "${env_var_prefix}=${env_var_value}" >> ".env"
+    echo "${env_var_prefix}=${env_var_value}" >> "${env_file_path}"
   done
 fi
 
@@ -189,4 +191,5 @@ deploy_dir="${deploy_root_dir}"/"${container_name}"
 
 log 'info' 'Sending ".env" file to deploy server...'
 
-scp -v '.env' "${deploy_username}"@"${deploy_server}":"${deploy_dir}"
+scp -v "${env_file_path}" "${deploy_username}"@"${deploy_server}":"${deploy_dir}"
+
