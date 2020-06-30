@@ -199,3 +199,13 @@ scp -v "${env_file_path}" "${deploy_username}@${deploy_server}:${deploy_dir}"
 log 'info' 'Sending "docker-compose.yml" file to deploy server...'
 
 scp -v "${full_app_path}/docker-compose.yml" "${deploy_username}@${deploy_server}:${deploy_dir}"
+
+log 'info' "Pulling pushed image \"${local_image}\" from deploy server..."
+
+ssh "${deploy_username}@${deploy_server}" "docker pull '${local_image}'"
+
+log 'info' "Bringing app up on deploy server with Docker Compose..."
+
+ssh "${deploy_username}@${deploy_server}" "cd '${DEPLOY_DIR}' && docker-compose up -d"
+
+log 'info' 'Done!'
