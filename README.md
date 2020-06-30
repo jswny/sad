@@ -57,16 +57,21 @@ You can simulate running the action locally by manually building and running the
 ```shell
 docker build --tag jswny/deploy app/
 ```
-2. Create a `.env` file with the required environment variables for the Action:
+1. Create a `.env` file with the required environment variables for the Action corresponding to the inputs (which need to be prefixed with `INPUT_`, and uppercase, and the GitHub environment variables (you need to add variables for all inputs, even inputs that aren't required):
 ```shell
+GITHUB_REPOSITORY=jswny/deploy
+GITHUB_REF=refs/heads/master
 INPUT_DEPLOY_SERVER=1.1.1.1
 INPUT_DEPLOY_USERNAME=user1
 INPUT_DEPLOY_ROOT_DIR=/srv
 INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY=abc123
 INPUT_PATH=app
+INPUT_STABLE_BRANCH=master
+INPUT_BETA_BRANCH=ANY
 INPUT_DEBUG=1
-GITHUB_REPOSITORY=jswny/deploy
-GITHUB_REF=refs/heads/master
+INPUT_ENV_VAR_PREFIXES=FOO,BAR
+FOO_BETA=foo123
+BAR_BETA=bar123
 ```
 3. Create a `.env` file with the required environment variables for the demo app:
 ```shell
@@ -75,7 +80,7 @@ DOCKER_CONTAINER_NAME=jswny-dotfiles-beta
 TOKEN=abc123
 DEBUG=1
 ```
-4. Build and the Action Docker image:
+4. Build and run the Action Docker image:
 ```shell
 docker build --tag jswny/deploy-action . && docker run -e CI=true -v "<local path to this repository>":"/github/workspace" -v "/var/run/docker.sock":"/var/run/docker.sock" --env-file=.env jswny/deploy-action
 ```
