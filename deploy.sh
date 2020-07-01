@@ -46,6 +46,16 @@ check_exists_file() {
   fi
 }
 
+scp_wrapper() {
+  log 'info' "Sending \"$(basename "${1}")\" to deploy server..."
+
+  if [ "${debug}" = 1 ]; then
+    scp -v "${1}" "${deploy_username}@${deploy_server}:${deploy_dir}"
+  else
+    scp "${1}" "${deploy_username}@${deploy_server}:${deploy_dir}"
+  fi
+}
+
 any_branch_identifier='ANY'
 
 # Translate input environment variables
@@ -198,13 +208,9 @@ else
   done
 fi
 
-log 'info' 'Sending ".env" file to deploy server...'
+scp_wrapper "${env_file_path}"
 
-scp -v "${env_file_path}" "${deploy_username}@${deploy_server}:${deploy_dir}"
-
-log 'info' 'Sending "docker-compose.yml" file to deploy server...'
-
-scp -v "${full_app_path}/docker-compose.yml" "${deploy_username}@${deploy_server}:${deploy_dir}"
+scp_wrapper "${full_app_path}/docker-compose.yml"
 
 log 'info' "Pulling pushed image \"${local_image}\" from deploy server..."
 
