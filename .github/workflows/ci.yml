@@ -35,6 +35,8 @@ jobs:
           repository: ${{ github.repository }}
           path: 'app'
           tag_with_ref: true
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_password }}
       - name: Deploy
         uses: ./
         id: deploy
