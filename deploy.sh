@@ -167,6 +167,15 @@ log 'info' 'Adding SSH key(s) to known hosts...'
 
 ssh-keyscan "${deploy_server}" >> "${ssh_path}/known_hosts"
 
+check_exists_file "${ssh_path}/known_hosts"
+
+deploy_dir="${deploy_root_dir}/${container_name}"
+verify_var_set 'deploy_dir' 'Could not generate deploy directory path!'
+
+log 'info' "Creating deploy directory \"${deploy_dir}\" on deploy server"
+
+ssh "${deploy_username}@${deploy_server}" "mkdir -p '${deploy_dir}'"
+
 log 'info' 'Generating ".env" file for deployment...'
 
 env_file_path="${full_app_path}/.env"
@@ -190,9 +199,6 @@ else
 fi
 
 log 'debug' "Workspace: $GITHUB_WORKSPACE"
-
-deploy_dir="${deploy_root_dir}/${container_name}"
-verify_var_set 'deploy_dir' 'Could not generate deploy directory path!'
 
 log 'info' 'Sending ".env" file to deploy server...'
 
