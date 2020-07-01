@@ -34,15 +34,15 @@ verify_var_set() {
 }
 
 check_exists_file() {
-  if [ ! -f "$1" ]; then
-    if [ -e "$1" ]; then
-      log 'error' "Item at path \"$1\" exists, but it is not a file!"
+  if [ ! -f "${1}" ]; then
+    if [ -e "${1}" ]; then
+      log 'error' "Item at path \"${1}\" exists, but it is not a file!"
     else
-      log 'error' "File \"$1\" does not exist!"
+      log 'error' "File \"${1}\" does not exist!"
     fi
     exit 1
   else
-    log 'debug' "File \"$1\" exists!"
+    log 'debug' "File \"${1}\" exists!"
   fi
 }
 
@@ -70,9 +70,9 @@ verify_var_set 'beta_branch'
 
 log 'info' 'Detecting Git and release info...'
 
-if echo "$ref" | grep -qE '^refs\/(tags|remote)\/'; then
+if echo "${ref}" | grep -qE '^refs\/(tags|remote)\/'; then
   ref_type='tag/remote'
-elif echo "$ref" | grep -qE '^refs\/heads\/'; then
+elif echo "${ref}" | grep -qE '^refs\/heads\/'; then
   ref_type='branch'
 fi
 
@@ -84,13 +84,13 @@ verify_var_set 'ref_name' 'Could not extract a proper supported Git ref name!'
 
 log 'debug' "Ref type detected \"${ref_type}\" with name \"${ref_name}\""
 
-if [ "$ref_type" = 'tag/remote' ]; then
+if [ "${ref_type}" = 'tag/remote' ]; then
   log 'error' "Unsupported ref \"${ref}\" with detected ref type \"${ref_type}\""
   exit 1
-elif [ "$ref_type" = 'branch' ]; then
-  if [ "$ref_name" = "$stable_branch" ] || [ "$stable_branch" = "$any_branch_identifier" ]; then
+elif [ "${ref_type}" = 'branch' ]; then
+  if [ "${ref_name}" = "${stable_branch}" ] || [ "${stable_branch}" = "${any_branch_identifier}" ]; then
     channel='stable'
-  elif [ "$ref_name" = "$beta_branch" ] || [ "$beta_branch" = "$any_branch_identifier" ]; then 
+  elif [ "${ref_name}" = "${beta_branch}" ] || [ "${beta_branch}" = "${any_branch_identifier}" ]; then 
     channel='beta'
   fi
 fi
@@ -119,7 +119,7 @@ log 'info' 'Detecting local Docker image...'
 
 local_image_id="$(docker images -q "${GITHUB_REPOSITORY}" 2> /dev/null)"
 
-verify_var_set 'local_image_id' "No local Docker image detected for this repository! Please build a local image first before deploying, and ensure it is tagged with the name of this repository \"$repository\"."
+verify_var_set 'local_image_id' "No local Docker image detected for this repository! Please build a local image first before deploying, and ensure it is tagged with the name of this repository \"${repository}\"."
 
 log 'debug' "Local Docker image ID(s) detected: \"${local_image_id}\""
 
@@ -191,7 +191,7 @@ else
   IFS=', ' read -r -a env_var_prefixes_array <<< "${env_var_prefixes}"
   for env_var_prefix in "${env_var_prefixes_array[@]}"; do
     env_var_name=$(echo "${env_var_prefix}_${channel}" | tr '[:lower:]' '[:upper:]')
-    verify_var_set "$env_var_name" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
+    verify_var_set "${env_var_name}" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
     env_var_value="${!env_var_name}"
     log 'debug' "Setting deploy environment variable ${env_var_name}"
     echo "${env_var_prefix}=${env_var_value}" >> "${env_file_path}"
