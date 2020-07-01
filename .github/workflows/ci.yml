@@ -35,8 +35,8 @@ jobs:
           repository: ${{ github.repository }}
           path: 'app'
           tag_with_ref: true
-          username: ${{ secrets.docker_username }}
-          password: ${{ secrets.docker_password }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Deploy
         uses: ./
         id: deploy
@@ -50,5 +50,5 @@ jobs:
           debug: 1
           env_var_prefixes: 'FOO,BAR'
         env:
-          FOO_BETA: ${{ secrets.foo_beta }}
-          BAR_BETA: ${{ secrets.bar_beta }}
+          FOO_BETA: ${{ secrets.FOO_BETA }}
+          BAR_BETA: ${{ secrets.BAR_BETA }}
