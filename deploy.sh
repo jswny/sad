@@ -198,7 +198,8 @@ ssh_wrapper "mkdir -p '${deploy_dir}'"
 
 log 'info' 'Generating ".env" file for deployment...'
 
-env_file_path="${full_app_path}/.env"
+env_file_name='deploy.env'
+env_file_path="${full_app_path}/${env_file_name}"
 
 {
   echo "IMAGE=${local_image}"
@@ -219,6 +220,7 @@ else
 fi
 
 scp_wrapper "${env_file_path}"
+ssh_wrapper "mv '${deploy_dir}/${env_file_name}' '${deploy_dir}/.env'"
 
 scp_wrapper "${full_app_path}/docker-compose.yml"
 
