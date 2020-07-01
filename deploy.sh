@@ -102,7 +102,7 @@ log 'info' "Detected release channel \"${channel}\""
 log 'info' 'Verifying action inputs...'
 
 home_path="/root"
-repository_path='/github/workspace'
+repository_path="${GITHUB_WORKSPACE}"
 
 verify_var_set 'repository_path'
 verify_var_set 'deploy_server'
@@ -197,8 +197,6 @@ else
     echo "${env_var_prefix}=${env_var_value}" >> "${env_file_path}"
   done
 fi
-
-log 'debug' "Workspace: $GITHUB_WORKSPACE"
 
 log 'info' 'Sending ".env" file to deploy server...'
 
