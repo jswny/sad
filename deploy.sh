@@ -56,6 +56,14 @@ scp_wrapper() {
   fi
 }
 
+ssh_wrapper() {
+  if [ "${debug}" = 1 ]; then
+    ssh -v "${deploy_username}@${deploy_server}" "${1}"
+  else
+    ssh "${deploy_username}@${deploy_server}" "${1}"
+  fi
+}
+
 any_branch_identifier='ANY'
 
 # Translate input environment variables
@@ -184,7 +192,7 @@ verify_var_set 'deploy_dir' 'Could not generate deploy directory path!'
 
 log 'info' "Creating deploy directory \"${deploy_dir}\" on deploy server"
 
-ssh "${deploy_username}@${deploy_server}" "mkdir -p '${deploy_dir}'"
+ssh_wrapper "mkdir -p '${deploy_dir}'"
 
 log 'info' 'Generating ".env" file for deployment...'
 
@@ -214,10 +222,10 @@ scp_wrapper "${full_app_path}/docker-compose.yml"
 
 log 'info' "Pulling pushed image \"${local_image}\" from deploy server..."
 
-ssh "${deploy_username}@${deploy_server}" "docker pull '${local_image}'"
+ssh_wrapper "${deploy_username}@${deploy_server}" "docker pull '${local_image}'"
 
 log 'info' "Bringing app up on deploy server with Docker Compose..."
 
-ssh "${deploy_username}@${deploy_server}" "cd '${deploy_dir}' && docker-compose up -d"
+ssh_wrapper "cd '${deploy_dir}' && docker-compose up -d"
 
 log 'info' 'Done!'
