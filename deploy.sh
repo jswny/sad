@@ -57,6 +57,8 @@ scp_wrapper() {
 }
 
 ssh_wrapper() {
+  log 'debug' "Running command over SSH \"${1}\""
+
   if [ "${debug}" = 1 ]; then
     ssh -v "${deploy_username}@${deploy_server}" "${1}"
   else
