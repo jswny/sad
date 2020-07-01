@@ -124,7 +124,7 @@ log 'info' 'Verifying action inputs...'
 home_path="/root"
 repository_path="${GITHUB_WORKSPACE}"
 
-verify_var_set 'repository_path'
+verify_var_set 'repository_path' 'GITHUB_WORKSPACE is blank or unset!'
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'

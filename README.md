@@ -60,6 +60,7 @@ docker build --tag jswny/deploy app/
 1. Create a `.env` file with the required environment variables for the Action corresponding to the inputs (which need to be prefixed with `INPUT_`, and uppercase, and the GitHub environment variables (you need to add variables for all inputs, even inputs that aren't required):
 ```shell
 GITHUB_REPOSITORY=jswny/deploy
+GITHUB_WORKSPACE=/github/workspace
 GITHUB_REF=refs/heads/master
 HOME=/github/HOME
 CI=true
