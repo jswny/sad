@@ -224,7 +224,7 @@ scp_wrapper "${full_app_path}/docker-compose.yml"
 
 log 'info' "Pulling pushed image \"${local_image}\" from deploy server..."
 
-ssh_wrapper "${deploy_username}@${deploy_server}" "docker pull '${local_image}'"
+ssh_wrapper "docker pull '${local_image}'"
 
 log 'info' "Bringing app up on deploy server with Docker Compose..."
 
