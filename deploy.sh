@@ -100,12 +100,12 @@ verify_var_set 'ref_type' "Could not detect valid ref type from ref \"${ref}\""
 
 ref_name=$(echo "${ref}" | sed -E 's/refs\/(heads|tags|remote)\///')
 
-verify_var_set 'ref_name' 'Could not extract a proper supported Git ref name!'
+verify_var_set 'ref_name' 'Could not extract a proper supported Git reference name!'
 
-log 'debug' "Ref type detected \"${ref_type}\" with name \"${ref_name}\""
+log 'debug' "Reference type detected \"${ref_type}\" with name \"${ref_name}\""
 
 if [ "${ref_type}" = 'tag/remote' ]; then
-  log 'error' "Unsupported ref \"${ref}\" with detected ref type \"${ref_type}\""
+  log 'error' "Unsupported reference \"${ref}\" with detected reference type \"${ref_type}\""
   exit 1
 elif [ "${ref_type}" = 'branch' ]; then
   if [ "${ref_name}" = "${stable_branch}" ] || [ "${stable_branch}" = "${any_branch_identifier}" ]; then
@@ -115,7 +115,7 @@ elif [ "${ref_type}" = 'branch' ]; then
   fi
 fi
 
-verify_var_set 'channel' "Could not detect release channel from ref type \"${ref_type}\" and ref name \"${ref_name}\""
+verify_var_set 'channel' "Could not detect release channel from reference type \"${ref_type}\" and reference name \"${ref_name}\""
 
 log 'info' "Detected release channel \"${channel}\""
 
