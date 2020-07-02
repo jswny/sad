@@ -1,0 +1,39 @@
+name: 'Deploy'
+description: 'Deploy Docker Compose app via SSH'
+inputs:
+  deploy_server:
+    description: 'The SSH-enabled server to deploy to'
+    required: true
+  deploy_username:
+    description: 'The deploy server username to SSH with'
+    required: true
+  deploy_root_dir:
+    description: 'The deploy server root directory to create the deployed repository directory under'
+    required: true
+  encrypted_deploy_key_encryption_key:
+    description: 'The encryption key for the deploy server SSH key'
+    required: true
+  path:
+    description: 'The path to the directory containing your app relative to the current directory of your repository'
+    required: false
+    default: '.'
+  stable_branch:
+    description: 'The branch which represents the stable version of the app. Use "ANY" to specify any branch.'
+    required: false
+    default: 'master'
+  beta_branch:
+    description: 'The branch which represents the beta version of the app. Use "ANY" to specify any branch.'
+    required: false
+    default: 'develop'
+  env_var_prefixes:
+    description: 'A comma-separated string list of environment variable prefixes which, when suffixed with the deploy channel, represent the environment variables required to be injected into the app'
+    required: false
+    default: ''
+  debug:
+    description: 'Print extra debugging info (0 for false or 1 for true)'
+    required: false
+    default: 0
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+

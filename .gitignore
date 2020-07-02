@@ -1,2 +1,4 @@
 # Local environment variables
 .env
+app/.env
+app/deploy.env
