@@ -52,3 +52,5 @@ jobs:
         env:
           FOO_BETA: ${{ secrets.FOO_BETA }}
           BAR_BETA: ${{ secrets.BAR_BETA }}
+          FOO_STABLE: ${{ secrets.FOO_STABLE }}
+          BAR_STABLE: ${{ secrets.BAR_STABLE }}
