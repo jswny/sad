@@ -83,6 +83,16 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 10. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
 
 ## Release Channels
+Release channels are determined by the [Git reference](https://git-scm.com/book/en/v2/Git-Internals-Git-References), the rules below, and the appropriate options passed in via inputs.
+
+### Rules
+Rules are matched in the following order:
+1. Check if the current Git reference is a branch, if not, error out.
+2. Check `stable_branch`. If set to `ANY`, set release channel to **`stable`**.
+3. Otherwise, check if the current branch matches `stable_branch`, and if so, set release channel to **`stable`**.
+4. Otherwise, check `beta_branch`. If set to `ANY`, set release channel to **`beta`**.
+5. Otherwise, check if the current branch matches `beta_branch`, and if so, set release channel to **`stable`**.
+6. Otherwise, error out.
 
 ## Running Locally
 You can simulate running the action locally by manually building and running the appropriate Docker images.
