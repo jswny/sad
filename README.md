@@ -14,7 +14,7 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 - **A GitHub Actions workflow** to run this Action
 
 ## Usage
-1. Include this Action in your workflow (see below for examples)
+1. Include this Action in your workflow. For example, see [the demo version run in this repository under the `deploy` job here](https://github.com/jswny/deploy/blob/master/.github/workflows/ci.yml).
 2. Encrypt your private deployment SSH key into using OpenSSL `aes-256-cbc` and commit **the encrypted version** to your repository: `openssl enc -aes-256-cbc -salt -in deploy_key -out deploy_key.enc -k "<encryption key>`. You can decrypt it if needed with `openssl enc -aes-256-cbc -d -in deploy_key.enc -out deploy_key -k "<encryption key>"`.
 3. Fill in the inputs as noted below.
 4. Create a `Dockerfile` for your app, use any environment variables that you need injected as you would usually.
