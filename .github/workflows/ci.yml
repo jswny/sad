@@ -28,6 +28,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
+    if: ${{ !contains(github.ref, 'refs/tags') }}
     steps:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
