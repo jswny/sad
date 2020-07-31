@@ -8,7 +8,7 @@ log() {
   local component="Deploy"
   local prefix="${prefix_spacer} [${component}]"
   if [ "${1}" = 'debug' ]; then
-    if [ "${debug}" = 1 ]; then
+    if [ "${debug}" = 'true' ]; then
       echo "::debug::${prefix} DEBUG: ${2}"
     fi
   elif [ "${1}" = 'info' ]; then
@@ -49,7 +49,7 @@ check_exists_file() {
 scp_wrapper() {
   log 'info' "Sending \"$(basename "${1}")\" to deploy server..."
 
-  if [ "${debug}" = 1 ]; then
+  if [ "${debug}" = 'true' ]; then
     scp -v "${1}" "${deploy_username}@${deploy_server}:${deploy_dir}"
   else
     scp "${1}" "${deploy_username}@${deploy_server}:${deploy_dir}"
@@ -59,7 +59,7 @@ scp_wrapper() {
 ssh_wrapper() {
   log 'debug' "Running command over SSH \"${1}\""
 
-  if [ "${debug}" = 1 ]; then
+  if [ "${debug}" = 'true' ]; then
     ssh -v "${deploy_username}@${deploy_server}" "${1}"
   else
     ssh "${deploy_username}@${deploy_server}" "${1}"
