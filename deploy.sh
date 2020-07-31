@@ -8,17 +8,17 @@ log() {
   local component="Deploy"
   local prefix="${prefix_spacer} [${component}]"
   if [ "${1}" = 'debug' ]; then
-    if [ "${debug}" = 1 ]; then
-      echo "${prefix} DEBUG: ${2}"
+    if [ "${debug}" = 'true' ]; then
+      echo "::debug::${prefix} DEBUG: ${2}"
     fi
   elif [ "${1}" = 'info' ]; then
     echo "${prefix} INFO: ${2}"
   elif [ "${1}" = 'warn' ]; then
-    echo "${prefix} WARN: ${2}" >&2
+    echo "::warning::${prefix} WARN: ${2}" >&2
   elif [ "${1}" = 'error' ]; then
-    echo "${prefix} ERROR: ${2}" >&2
+    echo "::error::${prefix} ERROR: ${2}" >&2
   else
-    echo "${prefix} INTERNAL ERROR: invalid option \"${1}\" for log() with message \"${2}\"" >&2 "" >&2
+    echo "::error::${prefix} INTERNAL ERROR: invalid option \"${1}\" for log() with message \"${2}\"" >&2 "" >&2
   fi
 }
 
@@ -49,7 +49,7 @@ check_exists_file() {
 scp_wrapper() {
   log 'info' "Sending \"$(basename "${1}")\" to deploy server..."
 
-  if [ "${debug}" = 1 ]; then
+  if [ "${debug}" = 'true' ]; then
     scp -v "${1}" "${deploy_username}@${deploy_server}:${deploy_dir}"
   else
     scp "${1}" "${deploy_username}@${deploy_server}:${deploy_dir}"
@@ -59,7 +59,7 @@ scp_wrapper() {
 ssh_wrapper() {
   log 'debug' "Running command over SSH \"${1}\""
 
-  if [ "${debug}" = 1 ]; then
+  if [ "${debug}" = 'true' ]; then
     ssh -v "${deploy_username}@${deploy_server}" "${1}"
   else
     ssh "${deploy_username}@${deploy_server}" "${1}"
@@ -130,7 +130,8 @@ verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
 verify_var_set 'ssh_key'
 verify_var_set 'app_path' 'path is blank or unset!'
-verify_var_set 'debug'
+
+debug="${debug:-false}"
 
 full_app_path="${repository_path}/${app_path}"
 verify_var_set 'full_app_path' 'Could not generate full app path based on provided app path!'

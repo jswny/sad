@@ -68,7 +68,7 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 ### `debug`
 | Required | Default | Description |
 | --- | --- | --- |
-| No | `0` | Print extra debugging info. Specify `0` for false or `1` for true. |
+| No | `"false"` | Print extra debugging info. Specify `"false"` for false or `"true"` for true. Set to the value of `${{ secrets.actions_step_debug }}` (and set in your secrets if needed as indicated [here](https://github.com/actions/toolkit/blob/master/docs/action-debugging.md)) to synchronize debugging with the rest of the workflow. |
 
 ## How it Works
 1. Determines the release channel based on the options passed in via the appropriate inputs.
