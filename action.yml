@@ -10,9 +10,6 @@ inputs:
   deploy_root_dir:
     description: 'The deploy server root directory to create the deployed repository directory under'
     required: true
-  encrypted_deploy_key_encryption_key:
-    description: 'The encryption key for the deploy server SSH key'
-    required: true
   ssk_key:
     description: 'The SSH private key to SSH into the deploy server with'
     required: true
@@ -39,4 +36,3 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-
