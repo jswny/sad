@@ -72,7 +72,6 @@ any_branch_identifier='ANY'
 deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
 deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
-encrypted_deploy_key_encryption_key="${INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY}"
 ssh_key="${INPUT_SSH_KEY}"
 app_path="${INPUT_PATH}"
 stable_branch="${INPUT_STABLE_BRANCH}"
@@ -129,7 +128,6 @@ verify_var_set 'repository_path' 'GITHUB_WORKSPACE is blank or unset!'
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
-verify_var_set 'encrypted_deploy_key_encryption_key'
 verify_var_set 'ssh_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
@@ -167,15 +165,7 @@ verify_var_set 'container_name' 'Could not generate container name for deploymen
 
 log 'info' "Generated container name for deployment ${container_name}"
 
-log 'info' 'Scanning for SSH keys...'
-
-encrypted_deploy_key_path="${full_app_path}/deploy_key.enc"
-verify_var_set 'encrypted_deploy_key_path'
-check_exists_file "${encrypted_deploy_key_path}"
-
-openssl enc -aes-256-cbc -d -in "${encrypted_deploy_key_path}" -out deploy_key -k "${encrypted_deploy_key_encryption_key}"
-
-chmod 600 'deploy_key'
+log 'info' 'Adding SSH key to agent...'
 
 eval "$(ssh-agent -s)"
 
