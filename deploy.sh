@@ -179,7 +179,7 @@ chmod 600 'deploy_key'
 
 eval "$(ssh-agent -s)"
 
-ssh-add 'deploy_key'
+ssh-add - <<< "${ssh_key}"
 
 ssh_path="${home_path}/.ssh"
 verify_var_set 'ssh_path'
