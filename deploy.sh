@@ -130,7 +130,8 @@ verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
 verify_var_set 'ssh_key'
 verify_var_set 'app_path' 'path is blank or unset!'
-verify_var_set 'debug'
+
+debug="${debug:-false}"
 
 full_app_path="${repository_path}/${app_path}"
 verify_var_set 'full_app_path' 'Could not generate full app path based on provided app path!'

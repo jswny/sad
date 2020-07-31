@@ -32,7 +32,7 @@ inputs:
   debug:
     description: 'Print extra debugging info (0 for false or 1 for true)'
     required: false
-    default: 0
+    default: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
