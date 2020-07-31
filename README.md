@@ -46,6 +46,11 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 | --- | --- | --- |
 | **Yes** | N/A | The key to decrypt the encrypted SSH deploy key for the deploy server. |
 
+### `ssh_key`
+| Required | Default | Description |
+| --- | --- | --- |
+| **Yes** | N/A | The SSH key to be used to access the deploy server. |
+
 ### `path`
 | Required | Default | Description |
 | --- | --- | --- |
