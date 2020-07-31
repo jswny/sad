@@ -12,13 +12,13 @@ jobs:
         env:
           SHELLCHECK_OPTS: -e SC2029
   hadolint:
-    name: Hadolint
+    name: Hadolint Action
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: brpaz/hadolint-action@master
   hadolint-app:
-    name: Hadolint App
+    name: Hadolint Demo App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
           dockerfile: 'app/Dockerfile'
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Deploy Demo App
     if: ${{ !contains(github.ref, 'refs/tags') }}
     steps:
       - uses: actions/checkout@v2
@@ -45,7 +45,7 @@ jobs:
           deploy_server: ${{ secrets.deploy_server }}
           deploy_username: ${{ secrets.deploy_username }}
           deploy_root_dir: '/srv'
-          encrypted_deploy_key_encryption_key: ${{ secrets.encrypted_deploy_key_encryption_key }}
+          ssh_key: ${{ secrets.ssh_key }}
           path: 'app'
           beta_branch: 'ANY'
           debug: 1
