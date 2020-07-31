@@ -30,9 +30,9 @@ inputs:
     required: false
     default: ''
   debug:
-    description: 'Print extra debugging info (0 for false or 1 for true)'
+    description: 'Print extra debugging info (true or false)'
     required: false
-    default: false
+    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'
