@@ -93,39 +93,3 @@ Rules are matched in the following order:
 4. Otherwise, check `beta_branch`. If set to `ANY`, set release channel to **`beta`**.
 5. Otherwise, check if the current branch matches `beta_branch`, and if so, set release channel to **`stable`**.
 6. Otherwise, error out.
-
-## Running Locally
-You can simulate running the action locally by manually building and running the appropriate Docker images.
-1. Build the demo Docker image from `app/`:
-```shell
-docker build --tag jswny/deploy app/
-```
-1. Create a `.env` file with the required environment variables for the Action corresponding to the inputs (which need to be prefixed with `INPUT_`, and uppercase, and the GitHub environment variables (you need to add variables for all inputs, even inputs that aren't required):
-```shell
-GITHUB_REPOSITORY=jswny/deploy
-GITHUB_WORKSPACE=/github/workspace
-GITHUB_REF=refs/heads/master
-HOME=/github/HOME
-CI=true
-INPUT_DEPLOY_SERVER=1.1.1.1
-INPUT_DEPLOY_USERNAME=user1
-INPUT_DEPLOY_ROOT_DIR=/srv
-INPUT_PATH=app
-INPUT_STABLE_BRANCH=master
-INPUT_BETA_BRANCH=ANY
-INPUT_DEBUG=1
-INPUT_ENV_VAR_PREFIXES=FOO,BAR
-FOO_BETA=foo123
-BAR_BETA=bar123
-```
-3. Create a `.env` file with the required environment variables for the demo app:
-```shell
-DOCKER_IMAGE=jswny/dotfiles
-DOCKER_CONTAINER_NAME=jswny-dotfiles-beta
-TOKEN=abc123
-DEBUG=1
-```
-4. Build and run the Action Docker image:
-```shell
-docker build --tag jswny/deploy-action . && docker run -v "<local path to this repository>":"/github/workspace" -v "/var/run/docker.sock":"/var/run/docker.sock" --env-file=.env jswny/deploy-action
-```
