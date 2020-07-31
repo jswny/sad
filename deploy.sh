@@ -9,16 +9,16 @@ log() {
   local prefix="${prefix_spacer} [${component}]"
   if [ "${1}" = 'debug' ]; then
     if [ "${debug}" = 1 ]; then
-      echo "${prefix} DEBUG: ${2}"
+      echo "::debug::${prefix} DEBUG: ${2}"
     fi
   elif [ "${1}" = 'info' ]; then
     echo "${prefix} INFO: ${2}"
   elif [ "${1}" = 'warn' ]; then
-    echo "${prefix} WARN: ${2}" >&2
+    echo "::warning::${prefix} WARN: ${2}" >&2
   elif [ "${1}" = 'error' ]; then
-    echo "${prefix} ERROR: ${2}" >&2
+    echo "::error::${prefix} ERROR: ${2}" >&2
   else
-    echo "${prefix} INTERNAL ERROR: invalid option \"${1}\" for log() with message \"${2}\"" >&2 "" >&2
+    echo "::error::${prefix} INTERNAL ERROR: invalid option \"${1}\" for log() with message \"${2}\"" >&2 "" >&2
   fi
 }
 
