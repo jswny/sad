@@ -10,7 +10,7 @@ inputs:
   deploy_root_dir:
     description: 'The deploy server root directory to create the deployed repository directory under'
     required: true
-  ssk_key:
+  ssh_key:
     description: 'The SSH private key to SSH into the deploy server with'
     required: true
   path:
