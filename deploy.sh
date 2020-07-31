@@ -73,6 +73,7 @@ deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
 deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
 encrypted_deploy_key_encryption_key="${INPUT_ENCRYPTED_DEPLOY_KEY_ENCRYPTION_KEY}"
+ssh_key="${INPUT_SSH_KEY}"
 app_path="${INPUT_PATH}"
 stable_branch="${INPUT_STABLE_BRANCH}"
 beta_branch="${INPUT_BETA_BRANCH}"
@@ -129,6 +130,7 @@ verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
 verify_var_set 'encrypted_deploy_key_encryption_key'
+verify_var_set 'ssh_key'
 verify_var_set 'app_path' 'path is blank or unset!'
 verify_var_set 'debug'
 
