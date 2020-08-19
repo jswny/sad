@@ -77,9 +77,7 @@ env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
 channel="${INPUT_CHANNEL}"
 
 repository="${GITHUB_REPOSITORY}"
-ref="${GITHUB_REF}"
 
-verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 
 log 'info' 'Verifying action inputs...'
