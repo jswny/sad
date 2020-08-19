@@ -73,7 +73,7 @@ deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
 ssh_key="${INPUT_SSH_KEY}"
 app_path="${INPUT_PATH}"
 debug="${INPUT_DEBUG}"
-env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
+env_vars="${INPUT_ENV_VARS}"
 channel="${INPUT_CHANNEL}"
 
 repository="${GITHUB_REPOSITORY}"
@@ -161,16 +161,16 @@ env_file_path="${full_app_path}/${env_file_name}"
   echo "CONTAINER_NAME=${container_name}"
 } >> "${env_file_path}"
 
-if [ -z "${env_var_prefixes}" ]; then
-  log 'info' 'No custom environment variables found to inject into the deployment. See the "env_var_prefixes" input to add some.'
+if [ -z "${env_vars}" ]; then
+  log 'info' 'No custom environment variables found to inject into the deployment. See the "env_vars" input to add some.'
 else
-  IFS=', ' read -r -a env_var_prefixes_array <<< "${env_var_prefixes}"
-  for env_var_prefix in "${env_var_prefixes_array[@]}"; do
-    env_var_name=$(echo "${env_var_prefix}_${channel}" | tr '[:lower:]' '[:upper:]')
-    verify_var_set "${env_var_name}" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
+  IFS=', ' read -r -a env_var_array <<< "${env_vars}"
+  for env_var in "${env_var_array[@]}"; do
+    env_var_name=$(echo "${env_var}" | tr '[:lower:]' '[:upper:]')
+    verify_var_set "${env_var_name}" "Environment variable \"${env_var_name}\" generated from environment variable inputs is blank or unset!"
     env_var_value="${!env_var_name}"
     log 'debug' "Setting deploy environment variable ${env_var_name}"
-    echo "${env_var_prefix}=${env_var_value}" >> "${env_file_path}"
+    echo "${env_var}=${env_var_value}" >> "${env_file_path}"
   done
 fi
 

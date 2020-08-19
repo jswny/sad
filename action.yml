@@ -17,8 +17,8 @@ inputs:
     description: 'The path to the directory containing your app relative to the current directory of your repository'
     required: false
     default: '.'
-  env_var_prefixes:
-    description: 'A comma-separated string list of environment variable prefixes which, when suffixed with the deploy channel, represent the environment variables required to be injected into the app'
+  env_vars:
+    description: 'A comma-separated string list of environment variables which will be injected into the app'
     required: false
     default: ''
   debug:
