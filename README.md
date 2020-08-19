@@ -3,8 +3,8 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 
 ## Features
 - Automatic deployment from GitHub actions
-- Supports separate release channels
-- Automatically injects necessary environment variables based on the release channel
+- Supports separate channels
+- Automatically injects necessary environment variables based on the channel
 - Only requires SSH and Docker packaging of your app
 
 ## Requirements
@@ -38,7 +38,7 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 ### `deploy_root_dir`
 | Required | Default | Description |
 | --- | --- | --- |
-| **Yes** | N/A | The root directory to deploy the app to on the deploy server. A subdirectory will be created inside this directory based on the release channel and the repository name. The root directory will be created if it doesn't already exist. |
+| **Yes** | N/A | The root directory to deploy the app to on the deploy server. A subdirectory will be created inside this directory based on the channel and the repository name. The root directory will be created if it doesn't already exist. |
 
 ### `ssh_key`
 | Required | Default | Description |
@@ -61,13 +61,13 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 | No | `"false"` | Print extra debugging info. Specify `"false"` for false or `"true"` for true. Set to the value of `${{ secrets.actions_step_debug }}` (and set in your secrets if needed as indicated [here](https://github.com/actions/toolkit/blob/master/docs/action-debugging.md)) to synchronize debugging with the rest of the workflow. |
 
 ## How it Works
-1. Determines the release channel based on the options passed in via the appropriate inputs.
+1. Determines the channel based on the options passed in via the appropriate inputs.
 2. Finds the local Docker image in the Actions runner built by a previous step in your workflow containing the name of your repository.
-3. Generates an appropriate container name based on the local image name and the release channel.
+3. Generates an appropriate container name based on the local image name and the channel.
 4. Sets up the SSH agent inside the Actions runner using the provided SSH key.
 5. Pushes the image to Docker Hub.
-6. Populates a `.env` file with the appropriate environment variables required by your app depending on the release channel, and a few other environment variables such as the ones required by the Compose file.
-7. Creates a directory on the remote server for the app given the current deploy channel using the provided deploy root directory.
+6. Populates a `.env` file with the appropriate environment variables required by your app depending on the channel, and a few other environment variables such as the ones required by the Compose file.
+7. Creates a directory on the remote server for the app given the current channel using the provided deploy root directory.
 8. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server.
 9. Pulls the Docker image on the remote server.
 10. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
