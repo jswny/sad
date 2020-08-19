@@ -34,6 +34,7 @@ jobs:
         uses: golangci/golangci-lint-action@v1
         with:
           version: v1.29
+          args: --enable gofmt
   demo-deploy-beta:
     runs-on: ubuntu-latest
     name: Deploy Beta Demo App
