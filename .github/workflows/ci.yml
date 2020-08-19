@@ -25,7 +25,16 @@ jobs:
       - uses: brpaz/hadolint-action@master
         with:
           dockerfile: 'app/Dockerfile'
-  deploy-beta:
+  go-lint:
+    name: Go Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.29
+  demo-deploy-beta:
     runs-on: ubuntu-latest
     name: Deploy Beta Demo App
     if: ${{ !contains(github.ref, 'refs/tags') }}
@@ -55,7 +64,7 @@ jobs:
           BAR: ${{ secrets.BAR_BETA }}
           FOO_STABLE: ${{ secrets.FOO_STABLE }}
           BAR_STABLE: ${{ secrets.BAR_STABLE }}
-  deploy-stable:
+  demo-deploy-stable:
     runs-on: ubuntu-latest
     name: Deploy Stable Demo App
     if: ${{ contains(github.ref, 'refs/tags') }}
