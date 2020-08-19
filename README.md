@@ -50,16 +50,6 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 | --- | --- | --- |
 | No | `.` | The path to the directory containing your app. Relative to the current directory of your repository. |
 
-### `stable_branch`
-| Required | Default | Description |
-| --- | --- | --- |
-| No | `master` | The branch which represents the stable version of the app. If `ANY` is specified, any branch will be used. |
-
-### `beta_branch`
-| Required | Default | Description |
-| --- | --- | --- |
-| No | `develop` | The branch which represents the beta version of the app. If `ANY` is specified, any branch will be used. If `ANY` is specified for `stable_branch`, this condition will never be cheked. |
-
 ### `env_var_prefixes`
 | Required | Default | Description |
 | --- | --- | --- |
@@ -81,15 +71,3 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 8. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server.
 9. Pulls the Docker image on the remote server.
 10. Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
-
-## Release Channels
-Release channels are determined by the [Git reference](https://git-scm.com/book/en/v2/Git-Internals-Git-References), the rules below, and the appropriate options passed in via inputs.
-
-### Rules
-Rules are matched in the following order:
-1. Check if the current Git reference is a branch, if not, error out.
-2. Check `stable_branch`. If set to `ANY`, set release channel to **`stable`**.
-3. Otherwise, check if the current branch matches `stable_branch`, and if so, set release channel to **`stable`**.
-4. Otherwise, check `beta_branch`. If set to `ANY`, set release channel to **`beta`**.
-5. Otherwise, check if the current branch matches `beta_branch`, and if so, set release channel to **`stable`**.
-6. Otherwise, error out.

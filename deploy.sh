@@ -66,18 +66,15 @@ ssh_wrapper() {
   fi
 }
 
-any_branch_identifier='ANY'
-
 # Translate input environment variables
 deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
 deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
 ssh_key="${INPUT_SSH_KEY}"
 app_path="${INPUT_PATH}"
-stable_branch="${INPUT_STABLE_BRANCH}"
-beta_branch="${INPUT_BETA_BRANCH}"
 debug="${INPUT_DEBUG}"
 env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
+channel="${INPUT_CHANNEL}"
 
 repository="${GITHUB_REPOSITORY}"
 ref="${GITHUB_REF}"
@@ -85,46 +82,13 @@ ref="${GITHUB_REF}"
 verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
 
-verify_var_set 'stable_branch'
-verify_var_set 'beta_branch'
-
-log 'info' 'Detecting Git and release info...'
-
-if echo "${ref}" | grep -qE '^refs\/(tags|remote)\/'; then
-  ref_type='tag/remote'
-elif echo "${ref}" | grep -qE '^refs\/heads\/'; then
-  ref_type='branch'
-fi
-
-verify_var_set 'ref_type' "Could not detect valid ref type from ref \"${ref}\""
-
-ref_name=$(echo "${ref}" | sed -E 's/refs\/(heads|tags|remote)\///')
-
-verify_var_set 'ref_name' 'Could not extract a proper supported Git reference name!'
-
-log 'debug' "Reference type detected \"${ref_type}\" with name \"${ref_name}\""
-
-if [ "${ref_type}" = 'tag/remote' ]; then
-  log 'error' "Unsupported reference \"${ref}\" with detected reference type \"${ref_type}\""
-  exit 1
-elif [ "${ref_type}" = 'branch' ]; then
-  if [ "${ref_name}" = "${stable_branch}" ] || [ "${stable_branch}" = "${any_branch_identifier}" ]; then
-    channel='stable'
-  elif [ "${ref_name}" = "${beta_branch}" ] || [ "${beta_branch}" = "${any_branch_identifier}" ]; then 
-    channel='beta'
-  fi
-fi
-
-verify_var_set 'channel' "Could not detect release channel from reference type \"${ref_type}\" and reference name \"${ref_name}\""
-
-log 'info' "Detected release channel \"${channel}\""
-
 log 'info' 'Verifying action inputs...'
 
 home_path="/root"
 repository_path="${GITHUB_WORKSPACE}"
 
 verify_var_set 'repository_path' 'GITHUB_WORKSPACE is blank or unset!'
+verify_var_set 'channel'
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'

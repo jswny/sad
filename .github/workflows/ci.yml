@@ -47,7 +47,7 @@ jobs:
           deploy_root_dir: '/srv'
           ssh_key: ${{ secrets.ssh_key }}
           path: 'app'
-          beta_branch: 'ANY'
+          channel: 'beta'
           debug: ${{ secrets.actions_step_debug }}
           env_var_prefixes: 'FOO,BAR'
         env:
