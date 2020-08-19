@@ -66,58 +66,19 @@ ssh_wrapper() {
   fi
 }
 
-any_branch_identifier='ANY'
-
 # Translate input environment variables
 deploy_server="${INPUT_DEPLOY_SERVER}"
 deploy_username="${INPUT_DEPLOY_USERNAME}"
 deploy_root_dir="${INPUT_DEPLOY_ROOT_DIR}"
 ssh_key="${INPUT_SSH_KEY}"
 app_path="${INPUT_PATH}"
-stable_branch="${INPUT_STABLE_BRANCH}"
-beta_branch="${INPUT_BETA_BRANCH}"
 debug="${INPUT_DEBUG}"
-env_var_prefixes="${INPUT_ENV_VAR_PREFIXES}"
+env_vars="${INPUT_ENV_VARS}"
+channel="${INPUT_CHANNEL}"
 
 repository="${GITHUB_REPOSITORY}"
-ref="${GITHUB_REF}"
 
-verify_var_set 'ref' 'GITHUB_REF is blank or unset!'
 verify_var_set 'repository' 'GITHUB_REPOSITORY is blank or unset!'
-
-verify_var_set 'stable_branch'
-verify_var_set 'beta_branch'
-
-log 'info' 'Detecting Git and release info...'
-
-if echo "${ref}" | grep -qE '^refs\/(tags|remote)\/'; then
-  ref_type='tag/remote'
-elif echo "${ref}" | grep -qE '^refs\/heads\/'; then
-  ref_type='branch'
-fi
-
-verify_var_set 'ref_type' "Could not detect valid ref type from ref \"${ref}\""
-
-ref_name=$(echo "${ref}" | sed -E 's/refs\/(heads|tags|remote)\///')
-
-verify_var_set 'ref_name' 'Could not extract a proper supported Git reference name!'
-
-log 'debug' "Reference type detected \"${ref_type}\" with name \"${ref_name}\""
-
-if [ "${ref_type}" = 'tag/remote' ]; then
-  log 'error' "Unsupported reference \"${ref}\" with detected reference type \"${ref_type}\""
-  exit 1
-elif [ "${ref_type}" = 'branch' ]; then
-  if [ "${ref_name}" = "${stable_branch}" ] || [ "${stable_branch}" = "${any_branch_identifier}" ]; then
-    channel='stable'
-  elif [ "${ref_name}" = "${beta_branch}" ] || [ "${beta_branch}" = "${any_branch_identifier}" ]; then 
-    channel='beta'
-  fi
-fi
-
-verify_var_set 'channel' "Could not detect release channel from reference type \"${ref_type}\" and reference name \"${ref_name}\""
-
-log 'info' "Detected release channel \"${channel}\""
 
 log 'info' 'Verifying action inputs...'
 
@@ -125,6 +86,7 @@ home_path="/root"
 repository_path="${GITHUB_WORKSPACE}"
 
 verify_var_set 'repository_path' 'GITHUB_WORKSPACE is blank or unset!'
+verify_var_set 'channel'
 verify_var_set 'deploy_server'
 verify_var_set 'deploy_username'
 verify_var_set 'deploy_root_dir'
@@ -199,16 +161,16 @@ env_file_path="${full_app_path}/${env_file_name}"
   echo "CONTAINER_NAME=${container_name}"
 } >> "${env_file_path}"
 
-if [ -z "${env_var_prefixes}" ]; then
-  log 'info' 'No custom environment variables found to inject into the deployment. See the "env_var_prefixes" input to add some.'
+if [ -z "${env_vars}" ]; then
+  log 'info' 'No custom environment variables found to inject into the deployment. See the "env_vars" input to add some.'
 else
-  IFS=', ' read -r -a env_var_prefixes_array <<< "${env_var_prefixes}"
-  for env_var_prefix in "${env_var_prefixes_array[@]}"; do
-    env_var_name=$(echo "${env_var_prefix}_${channel}" | tr '[:lower:]' '[:upper:]')
-    verify_var_set "${env_var_name}" "Environment variable \"${env_var_name}\" generated from environment variable prefixes is blank or unset!"
+  IFS=', ' read -r -a env_var_array <<< "${env_vars}"
+  for env_var in "${env_var_array[@]}"; do
+    env_var_name=$(echo "${env_var}" | tr '[:lower:]' '[:upper:]')
+    verify_var_set "${env_var_name}" "Environment variable \"${env_var_name}\" generated from environment variable inputs is blank or unset!"
     env_var_value="${!env_var_name}"
     log 'debug' "Setting deploy environment variable ${env_var_name}"
-    echo "${env_var_prefix}=${env_var_value}" >> "${env_file_path}"
+    echo "${env_var}=${env_var_value}" >> "${env_file_path}"
   done
 fi
 

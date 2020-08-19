@@ -25,9 +25,9 @@ jobs:
       - uses: brpaz/hadolint-action@master
         with:
           dockerfile: 'app/Dockerfile'
-  deploy:
+  deploy-beta:
     runs-on: ubuntu-latest
-    name: Deploy Demo App
+    name: Deploy Beta Demo App
     if: ${{ !contains(github.ref, 'refs/tags') }}
     steps:
       - uses: actions/checkout@v2
@@ -47,11 +47,39 @@ jobs:
           deploy_root_dir: '/srv'
           ssh_key: ${{ secrets.ssh_key }}
           path: 'app'
-          beta_branch: 'ANY'
+          channel: 'beta'
           debug: ${{ secrets.actions_step_debug }}
-          env_var_prefixes: 'FOO,BAR'
+          env_vars: 'FOO,BAR'
         env:
-          FOO_BETA: ${{ secrets.FOO_BETA }}
-          BAR_BETA: ${{ secrets.BAR_BETA }}
+          FOO: ${{ secrets.FOO_BETA }}
+          BAR: ${{ secrets.BAR_BETA }}
           FOO_STABLE: ${{ secrets.FOO_STABLE }}
           BAR_STABLE: ${{ secrets.BAR_STABLE }}
+  deploy-stable:
+    runs-on: ubuntu-latest
+    name: Deploy Stable Demo App
+    if: ${{ contains(github.ref, 'refs/tags') }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/build-push-action@v1
+        with:
+          repository: ${{ github.repository }}
+          path: 'app'
+          tag_with_ref: true
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Deploy
+        uses: ./
+        id: deploy
+        with:
+          deploy_server: ${{ secrets.deploy_server }}
+          deploy_username: ${{ secrets.deploy_username }}
+          deploy_root_dir: '/srv'
+          ssh_key: ${{ secrets.ssh_key }}
+          path: 'app'
+          channel: 'stable'
+          debug: ${{ secrets.actions_step_debug }}
+          env_vars: 'FOO,BAR'
+        env:
+          FOO: ${{ secrets.FOO_STABLE }}
+          BAR: ${{ secrets.BAR_STABLE }}
