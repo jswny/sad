@@ -4,7 +4,7 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 ## Features
 - Automatic deployment from GitHub actions
 - Supports separate channels
-- Automatically injects necessary environment variables based on the channel
+- Automatically injects necessary environment variables
 - Only requires SSH and Docker packaging of your app
 
 ## Requirements
@@ -66,7 +66,7 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 3. Generates an appropriate container name based on the local image name and the channel.
 4. Sets up the SSH agent inside the Actions runner using the provided SSH key.
 5. Pushes the image to Docker Hub.
-6. Populates a `.env` file with the appropriate environment variables required by your app depending on the channel, and a few other environment variables such as the ones required by the Compose file.
+6. Populates a `.env` file with the appropriate environment variables required by your, and a few other environment variables such as the ones required by the Compose file.
 7. Creates a directory on the remote server for the app given the current channel using the provided deploy root directory.
 8. Uses SCP to send the `.env` file and the `docker-compose.yml` file to the remote server.
 9. Pulls the Docker image on the remote server.
