@@ -1,5 +1,5 @@
-name: 'Deploy'
-description: 'Deploy Docker Compose app via SSH'
+name: 'sad'
+description: 'Simple app deployment based on SSH and Docker'
 inputs:
   channel:
     description: 'The deployment channel'

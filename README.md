@@ -1,5 +1,5 @@
-# Deploy ![Deploy](https://github.com/jswny/deploy/workflows/CI/badge.svg)
-A [GitHub Action](https://github.com/features/actions) to deploy apps to any server.
+# `sad` ![CI](https://github.com/jswny/sad/workflows/CI/badge.svg)
+Simple app deployment based on SSH and Docker.
 
 ## Features
 - Automatic deployment from GitHub actions
@@ -14,7 +14,7 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 - **A GitHub Actions workflow** to run this Action
 
 ## Usage
-1. Include this Action in your workflow. For example, see [the demo version run in this repository under the `deploy` job here](https://github.com/jswny/deploy/blob/master/.github/workflows/ci.yml).
+1. Include this Action in your workflow. For example, see [the demo version run in this repository under the `deploy` job here](https://github.com/jswny/sad/blob/master/.github/workflows/ci.yml).
 2. Fill in the inputs as noted below.
 3. Create a `Dockerfile` for your app, use any environment variables that you need injected as you would usually.
 4. Copy the default `docker-compose.yml` file from `app/docker-compose.yml` or use your own. Make sure the Compose file you use conforms to the following:
