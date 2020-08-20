@@ -2,3 +2,6 @@
 .env
 app/.env
 app/deploy.env
+
+# Go build
+sad
