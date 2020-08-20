@@ -1,6 +1,10 @@
 name: 'Deploy'
 description: 'Deploy Docker Compose app via SSH'
 inputs:
+  channel:
+    description: 'The deployment channel'
+    required: false
+    required: 'stable'
   deploy_server:
     description: 'The SSH-enabled server to deploy to'
     required: true
