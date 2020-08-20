@@ -4,7 +4,7 @@ inputs:
   channel:
     description: 'The deployment channel'
     required: false
-    required: 'stable'
+    default: 'stable'
   deploy_server:
     description: 'The SSH-enabled server to deploy to'
     required: true

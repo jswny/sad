@@ -25,11 +25,6 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 6. Make sure the Action is only triggered on the appropriate events using [`jobs.<job_id>.if`](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idif).
 
 ## Inputs
-### `channel`
-| Required | Default | Description |
-| --- | --- | --- |
-| **Yes** | N/A | The IP address of the SSH-enabled server to deploy to. |
-
 ### `deploy_server`
 | Required | Default | Description |
 | --- | --- | --- |
@@ -49,6 +44,11 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 | Required | Default | Description |
 | --- | --- | --- |
 | **Yes** | N/A | The SSH key to be used to access the deploy server. |
+
+### `channel`
+| Required | Default | Description |
+| --- | --- | --- |
+| No | `stable` | The IP address of the SSH-enabled server to deploy to. |
 
 ### `path`
 | Required | Default | Description |
