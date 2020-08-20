@@ -26,14 +26,14 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 
 ## Inputs
 ### `deploy_server`
-| Required | Description |
-| --- | --- |
-| **Yes** | The IP address of the SSH-enabled server to deploy to. |
+| Required | Default | Description |
+| --- | --- | --- |
+| **Yes** | N/A | The IP address of the SSH-enabled server to deploy to. |
 
 ### `deploy_username`
-| Required | Description |
-| --- | --- |
-| **Yes** | The username of the account associated with the provided SSH key to access on the deploy server. |
+| Required | Default | Description |
+| --- | --- | --- |
+| **Yes** | N/A | The username of the account associated with the provided SSH key to access on the deploy server. |
 
 ### `deploy_root_dir`
 | Required | Default | Description |
@@ -44,6 +44,11 @@ A [GitHub Action](https://github.com/features/actions) to deploy apps to any ser
 | Required | Default | Description |
 | --- | --- | --- |
 | **Yes** | N/A | The SSH key to be used to access the deploy server. |
+
+### `channel`
+| Required | Default | Description |
+| --- | --- | --- |
+| No | `stable` | The IP address of the SSH-enabled server to deploy to. |
 
 ### `path`
 | Required | Default | Description |
