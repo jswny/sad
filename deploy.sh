@@ -5,7 +5,7 @@ set -eo pipefail
 
 log() {
   local prefix_spacer="-----"
-  local component="Deploy"
+  local component="sad"
   local prefix="${prefix_spacer} [${component}]"
   if [ "${1}" = 'debug' ]; then
     if [ "${debug}" = 'true' ]; then
