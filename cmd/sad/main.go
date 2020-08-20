@@ -8,5 +8,6 @@ import (
 
 func main() {
 	fmt.Println("Sad CLI!")
-	sad.Hello()
+	s := sad.Hello()
+	fmt.Println(s)
 }
