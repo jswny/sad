@@ -5,4 +5,5 @@ app/deploy.env
 
 # Go build
 sad
+!cmd/sad/
 main
