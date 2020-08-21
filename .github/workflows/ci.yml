@@ -34,6 +34,17 @@ jobs:
         uses: golangci/golangci-lint-action@v1
         with:
           version: v1.29
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.14.6'
+    - name: Test Library
+      run: go test -v
+    - name: Test CLI
+      run: cd cmd/sad && go test -v
   demo-deploy-beta:
     runs-on: ubuntu-latest
     name: Deploy Beta Demo App
