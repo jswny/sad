@@ -7,3 +7,6 @@ app/deploy.env
 sad
 !cmd/sad/
 main
+
+# Config files
+.sad.json
