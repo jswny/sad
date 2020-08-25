@@ -20,22 +20,36 @@ func TestHello(t *testing.T) {
 	}
 }
 
-func TestRSAPrivateKeyMarshalUnmarshalJSON(t *testing.T) {
-	privateKey, _ := rsa.GenerateKey(rand.Reader, 4096)
+func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
+	privateKey := generatePrivateKey()
 
 	rsaPrivateKey := sad.RSAPrivateKey{
 		PrivateKey: privateKey,
 	}
 
-	firstKeyData, err := rsaPrivateKey.MarshalJSON()
+	data, err := rsaPrivateKey.MarshalJSON()
 
 	if err != nil {
 		t.Fatalf("Error marshaling first RSA private key: %s", err)
 	}
 
+	if !json.Valid(data) {
+		t.Errorf("RSA private key marshal to JSON did not produce valid JSON")
+	}
+}
+
+func TestRSAPrivateKeyMarshalUnmarshalJSON(t *testing.T) {
+	privateKey := generatePrivateKey()
+
+	rsaPrivateKey := sad.RSAPrivateKey{
+		PrivateKey: privateKey,
+	}
+
+	firstKeyData, _ := rsaPrivateKey.MarshalJSON()
+
 	rsaPrivateKey2 := sad.RSAPrivateKey{}
 
-	err = rsaPrivateKey2.UnmarshalJSON(firstKeyData)
+	err := rsaPrivateKey2.UnmarshalJSON(firstKeyData)
 
 	if err != nil {
 		t.Fatalf("Error unmarshaling RSA private key: %s", err)
@@ -47,7 +61,7 @@ func TestRSAPrivateKeyMarshalUnmarshalJSON(t *testing.T) {
 }
 
 func TestOptionsGet(t *testing.T) {
-	privateKey, _ := rsa.GenerateKey(rand.Reader, 4096)
+	privateKey := generatePrivateKey()
 	rsaPrivateKey := sad.RSAPrivateKey{PrivateKey: privateKey}
 
 	testOpts := sad.Options{
@@ -67,7 +81,7 @@ func TestOptionsGet(t *testing.T) {
 		t.Fatalf("Error marshaling test options: %s", err)
 	}
 
-	tempFile, err := ioutil.TempFile("", ".sad.json.test.")
+	tempFile, err := ioutil.TempFile(".", ".sad.json.test.")
 
 	if err != nil {
 		t.Fatalf("Error creating temp file: %s", err)
@@ -116,6 +130,11 @@ func TestOptionsGet(t *testing.T) {
 	if opts.Debug != testOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", testOpts.Debug, opts.Debug)
 	}
+}
+
+func generatePrivateKey() *rsa.PrivateKey {
+	privateKey, _ := rsa.GenerateKey(rand.Reader, 4096)
+	return privateKey
 }
 
 func testEqualSlices(a, b []string) bool {
