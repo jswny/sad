@@ -36,7 +36,13 @@ func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 		},
 	)
 
-	return pemBlock, nil
+	marshaledData, err := json.Marshal(pemBlock)
+
+	if err != nil {
+		return nil, errors.New("Failed to marshal encoded pem data to JSON")
+	}
+
+	return marshaledData, nil
 }
 
 func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {

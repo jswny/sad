@@ -34,7 +34,7 @@ func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
 	}
 
 	if !json.Valid(data) {
-		t.Errorf("RSA private key marshal to JSON did not produce valid JSON")
+		t.Errorf("RSA private key marshal to JSON did not produce valid JSON. Got %s", data)
 	}
 }
 
