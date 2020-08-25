@@ -1,6 +1,7 @@
 package sad
 
 import (
+	"crypto/rsa"
 	"encoding/json"
 	"io/ioutil"
 	"net"
@@ -12,7 +13,7 @@ type Options struct {
 	Server     net.IP
 	Username   string
 	RootDir    string
-	PrivateKey interface{}
+	PrivateKey *rsa.PrivateKey
 	Channel    string
 	Path       string
 	EnvVars    []string
