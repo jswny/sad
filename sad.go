@@ -47,7 +47,7 @@ func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 }
 
 func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
-	unmarshaled := ""
+	var unmarshaled string
 	err := json.Unmarshal(data, &unmarshaled)
 	if err != nil {
 		return err
