@@ -60,6 +60,28 @@ func TestRSAPrivateKeyMarshalUnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
+	privateKey := generatePrivateKey()
+
+	rsaPrivateKey := sad.RSAPrivateKey{
+		PrivateKey: privateKey,
+	}
+
+	firstKeyData, _ := rsaPrivateKey.MarshalJSON()
+
+	rsaPrivateKey2 := sad.RSAPrivateKey{}
+
+	err := rsaPrivateKey2.UnmarshalJSON(firstKeyData)
+
+	if err != nil {
+		t.Fatalf("Error unmarshaling RSA private key: %s", err)
+	}
+
+	if !rsaPrivateKey.PrivateKey.Equal(rsaPrivateKey2.PrivateKey) {
+		t.Errorf("Expected marshaled and unmarshaled private keys to be equal, but they were not equal")
+	}
+}
+
 func TestOptionsGet(t *testing.T) {
 	privateKey := generatePrivateKey()
 	rsaPrivateKey := sad.RSAPrivateKey{PrivateKey: privateKey}
