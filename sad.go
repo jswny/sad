@@ -3,6 +3,7 @@ package sad
 import (
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
@@ -46,13 +47,26 @@ func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 }
 
 func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
-	block, _ := pem.Decode(data)
+	unmarshaled := ""
+	err := json.Unmarshal(data, &unmarshaled)
+	if err != nil {
+		return err
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(unmarshaled)
+
+	if err != nil {
+		return err
+	}
+
+	block, _ := pem.Decode(decoded)
 
 	if block == nil {
 		return errors.New("Failed to parse PEM block containing RSA private key")
 	}
 
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
 	if err != nil {
 		return err
 	}
