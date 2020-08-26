@@ -95,7 +95,7 @@ func TestOptionsGet(t *testing.T) {
 
 	opts := sad.Options{}
 
-	if err := opts.Get(tempFile.Name()); err != nil {
+	if err := opts.GetJSON(tempFile.Name()); err != nil {
 		t.Fatalf("Error getting options from file: %s", err)
 	}
 
