@@ -12,6 +12,7 @@ import (
 	"os"
 )
 
+// RSAPrivateKey wraps an RSA private key and supports conversion to/from JSON
 type RSAPrivateKey struct {
 	PrivateKey *rsa.PrivateKey
 }
@@ -28,6 +29,7 @@ type Options struct {
 	Debug      bool
 }
 
+// MarshalJSON marshals an RSA private key into valid JSON
 func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
 	pemBlock := pem.EncodeToMemory(
@@ -46,6 +48,7 @@ func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 	return marshaledData, nil
 }
 
+// UnmarshalJSON unmarshals JSON into an RSA private key
 func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 	var unmarshaled string
 	err := json.Unmarshal(data, &unmarshaled)
