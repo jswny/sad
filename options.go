@@ -30,6 +30,7 @@ type Options struct {
 }
 
 // MarshalJSON marshals an RSA private key into valid JSON
+// The key is marshalled into a base64 encoded PEM key string
 func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
 	pemBlock := pem.EncodeToMemory(
@@ -49,33 +50,17 @@ func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON unmarshals JSON into an RSA private key
+// The key should be a base64 encoded PEM key string
 func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 	var unmarshaled string
 	err := json.Unmarshal(data, &unmarshaled)
-	if err != nil {
-		return err
-	}
-
-	decoded, err := base64.StdEncoding.DecodeString(unmarshaled)
 
 	if err != nil {
 		return err
 	}
 
-	block, _ := pem.Decode(decoded)
-
-	if block == nil {
-		return errors.New("Failed to parse PEM block containing RSA private key")
-	}
-
-	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-
-	if err != nil {
-		return err
-	}
-
-	k.PrivateKey = privateKey
-	return err
+	k.parseBase64PEMKey(unmarshaled)
+	return nil
 }
 
 // GetJSON parses options from a JSON file
@@ -95,4 +80,27 @@ func (o *Options) GetJSON(filename string) error {
 	}
 
 	return json.Unmarshal(file, o)
+}
+
+func (k *RSAPrivateKey) parseBase64PEMKey(str string) error {
+	decoded, err := base64.StdEncoding.DecodeString(str)
+
+	if err != nil {
+		return err
+	}
+
+	block, _ := pem.Decode(decoded)
+
+	if block == nil {
+		return errors.New("Failed to parse PEM block containing RSA private key")
+	}
+
+	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	if err != nil {
+		return err
+	}
+
+	k.PrivateKey = privateKey
+	return nil
 }
