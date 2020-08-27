@@ -86,32 +86,35 @@ func TestOptionsGetJSON(t *testing.T) {
 func TestOptionsGetEnv(t *testing.T) {
 	testOpts := getTestOpts()
 
-	os.Setenv("SERVER", testOpts.Server.String())
+	prefix := sad.EnvVarPrefix
+
+	server := testOpts.Server.String()
+	os.Setenv(prefix+"SERVER", server)
 	defer os.Unsetenv("SERVER")
 
-	os.Setenv("USERNAME", testOpts.Username)
+	os.Setenv(prefix+"USERNAME", testOpts.Username)
 	defer os.Unsetenv("USERNAME")
 
-	os.Setenv("ROOT_DIR", testOpts.RootDir)
+	os.Setenv(prefix+"ROOT_DIR", testOpts.RootDir)
 	defer os.Unsetenv("ROOT_DIR")
 
-	encoded := testOpts.PrivateKey.ToBase64PEMData()
+	encoded := testOpts.PrivateKey.ToBase64PEMString()
 
-	os.Setenv("PRIVATE_KEY", string(encoded))
+	os.Setenv(prefix+"PRIVATE_KEY", encoded)
 	defer os.Unsetenv("PRIVATE_KEY")
 
-	os.Setenv("CHANNEL", testOpts.Channel)
+	os.Setenv(prefix+"CHANNEL", testOpts.Channel)
 	defer os.Unsetenv("CHANNEL")
 
-	os.Setenv("PATH", testOpts.Path)
+	os.Setenv(prefix+"PATH", testOpts.Path)
 	defer os.Unsetenv("PATH")
 
 	envVars := strings.Join(testOpts.EnvVars, ",")
-	os.Setenv("ENV_VARS", envVars)
+	os.Setenv(prefix+"ENV_VARS", envVars)
 	defer os.Unsetenv("ENV_VARS")
 
 	debug := strconv.FormatBool(testOpts.Debug)
-	os.Setenv("DEBUG", debug)
+	os.Setenv(prefix+"DEBUG", debug)
 	defer os.Unsetenv("DEBUG")
 
 	opts := sad.Options{}
@@ -120,6 +123,8 @@ func TestOptionsGetEnv(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error getting options from environment: %s", err)
 	}
+
+	compareOpts(testOpts, opts, t)
 }
 
 func compareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {

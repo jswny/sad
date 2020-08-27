@@ -14,6 +14,9 @@ import (
 	"strings"
 )
 
+// EnvVarPrefix represents the prefix that all environment variables should have to be read properly
+var EnvVarPrefix = "SAD_"
+
 // RSAPrivateKey wraps an RSA private key and supports conversion to/from JSON
 type RSAPrivateKey struct {
 	PrivateKey *rsa.PrivateKey
@@ -32,7 +35,7 @@ type Options struct {
 }
 
 // MarshalJSON marshals an RSA private key into valid JSON
-// The key is marshalled into a base64 encoded PEM key string
+// The key is marshalled into a base64 encoded PEM block string
 func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
 	pemBlock := pem.EncodeToMemory(
@@ -52,7 +55,7 @@ func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON unmarshals JSON into an RSA private key
-// The key should be a base64 encoded PEM key string
+// The key should be a base64 encoded PEM block string
 func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 	var unmarshaled string
 	err := json.Unmarshal(data, &unmarshaled)
@@ -90,11 +93,11 @@ func (o *Options) GetJSON(filename string) error {
 }
 
 // GetEnv parses options from environment variables
-// All variables should be prefixed with `SAD_` and they should correspond to the available options with underscores separating words such as `PRIVATE_KEY`
+// All variables should be prefixed and they should correspond to the available options with underscores separating words such as `PRIVATE_KEY`
 // The private key should be a base64 encoded string
 // The environment variables should be a comma-separated string
 func (o *Options) GetEnv() error {
-	prefix := "SAD_"
+	prefix := EnvVarPrefix
 
 	if envVar := os.Getenv(prefix + "SERVER"); envVar != "" {
 		o.Server = net.ParseIP(envVar)
@@ -105,7 +108,7 @@ func (o *Options) GetEnv() error {
 	}
 
 	if envVar := os.Getenv(prefix + "ROOT_DIR"); envVar != "" {
-		o.Username = envVar
+		o.RootDir = envVar
 	}
 
 	if envVar := os.Getenv(prefix + "PRIVATE_KEY"); envVar != "" {
@@ -145,8 +148,8 @@ func (o *Options) GetEnv() error {
 	return nil
 }
 
-// ToBase64PEMData converts an RSA private key into an array of base 64 encoded PEM bytes
-func (k *RSAPrivateKey) ToBase64PEMData() []byte {
+// ToBase64PEMString converts an RSA private key into a base 64 encoded PEM block string
+func (k *RSAPrivateKey) ToBase64PEMString() string {
 	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
 	pemBlock := pem.EncodeToMemory(
 		&pem.Block{
@@ -155,7 +158,9 @@ func (k *RSAPrivateKey) ToBase64PEMData() []byte {
 		},
 	)
 
-	return pemBlock
+	encoded := base64.StdEncoding.EncodeToString(pemBlock)
+
+	return encoded
 }
 
 func (k *RSAPrivateKey) parseBase64PEMKey(str string) error {
