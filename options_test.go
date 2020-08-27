@@ -3,6 +3,7 @@ package sad_test
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net"
@@ -15,11 +16,7 @@ import (
 )
 
 func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
-	privateKey := generatePrivateKey()
-
-	rsaPrivateKey := sad.RSAPrivateKey{
-		PrivateKey: privateKey,
-	}
+	rsaPrivateKey := generateRSAPrivateKey()
 
 	data, err := rsaPrivateKey.MarshalJSON()
 
@@ -33,11 +30,7 @@ func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
 }
 
 func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
-	privateKey := generatePrivateKey()
-
-	rsaPrivateKey := sad.RSAPrivateKey{
-		PrivateKey: privateKey,
-	}
+	rsaPrivateKey := generateRSAPrivateKey()
 
 	firstKeyData, _ := rsaPrivateKey.MarshalJSON()
 
@@ -51,6 +44,17 @@ func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
 
 	if !rsaPrivateKey.PrivateKey.Equal(rsaPrivateKey2.PrivateKey) {
 		t.Errorf("Expected marshaled and unmarshaled private keys to be equal, but they were not equal")
+	}
+}
+
+func TestToBase64PEMString(t *testing.T) {
+	rsaPrivateKey := generateRSAPrivateKey()
+	encoded := rsaPrivateKey.ToBase64PEMString()
+
+	_, err := base64.StdEncoding.DecodeString(encoded)
+
+	if err != nil {
+		t.Errorf("PEM block string was not valid base64 encoding")
 	}
 }
 
@@ -162,8 +166,7 @@ func compareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 }
 
 func getTestOpts() sad.Options {
-	privateKey := generatePrivateKey()
-	rsaPrivateKey := sad.RSAPrivateKey{PrivateKey: privateKey}
+	rsaPrivateKey := generateRSAPrivateKey()
 
 	testOpts := sad.Options{
 		Server:     net.ParseIP("1.2.3.4"),
@@ -179,9 +182,12 @@ func getTestOpts() sad.Options {
 	return testOpts
 }
 
-func generatePrivateKey() *rsa.PrivateKey {
+func generateRSAPrivateKey() sad.RSAPrivateKey {
 	privateKey, _ := rsa.GenerateKey(rand.Reader, 4096)
-	return privateKey
+	rsaPrivateKey := sad.RSAPrivateKey{
+		PrivateKey: privateKey,
+	}
+	return rsaPrivateKey
 }
 
 func testEqualSlices(a, b []string) bool {

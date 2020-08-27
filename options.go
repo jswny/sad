@@ -64,7 +64,7 @@ func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	err = k.parseBase64PEMKey(unmarshaled)
+	err = k.ParseBase64PEMString(unmarshaled)
 
 	if err != nil {
 		return err
@@ -113,7 +113,7 @@ func (o *Options) GetEnv() error {
 
 	if envVar := os.Getenv(prefix + "PRIVATE_KEY"); envVar != "" {
 		k := RSAPrivateKey{}
-		err := k.parseBase64PEMKey(envVar)
+		err := k.ParseBase64PEMString(envVar)
 
 		if err != nil {
 			return err
@@ -163,7 +163,8 @@ func (k *RSAPrivateKey) ToBase64PEMString() string {
 	return encoded
 }
 
-func (k *RSAPrivateKey) parseBase64PEMKey(str string) error {
+// ParseBase64PEMString parses a base64 encoded PEM block string into an RSA private key
+func (k *RSAPrivateKey) ParseBase64PEMString(str string) error {
 	decoded, err := base64.StdEncoding.DecodeString(str)
 
 	if err != nil {
