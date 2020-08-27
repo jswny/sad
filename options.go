@@ -37,15 +37,9 @@ type Options struct {
 // MarshalJSON marshals an RSA private key into valid JSON
 // The key is marshalled into a base64 encoded PEM block string
 func (k RSAPrivateKey) MarshalJSON() ([]byte, error) {
-	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
-	pemBlock := pem.EncodeToMemory(
-		&pem.Block{
-			Type:  "RSA PRIVATE KEY",
-			Bytes: data,
-		},
-	)
+	encoded := k.ToBase64PEMString()
 
-	marshaledData, err := json.Marshal(pemBlock)
+	marshaledData, err := json.Marshal(encoded)
 
 	if err != nil {
 		return nil, errors.New("Failed to marshal encoded pem data to JSON")
