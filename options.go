@@ -10,6 +10,8 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // RSAPrivateKey wraps an RSA private key and supports conversion to/from JSON
@@ -80,6 +82,62 @@ func (o *Options) GetJSON(filename string) error {
 	}
 
 	return json.Unmarshal(file, o)
+}
+
+// GetEnv parses options from environment variables
+// All variables should be prefixed with `SAD_` and they should correspond to the available options with underscores separating words such as `PRIVATE_KEY`
+// The private key should be a base64 encoded string
+// The environment variables should be a comma-separated string
+func (o *Options) GetEnv() error {
+	prefix := "SAD_"
+
+	if envVar := os.Getenv(prefix + "SERVER"); envVar != "" {
+		o.Server = net.ParseIP(envVar)
+	}
+
+	if envVar := os.Getenv(prefix + "USERNAME"); envVar != "" {
+		o.Username = envVar
+	}
+
+	if envVar := os.Getenv(prefix + "ROOT_DIR"); envVar != "" {
+		o.Username = envVar
+	}
+
+	if envVar := os.Getenv(prefix + "PRIVATE_KEY"); envVar != "" {
+		k := RSAPrivateKey{}
+		err := k.parseBase64PEMKey(envVar)
+
+		if err != nil {
+			return err
+		}
+
+		o.PrivateKey = k
+	}
+
+	if envVar := os.Getenv(prefix + "CHANNEL"); envVar != "" {
+		o.Channel = envVar
+	}
+
+	if envVar := os.Getenv(prefix + "PATH"); envVar != "" {
+		o.Path = envVar
+	}
+
+	if envVar := os.Getenv(prefix + "ENV_VARS"); envVar != "" {
+		envVarsArr := strings.Split(envVar, ",")
+		o.EnvVars = envVarsArr
+	}
+
+	if envVar := os.Getenv(prefix + "DEBUG"); envVar != "" {
+		debug, err := strconv.ParseBool(envVar)
+
+		if err != nil {
+			return err
+		}
+
+		o.Debug = debug
+	}
+
+	return nil
 }
 
 func (k *RSAPrivateKey) parseBase64PEMKey(str string) error {
