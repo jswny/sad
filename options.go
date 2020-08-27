@@ -136,13 +136,26 @@ func (o *Options) GetEnv() error {
 		debug, err := strconv.ParseBool(envVar)
 
 		if err != nil {
-			return err
+			o.Debug = false
 		}
 
 		o.Debug = debug
 	}
 
 	return nil
+}
+
+// ToBase64PEMData converts an RSA private key into an array of base 64 encoded PEM bytes
+func (k *RSAPrivateKey) ToBase64PEMData() []byte {
+	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
+	pemBlock := pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: data,
+		},
+	)
+
+	return pemBlock
 }
 
 func (k *RSAPrivateKey) parseBase64PEMKey(str string) error {

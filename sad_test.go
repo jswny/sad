@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/jswny/sad"
@@ -60,21 +62,8 @@ func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
 	}
 }
 
-func TestOptionsGet(t *testing.T) {
-	privateKey := generatePrivateKey()
-	rsaPrivateKey := sad.RSAPrivateKey{PrivateKey: privateKey}
-
-	testOpts := sad.Options{
-		Server:     net.ParseIP("1.2.3.4"),
-		Username:   "user1",
-		RootDir:    "/srv",
-		PrivateKey: rsaPrivateKey,
-		Channel:    "beta",
-		Path:       "/app",
-		EnvVars:    []string{"foo", "bar"},
-		Debug:      true,
-	}
-
+func TestOptionsGetJSON(t *testing.T) {
+	testOpts := getTestOpts()
 	testOptsData, err := json.Marshal(testOpts)
 
 	if err != nil {
@@ -99,37 +88,98 @@ func TestOptionsGet(t *testing.T) {
 		t.Fatalf("Error getting options from file: %s", err)
 	}
 
-	if !opts.Server.Equal(testOpts.Server) {
-		t.Errorf("Expected server IP %s but got %s", testOpts.Server, opts.Server)
+	compareOpts(testOpts, opts, t)
+}
+
+func TestOptionsGetEnv(t *testing.T) {
+	testOpts := getTestOpts()
+
+	os.Setenv("SERVER", testOpts.Server.String())
+	defer os.Unsetenv("SERVER")
+
+	os.Setenv("USERNAME", testOpts.Username)
+	defer os.Unsetenv("USERNAME")
+
+	os.Setenv("ROOT_DIR", testOpts.RootDir)
+	defer os.Unsetenv("ROOT_DIR")
+
+	encoded := testOpts.PrivateKey.ToBase64PEMData()
+
+	os.Setenv("PRIVATE_KEY", string(encoded))
+	defer os.Unsetenv("PRIVATE_KEY")
+
+	os.Setenv("CHANNEL", testOpts.Channel)
+	defer os.Unsetenv("CHANNEL")
+
+	os.Setenv("PATH", testOpts.Path)
+	defer os.Unsetenv("PATH")
+
+	envVars := strings.Join(testOpts.EnvVars, ",")
+	os.Setenv("ENV_VARS", envVars)
+	defer os.Unsetenv("ENV_VARS")
+
+	debug := strconv.FormatBool(testOpts.Debug)
+	os.Setenv("DEBUG", debug)
+	defer os.Unsetenv("DEBUG")
+
+	opts := sad.Options{}
+	err := opts.GetEnv()
+
+	if err != nil {
+		t.Fatalf("Error getting options from environment: %s", err)
+	}
+}
+
+func compareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
+	if !actualOpts.Server.Equal(expectedOpts.Server) {
+		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
 	}
 
-	if opts.Username != testOpts.Username {
-		t.Errorf("Expected username %s but got %s", testOpts.Username, opts.Username)
+	if actualOpts.Username != expectedOpts.Username {
+		t.Errorf("Expected username %s but got %s", expectedOpts.Username, actualOpts.Username)
 	}
 
-	if opts.RootDir != testOpts.RootDir {
-		t.Errorf("Expected root directory %s but got %s", testOpts.RootDir, opts.RootDir)
+	if actualOpts.RootDir != expectedOpts.RootDir {
+		t.Errorf("Expected root directory %s but got %s", expectedOpts.RootDir, actualOpts.RootDir)
 	}
 
-	if !testOpts.PrivateKey.PrivateKey.Equal(opts.PrivateKey.PrivateKey) {
+	if !expectedOpts.PrivateKey.PrivateKey.Equal(actualOpts.PrivateKey.PrivateKey) {
 		t.Errorf("Expected equal private keys but they were not equal")
 	}
 
-	if opts.Channel != testOpts.Channel {
-		t.Errorf("Expected channel %s but got %s", testOpts.Channel, opts.Channel)
+	if actualOpts.Channel != expectedOpts.Channel {
+		t.Errorf("Expected channel %s but got %s", expectedOpts.Channel, actualOpts.Channel)
 	}
 
-	if opts.Path != testOpts.Path {
-		t.Errorf("Expected path %s but got %s", testOpts.Path, opts.Path)
+	if actualOpts.Path != expectedOpts.Path {
+		t.Errorf("Expected path %s but got %s", expectedOpts.Path, actualOpts.Path)
 	}
 
-	if !testEqualSlices(opts.EnvVars, testOpts.EnvVars) {
-		t.Errorf("Expected environment variables %s but got %s", testOpts.EnvVars, opts.EnvVars)
+	if !testEqualSlices(actualOpts.EnvVars, expectedOpts.EnvVars) {
+		t.Errorf("Expected environment variables %s but got %s", expectedOpts.EnvVars, actualOpts.EnvVars)
 	}
 
-	if opts.Debug != testOpts.Debug {
-		t.Errorf("Expected debug %t but got %t", testOpts.Debug, opts.Debug)
+	if actualOpts.Debug != expectedOpts.Debug {
+		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
+}
+
+func getTestOpts() sad.Options {
+	privateKey := generatePrivateKey()
+	rsaPrivateKey := sad.RSAPrivateKey{PrivateKey: privateKey}
+
+	testOpts := sad.Options{
+		Server:     net.ParseIP("1.2.3.4"),
+		Username:   "user1",
+		RootDir:    "/srv",
+		PrivateKey: rsaPrivateKey,
+		Channel:    "beta",
+		Path:       "/app",
+		EnvVars:    []string{"foo", "bar"},
+		Debug:      true,
+	}
+
+	return testOpts
 }
 
 func generatePrivateKey() *rsa.PrivateKey {
