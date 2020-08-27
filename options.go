@@ -61,7 +61,12 @@ func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	k.parseBase64PEMKey(unmarshaled)
+	err = k.parseBase64PEMKey(unmarshaled)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
