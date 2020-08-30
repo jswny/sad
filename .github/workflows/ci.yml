@@ -45,11 +45,11 @@ jobs:
       - name: Get Dependencies
         run: |
           go mod download
-          export PATH=$PATH:$(go env GOPATH)/bin
+          go get github.com/axw/gocov/gocov
       - name: Run Tests
         run: go test -v -coverprofile=cover.out ./...
       - name: Coverage Report
-        run: $(go env GOPATH)/bin/gocov convert cover.out | $(go env GOPATH)/bin/gocov report
+        run: gocov convert cover.out | gocov report
       - name: Line Coverage Report
         run: gocov convert cover.out | gocov annotate -
   demo-deploy-beta:
