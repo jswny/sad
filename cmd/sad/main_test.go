@@ -22,6 +22,7 @@ func TestMain(m *testing.M) {
 
 	if err := build.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot build CLI %s: %s", binName, err)
+		os.Exit(1)
 	}
 
 	fmt.Println("Running tests...")

@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"flag"
 	"io/ioutil"
 	"net"
 	"os"
@@ -63,6 +62,44 @@ func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// FromStrings converts strings into options
+func (o *Options) FromStrings(server string, username string, rootDir string, privateKey string, channel string, path string, envVars string, debug string) error {
+	if server != "" {
+		o.Server = net.ParseIP(server)
+	}
+
+	o.Username = username
+	o.RootDir = rootDir
+
+	if privateKey != "" {
+		rsaPrivateKey := RSAPrivateKey{}
+		err := rsaPrivateKey.ParseBase64PEMString(privateKey)
+		if err != nil {
+			return err
+		}
+		o.PrivateKey = rsaPrivateKey
+	}
+
+	o.Channel = channel
+	o.Path = path
+
+	if envVars != "" {
+		envVarsArr := strings.Split(envVars, ",")
+		o.EnvVars = envVarsArr
+	}
+
+	if debug != "" {
+		debugBool, err := strconv.ParseBool(debug)
+		if err != nil {
+			return err
+		}
+
+		o.Debug = debugBool
 	}
 
 	return nil
@@ -139,41 +176,6 @@ func (o *Options) GetEnv() error {
 
 		o.Debug = debug
 	}
-
-	return nil
-}
-
-// GetFlags parses options from command line flags
-func (o *Options) GetFlags() error {
-	server := flag.String("server", "", "Server to deploy to")
-	username := flag.String("username", "", "User to login to on the server")
-	rootDir := flag.String("root-dir", "", "Root directory to deploy to on the server")
-	privateKey := flag.String("private-key", "", "Base64 encoded SSH private key to login to the user on the server")
-	channel := flag.String("channel", "", "Deployment channel")
-	path := flag.String("path", "", "Path to the app to be deployed relative to the current directory")
-	envVars := flag.String("env-vars", "", "Local environment variables to be injected into the app deployment")
-	debug := flag.Bool("debug", false, "Debug mode")
-
-	flag.Parse()
-
-	o.Server = net.ParseIP(*server)
-	o.Username = *username
-	o.RootDir = *rootDir
-
-	rsaPrivateKey := RSAPrivateKey{}
-	err := rsaPrivateKey.ParseBase64PEMString(*privateKey)
-	if err != nil {
-		return err
-	}
-	o.PrivateKey = rsaPrivateKey
-
-	o.Channel = *channel
-	o.Path = *path
-
-	envVarsArr := strings.Split(*envVars, ",")
-	o.EnvVars = envVarsArr
-
-	o.Debug = *debug
 
 	return nil
 }
