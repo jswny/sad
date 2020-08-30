@@ -131,50 +131,19 @@ func (o *Options) GetJSON(filename string) error {
 func (o *Options) GetEnv() error {
 	prefix := EnvVarPrefix
 
-	if envVar := os.Getenv(prefix + "SERVER"); envVar != "" {
-		o.Server = net.ParseIP(envVar)
-	}
+	server := os.Getenv(prefix + "SERVER")
+	username := os.Getenv(prefix + "USERNAME")
+	rootDir := os.Getenv(prefix + "ROOT_DIR")
+	privateKey := os.Getenv(prefix + "PRIVATE_KEY")
+	channel := os.Getenv(prefix + "CHANNEL")
+	path := os.Getenv(prefix + "PATH")
+	envVars := os.Getenv(prefix + "ENV_VARS")
+	debug := os.Getenv(prefix + "DEBUG")
 
-	if envVar := os.Getenv(prefix + "USERNAME"); envVar != "" {
-		o.Username = envVar
-	}
+	err := o.FromStrings(server, username, rootDir, privateKey, channel, path, envVars, debug)
 
-	if envVar := os.Getenv(prefix + "ROOT_DIR"); envVar != "" {
-		o.RootDir = envVar
-	}
-
-	if envVar := os.Getenv(prefix + "PRIVATE_KEY"); envVar != "" {
-		k := RSAPrivateKey{}
-		err := k.ParseBase64PEMString(envVar)
-
-		if err != nil {
-			return err
-		}
-
-		o.PrivateKey = k
-	}
-
-	if envVar := os.Getenv(prefix + "CHANNEL"); envVar != "" {
-		o.Channel = envVar
-	}
-
-	if envVar := os.Getenv(prefix + "PATH"); envVar != "" {
-		o.Path = envVar
-	}
-
-	if envVar := os.Getenv(prefix + "ENV_VARS"); envVar != "" {
-		envVarsArr := strings.Split(envVar, ",")
-		o.EnvVars = envVarsArr
-	}
-
-	if envVar := os.Getenv(prefix + "DEBUG"); envVar != "" {
-		debug, err := strconv.ParseBool(envVar)
-
-		if err != nil {
-			o.Debug = false
-		}
-
-		o.Debug = debug
+	if err != nil {
+		return err
 	}
 
 	return nil
