@@ -42,10 +42,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '^1.14.6'
-      - name: Test Library
-        run: go test -v
-      - name: Test CLI
-        run: cd cmd/sad && go test -v
+      - run: go test -v ./...
   demo-deploy-beta:
     runs-on: ubuntu-latest
     name: Deploy Beta Demo App
