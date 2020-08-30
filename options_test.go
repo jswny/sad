@@ -85,6 +85,26 @@ func TestParseBase64PEMString(t *testing.T) {
 	}
 }
 
+func TestOptionsFromStrings(t *testing.T) {
+	testOpts := getTestOpts()
+	stringTestOpts := stringOptions{}
+	stringTestOpts.fromOptions(&testOpts)
+
+	server := stringTestOpts.Server
+	username := stringTestOpts.Username
+	rootDir := stringTestOpts.RootDir
+	privateKey := stringTestOpts.PrivateKey
+	channel := stringTestOpts.Channel
+	path := stringTestOpts.Path
+	envVars := stringTestOpts.EnvVars
+	debug := stringTestOpts.Debug
+
+	opts := sad.Options{}
+	opts.FromStrings(server, username, rootDir, privateKey, channel, path, envVars, debug)
+
+	compareOpts(testOpts, opts, t)
+}
+
 func TestOptionsGetJSON(t *testing.T) {
 	testOpts := getTestOpts()
 	testOptsData, err := json.Marshal(testOpts)
