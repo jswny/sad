@@ -100,7 +100,10 @@ func TestOptionsFromStrings(t *testing.T) {
 	debug := stringTestOpts.Debug
 
 	opts := sad.Options{}
-	opts.FromStrings(server, username, rootDir, privateKey, channel, path, envVars, debug)
+	err := opts.FromStrings(server, username, rootDir, privateKey, channel, path, envVars, debug)
+	if err != nil {
+		t.Fatalf("Error getting options from test options strings: %s", err)
+	}
 
 	compareOpts(testOpts, opts, t)
 }
