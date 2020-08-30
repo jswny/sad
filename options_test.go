@@ -15,6 +15,17 @@ import (
 	"github.com/jswny/sad"
 )
 
+type stringOptions struct {
+	Server     string
+	Username   string
+	RootDir    string
+	PrivateKey string
+	Channel    string
+	Path       string
+	EnvVars    string
+	Debug      string
+}
+
 func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
 	rsaPrivateKey := generateRSAPrivateKey()
 
@@ -105,36 +116,33 @@ func TestOptionsGetJSON(t *testing.T) {
 
 func TestOptionsGetEnv(t *testing.T) {
 	testOpts := getTestOpts()
+	stringTestOpts := stringOptions{}
+	stringTestOpts.fromOptions(&testOpts)
 
 	prefix := sad.EnvVarPrefix
 
-	server := testOpts.Server.String()
-	os.Setenv(prefix+"SERVER", server)
+	os.Setenv(prefix+"SERVER", stringTestOpts.Server)
 	defer os.Unsetenv("SERVER")
 
-	os.Setenv(prefix+"USERNAME", testOpts.Username)
+	os.Setenv(prefix+"USERNAME", stringTestOpts.Username)
 	defer os.Unsetenv("USERNAME")
 
-	os.Setenv(prefix+"ROOT_DIR", testOpts.RootDir)
+	os.Setenv(prefix+"ROOT_DIR", stringTestOpts.RootDir)
 	defer os.Unsetenv("ROOT_DIR")
 
-	encoded := testOpts.PrivateKey.ToBase64PEMString()
-
-	os.Setenv(prefix+"PRIVATE_KEY", encoded)
+	os.Setenv(prefix+"PRIVATE_KEY", stringTestOpts.PrivateKey)
 	defer os.Unsetenv("PRIVATE_KEY")
 
-	os.Setenv(prefix+"CHANNEL", testOpts.Channel)
+	os.Setenv(prefix+"CHANNEL", stringTestOpts.Channel)
 	defer os.Unsetenv("CHANNEL")
 
-	os.Setenv(prefix+"PATH", testOpts.Path)
+	os.Setenv(prefix+"PATH", stringTestOpts.Path)
 	defer os.Unsetenv("PATH")
 
-	envVars := strings.Join(testOpts.EnvVars, ",")
-	os.Setenv(prefix+"ENV_VARS", envVars)
+	os.Setenv(prefix+"ENV_VARS", stringTestOpts.EnvVars)
 	defer os.Unsetenv("ENV_VARS")
 
-	debug := strconv.FormatBool(testOpts.Debug)
-	os.Setenv(prefix+"DEBUG", debug)
+	os.Setenv(prefix+"DEBUG", stringTestOpts.Debug)
 	defer os.Unsetenv("DEBUG")
 
 	opts := sad.Options{}
@@ -179,6 +187,17 @@ func compareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
+}
+
+func (stringOpts *stringOptions) fromOptions(opts *sad.Options) {
+	stringOpts.Server = opts.Server.String()
+	stringOpts.Username = opts.Username
+	stringOpts.RootDir = opts.RootDir
+	stringOpts.PrivateKey = opts.PrivateKey.ToBase64PEMString()
+	stringOpts.Channel = opts.Channel
+	stringOpts.Path = opts.Path
+	stringOpts.EnvVars = strings.Join(opts.EnvVars, ",")
+	stringOpts.Debug = strconv.FormatBool(opts.Debug)
 }
 
 func getTestOpts() sad.Options {
