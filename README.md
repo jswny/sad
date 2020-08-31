@@ -1,4 +1,4 @@
-# `sad` ![CI](https://github.com/jswny/sad/workflows/CI/badge.svg)
+# Sad ![CI](https://github.com/jswny/sad/workflows/CI/badge.svg)
 Simple app deployment based on SSH and Docker.
 
 ## Features

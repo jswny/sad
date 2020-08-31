@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Running sad...")
+	fmt.Println("Running Sad...")
 
 	_, err := parseFlags()
 	if err != nil {
