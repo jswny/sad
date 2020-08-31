@@ -2,20 +2,18 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"os"
+	"log"
 	"strconv"
 
 	"github.com/jswny/sad"
 )
 
 func main() {
-	fmt.Println("Running Sad...")
+	log.Println("Running Sad...")
 
 	_, err := parseFlags()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		log.Fatalf("Error parsing command line arguments: %s", err)
 	}
 }
 
