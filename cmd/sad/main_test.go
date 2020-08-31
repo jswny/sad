@@ -44,7 +44,7 @@ func TestCLI(t *testing.T) {
 
 	cmdPath := filepath.Join(dir, binName)
 
-	t.Run("HelloWorld", func(t *testing.T) {
+	t.Run("Run", func(t *testing.T) {
 		cmd := exec.Command(cmdPath)
 
 		if err := cmd.Run(); err != nil {

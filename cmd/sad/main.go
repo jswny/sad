@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Sad CLI!")
+	fmt.Println("Running sad...")
 
 	_, err := parseFlags()
 	if err != nil {
