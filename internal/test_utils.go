@@ -1,3 +1,4 @@
+// Package testutils provides internal shared testing utilities.
 package testutils
 
 import (
@@ -10,6 +11,7 @@ import (
 	"github.com/jswny/sad"
 )
 
+// StringOptions represents all options as strings.
 type StringOptions struct {
 	Server     string
 	Username   string
@@ -21,6 +23,7 @@ type StringOptions struct {
 	Debug      string
 }
 
+// FromOptions converts options into string options.
 func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Server = opts.Server.String()
 	stringOpts.Username = opts.Username
@@ -32,6 +35,7 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Debug = strconv.FormatBool(opts.Debug)
 }
 
+// GetTestOpts retrieves a set of random options for testing.
 func GetTestOpts() sad.Options {
 	rsaPrivateKey := GenerateRSAPrivateKey()
 
@@ -49,6 +53,7 @@ func GetTestOpts() sad.Options {
 	return testOpts
 }
 
+// GenerateRSAPrivateKey generates a random RSA private key.
 func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 	privateKey, _ := rsa.GenerateKey(rand.Reader, 4096)
 	rsaPrivateKey := sad.RSAPrivateKey{
