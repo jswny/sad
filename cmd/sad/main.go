@@ -1,37 +1,58 @@
 package main
 
 import (
+	"bytes"
 	"flag"
+	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/jswny/sad"
 )
 
 func main() {
-	log.Println("Running Sad...")
-
-	_, err := parseFlags()
-	if err != nil {
-		log.Fatalf("Error parsing command line arguments: %s", err)
+	_, output, err := ParseFlags(os.Args[0], os.Args[1:])
+	if err == flag.ErrHelp {
+		fmt.Println(output)
+		os.Exit(2)
+	} else if err != nil {
+		fmt.Println("Error parsing command line arguments: ", err)
+		fmt.Println(output)
 	}
+
+	log.Println("Starting deployment...")
 }
 
-func parseFlags() (sad.Options, error) {
-	server := flag.String("server", "", "Server to deploy to")
-	username := flag.String("username", "", "User to login to on the server")
-	rootDir := flag.String("root-dir", "", "Root directory to deploy to on the server")
-	privateKey := flag.String("private-key", "", "Base64 encoded SSH private key to login to the user on the server")
-	channel := flag.String("channel", "", "Deployment channel")
-	path := flag.String("path", "", "Path to the app to be deployed relative to the current directory")
-	envVars := flag.String("env-vars", "", "Local environment variables to be injected into the app deployment")
-	debug := flag.Bool("debug", false, "Debug mode")
+// ParseFlags parses command line flags into options.
+// Flag parsing is always returned as output.
+// If help or usage is requested, flag.ErrHelp is returned.
+func ParseFlags(program string, args []string) (opts *sad.Options, output string, err error) {
+	flags := flag.NewFlagSet(program, flag.ContinueOnError)
+	var buf bytes.Buffer
+	flags.SetOutput(&buf)
 
-	flag.Parse()
+	server := flags.String("server", "", "Server to deploy to")
+	username := flags.String("username", "", "User to login to on the server")
+	rootDir := flags.String("root-dir", "", "Root directory to deploy to on the server")
+	privateKey := flags.String("private-key", "", "Base64 encoded SSH private key to login to the user on the server")
+	channel := flags.String("channel", "", "Deployment channel")
+	path := flags.String("path", "", "Path to the app to be deployed relative to the current directory")
+	envVars := flags.String("env-vars", "", "Local environment variables to be injected into the app deployment")
+	debug := flags.Bool("debug", false, "Debug mode")
 
-	opts := sad.Options{}
+	err = flags.Parse(args)
+	if err != nil {
+		return nil, buf.String(), err
+	}
+
+	opts = &sad.Options{}
 	debugString := strconv.FormatBool(*debug)
-	err := opts.FromStrings(*server, *username, *rootDir, *privateKey, *channel, *path, *envVars, debugString)
+	err = opts.FromStrings(*server, *username, *rootDir, *privateKey, *channel, *path, *envVars, debugString)
 
-	return opts, err
+	if err != nil {
+		return nil, buf.String(), err
+	}
+
+	return opts, buf.String(), nil
 }
