@@ -1,33 +1,19 @@
 package sad_test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
-	"net"
 	"os"
-	"strconv"
-	"strings"
 	"testing"
+
+	testutils "github.com/jswny/sad/internal"
 
 	"github.com/jswny/sad"
 )
 
-type stringOptions struct {
-	Server     string
-	Username   string
-	RootDir    string
-	PrivateKey string
-	Channel    string
-	Path       string
-	EnvVars    string
-	Debug      string
-}
-
 func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
-	rsaPrivateKey := generateRSAPrivateKey()
+	rsaPrivateKey := testutils.GenerateRSAPrivateKey()
 
 	data, err := rsaPrivateKey.MarshalJSON()
 
@@ -41,7 +27,7 @@ func TestRSAPrivateKeyMarshalJSON(t *testing.T) {
 }
 
 func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
-	rsaPrivateKey := generateRSAPrivateKey()
+	rsaPrivateKey := testutils.GenerateRSAPrivateKey()
 
 	firstKeyData, _ := rsaPrivateKey.MarshalJSON()
 
@@ -59,7 +45,7 @@ func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
 }
 
 func TestToBase64PEMString(t *testing.T) {
-	rsaPrivateKey := generateRSAPrivateKey()
+	rsaPrivateKey := testutils.GenerateRSAPrivateKey()
 	encoded := rsaPrivateKey.ToBase64PEMString()
 
 	_, err := base64.StdEncoding.DecodeString(encoded)
@@ -70,7 +56,7 @@ func TestToBase64PEMString(t *testing.T) {
 }
 
 func TestParseBase64PEMString(t *testing.T) {
-	testRSAPrivateKey := generateRSAPrivateKey()
+	testRSAPrivateKey := testutils.GenerateRSAPrivateKey()
 	encoded := testRSAPrivateKey.ToBase64PEMString()
 
 	rsaPrivateKey := sad.RSAPrivateKey{}
@@ -86,9 +72,9 @@ func TestParseBase64PEMString(t *testing.T) {
 }
 
 func TestOptionsFromStrings(t *testing.T) {
-	testOpts := getTestOpts()
-	stringTestOpts := stringOptions{}
-	stringTestOpts.fromOptions(&testOpts)
+	testOpts := testutils.GetTestOpts()
+	stringTestOpts := testutils.StringOptions{}
+	stringTestOpts.FromOptions(&testOpts)
 
 	server := stringTestOpts.Server
 	username := stringTestOpts.Username
@@ -109,7 +95,7 @@ func TestOptionsFromStrings(t *testing.T) {
 }
 
 func TestOptionsGetJSON(t *testing.T) {
-	testOpts := getTestOpts()
+	testOpts := testutils.GetTestOpts()
 	testOptsData, err := json.Marshal(testOpts)
 
 	if err != nil {
@@ -138,9 +124,9 @@ func TestOptionsGetJSON(t *testing.T) {
 }
 
 func TestOptionsGetEnv(t *testing.T) {
-	testOpts := getTestOpts()
-	stringTestOpts := stringOptions{}
-	stringTestOpts.fromOptions(&testOpts)
+	testOpts := testutils.GetTestOpts()
+	stringTestOpts := testutils.StringOptions{}
+	stringTestOpts.FromOptions(&testOpts)
 
 	prefix := sad.EnvVarPrefix
 
@@ -210,42 +196,6 @@ func compareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
-}
-
-func (stringOpts *stringOptions) fromOptions(opts *sad.Options) {
-	stringOpts.Server = opts.Server.String()
-	stringOpts.Username = opts.Username
-	stringOpts.RootDir = opts.RootDir
-	stringOpts.PrivateKey = opts.PrivateKey.ToBase64PEMString()
-	stringOpts.Channel = opts.Channel
-	stringOpts.Path = opts.Path
-	stringOpts.EnvVars = strings.Join(opts.EnvVars, ",")
-	stringOpts.Debug = strconv.FormatBool(opts.Debug)
-}
-
-func getTestOpts() sad.Options {
-	rsaPrivateKey := generateRSAPrivateKey()
-
-	testOpts := sad.Options{
-		Server:     net.ParseIP("1.2.3.4"),
-		Username:   "user1",
-		RootDir:    "/srv",
-		PrivateKey: rsaPrivateKey,
-		Channel:    "beta",
-		Path:       "/app",
-		EnvVars:    []string{"foo", "bar"},
-		Debug:      true,
-	}
-
-	return testOpts
-}
-
-func generateRSAPrivateKey() sad.RSAPrivateKey {
-	privateKey, _ := rsa.GenerateKey(rand.Reader, 4096)
-	rsaPrivateKey := sad.RSAPrivateKey{
-		PrivateKey: privateKey,
-	}
-	return rsaPrivateKey
 }
 
 func testEqualSlices(a, b []string) bool {
