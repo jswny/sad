@@ -19,6 +19,7 @@ func main() {
 	} else if err != nil {
 		fmt.Println("Error parsing command line arguments: ", err)
 		fmt.Println(output)
+		os.Exit(1)
 	}
 
 	log.Println("Starting deployment...")
