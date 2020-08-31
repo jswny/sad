@@ -3,3 +3,7 @@ linters:
     - gofmt
     - golint
     - godox
+    - godot
+issues:
+  include:
+    - EXC0002
