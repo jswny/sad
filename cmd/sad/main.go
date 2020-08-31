@@ -11,8 +11,6 @@ import (
 
 func main() {
 	fmt.Println("Sad CLI!")
-	s := sad.Hello()
-	fmt.Println(s)
 
 	_, err := parseFlags()
 	if err != nil {
