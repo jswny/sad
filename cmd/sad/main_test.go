@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	testutils "github.com/jswny/sad/internal"
 )
 
 var binName = "sad"
@@ -44,6 +46,45 @@ func TestCLI(t *testing.T) {
 
 	t.Run("HelloWorld", func(t *testing.T) {
 		cmd := exec.Command(cmdPath)
+
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("RunWithArgs", func(t *testing.T) {
+		testOpts := testutils.GetTestOpts()
+		stringTestOpts := testutils.StringOptions{}
+		stringTestOpts.FromOptions(&testOpts)
+
+		server := stringTestOpts.Server
+		username := stringTestOpts.Username
+		rootDir := stringTestOpts.RootDir
+		privateKey := stringTestOpts.PrivateKey
+		channel := stringTestOpts.Channel
+		path := stringTestOpts.Path
+		envVars := stringTestOpts.EnvVars
+		debug := stringTestOpts.Debug
+
+		cmd := exec.Command(
+			cmdPath,
+			"-server",
+			server,
+			"-username",
+			username,
+			"-root-dir",
+			rootDir,
+			"-private-key",
+			privateKey,
+			"-channel",
+			channel,
+			"-path",
+			path,
+			"-env-vars",
+			envVars,
+			"-debug",
+			debug,
+		)
 
 		if err := cmd.Run(); err != nil {
 			t.Fatal(err)
