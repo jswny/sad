@@ -4,6 +4,7 @@ package testutils
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	mathrand "math/rand"
 	"net"
 	"strconv"
 	"strings"
@@ -40,15 +41,20 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 func GetTestOpts() sad.Options {
 	rsaPrivateKey := GenerateRSAPrivateKey()
 
+	randSize := 5
+
 	testOpts := sad.Options{
 		Server:     net.ParseIP("1.2.3.4"),
-		Username:   "user1",
-		RootDir:    "/srv",
+		Username:   randString(randSize),
+		RootDir:    randString(randSize),
 		PrivateKey: rsaPrivateKey,
-		Channel:    "beta",
-		Path:       "/app",
-		EnvVars:    []string{"foo", "bar"},
-		Debug:      true,
+		Channel:    randString(randSize),
+		Path:       randString(randSize),
+		EnvVars: []string{
+			randString(randSize),
+			randString(randSize),
+		},
+		Debug: true,
 	}
 
 	return testOpts
@@ -96,6 +102,15 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
+}
+
+func randString(n int) string {
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[mathrand.Intn(len(letters))]
+	}
+	return string(b)
 }
 
 func testEqualSlices(a, b []string) bool {
