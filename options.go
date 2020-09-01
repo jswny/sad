@@ -67,6 +67,42 @@ func (k *RSAPrivateKey) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Merge merges the other options into the existing options
+// When both fields are populated, the field from the existing options is kept.
+func (o *Options) Merge(other *Options) {
+	if o.Server == nil {
+		o.Server = other.Server
+	}
+
+	if o.Username == "" {
+		o.Username = other.Username
+	}
+
+	if o.RootDir == "" {
+		o.RootDir = other.RootDir
+	}
+
+	if o.PrivateKey.PrivateKey == nil {
+		o.PrivateKey = other.PrivateKey
+	}
+
+	if o.Channel == "" {
+		o.Channel = other.Channel
+	}
+
+	if o.Path == "" {
+		o.Path = other.Path
+	}
+
+	if len(o.EnvVars) == 0 {
+		o.EnvVars = other.EnvVars
+	}
+
+	if !o.Debug {
+		o.Debug = other.Debug
+	}
+}
+
 // FromStrings converts strings into options.
 func (o *Options) FromStrings(server string, username string, rootDir string, privateKey string, channel string, path string, envVars string, debug string) error {
 	if server != "" {
