@@ -191,29 +191,52 @@ func TestOptionsGetEnv(t *testing.T) {
 
 	prefix := sad.EnvVarPrefix
 
-	os.Setenv(prefix+"SERVER", stringTestOpts.Server)
-	defer os.Unsetenv("SERVER")
+	var envVarPostfix string
 
-	os.Setenv(prefix+"USERNAME", stringTestOpts.Username)
-	defer os.Unsetenv("USERNAME")
+	envVarPostfix = "SERVER"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.Server)
+	defer os.Unsetenv(prefix + envVarPostfix)
 
-	os.Setenv(prefix+"ROOT_DIR", stringTestOpts.RootDir)
-	defer os.Unsetenv("ROOT_DIR")
+	envVarPostfix = "USERNAME"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.Username)
+	defer os.Unsetenv(prefix + envVarPostfix)
 
-	os.Setenv(prefix+"PRIVATE_KEY", stringTestOpts.PrivateKey)
-	defer os.Unsetenv("PRIVATE_KEY")
+	envVarPostfix = "ROOT_DIR"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.RootDir)
+	defer os.Unsetenv(prefix + envVarPostfix)
 
-	os.Setenv(prefix+"CHANNEL", stringTestOpts.Channel)
-	defer os.Unsetenv("CHANNEL")
+	envVarPostfix = "PRIVATE_KEY"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.PrivateKey)
+	defer os.Unsetenv(prefix + envVarPostfix)
 
-	os.Setenv(prefix+"PATH", stringTestOpts.Path)
-	defer os.Unsetenv("PATH")
+	envVarPostfix = "CHANNEL"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.Channel)
+	defer os.Unsetenv(prefix + envVarPostfix)
 
-	os.Setenv(prefix+"ENV_VARS", stringTestOpts.EnvVars)
-	defer os.Unsetenv("ENV_VARS")
+	envVarPostfix = "PATH"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.Path)
+	defer os.Unsetenv(prefix + envVarPostfix)
 
-	os.Setenv(prefix+"DEBUG", stringTestOpts.Debug)
-	defer os.Unsetenv("DEBUG")
+	envVarPostfix = "ENV_VARS"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.EnvVars)
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "DEBUG"
+	os.Setenv(prefix+envVarPostfix, stringTestOpts.Debug)
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	opts := sad.Options{}
+	err := opts.GetEnv()
+
+	if err != nil {
+		t.Fatalf("Error getting options from environment: %s", err)
+	}
+
+	testutils.CompareOpts(testOpts, opts, t)
+}
+
+func TestOptionsGetEnvEmptyValues(t *testing.T) {
+	testOpts := sad.Options{}
 
 	opts := sad.Options{}
 	err := opts.GetEnv()
