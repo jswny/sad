@@ -77,7 +77,7 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 		t.Errorf("Expected root directory %s but got %s", expectedOpts.RootDir, actualOpts.RootDir)
 	}
 
-	if !expectedOpts.PrivateKey.PrivateKey.Equal(actualOpts.PrivateKey.PrivateKey) {
+	if (expectedOpts.PrivateKey.PrivateKey != nil && actualOpts.PrivateKey.PrivateKey != nil) && !expectedOpts.PrivateKey.PrivateKey.Equal(actualOpts.PrivateKey.PrivateKey) {
 		t.Errorf("Expected equal private keys but they were not equal")
 	}
 

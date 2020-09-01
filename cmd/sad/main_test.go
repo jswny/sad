@@ -3,6 +3,7 @@ package main_test
 import (
 	"testing"
 
+	"github.com/jswny/sad"
 	main "github.com/jswny/sad/cmd/sad"
 	testutils "github.com/jswny/sad/internal"
 )
@@ -40,6 +41,24 @@ func TestParseFlags(t *testing.T) {
 		"-debug",
 		debug,
 	}
+
+	opts, output, err := main.ParseFlags(program, args)
+	if err != nil {
+		t.Fatalf("Error parsing flags: %s", err)
+	}
+
+	if output != "" {
+		t.Fatalf("Expected empty output but got: %s", output)
+	}
+
+	testutils.CompareOpts(testOpts, *opts, t)
+}
+
+func TestParseFlagsEmptyValues(t *testing.T) {
+	testOpts := sad.Options{}
+
+	program := "sad"
+	var args []string
 
 	opts, output, err := main.ParseFlags(program, args)
 	if err != nil {
