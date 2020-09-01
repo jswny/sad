@@ -56,6 +56,10 @@ func TestRSAPrivateKeyUnmarshalJSON(t *testing.T) {
 	if !rsaPrivateKey.PrivateKey.Equal(rsaPrivateKey2.PrivateKey) {
 		t.Errorf("Expected marshaled and unmarshaled private keys to be equal, but they were not")
 	}
+
+	if err := rsaPrivateKey.PrivateKey.Validate(); err != nil {
+		t.Errorf("Unmarshalled private key was not valid")
+	}
 }
 
 func TestRSAPrivateKeyUnmarshalJSONNil(t *testing.T) {
