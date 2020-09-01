@@ -151,7 +151,11 @@ func (o *Options) GetEnv() error {
 
 // ToBase64PEMString converts an RSA private key into a base 64 encoded PEM block string.
 func (k *RSAPrivateKey) ToBase64PEMString() string {
-	data := x509.MarshalPKCS1PrivateKey(k.PrivateKey)
+	var data []byte
+	if k.PrivateKey != nil {
+		data = x509.MarshalPKCS1PrivateKey(k.PrivateKey)
+	}
+
 	pemBlock := pem.EncodeToMemory(
 		&pem.Block{
 			Type:  "RSA PRIVATE KEY",
@@ -178,7 +182,10 @@ func (k *RSAPrivateKey) ParseBase64PEMString(str string) error {
 		return errors.New("Failed to parse PEM block containing RSA private key")
 	}
 
-	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	var privateKey *rsa.PrivateKey
+	if len(block.Bytes) > 0 {
+		privateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	}
 
 	if err != nil {
 		return err
