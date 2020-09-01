@@ -100,6 +100,53 @@ func TestMergeNoEmptyValues(t *testing.T) {
 	testutils.CompareOpts(opts, mergeOpts, t)
 }
 
+func TestMergeEmptyValues(t *testing.T) {
+	opts := sad.Options{}
+
+	testOpts := testutils.GetTestOpts()
+
+	mergeOpts := sad.Options{}
+	data, err := json.Marshal(opts)
+	if err != nil {
+		t.Fatalf("Error marshaling merge options: %s", err)
+	}
+
+	err = json.Unmarshal(data, &mergeOpts)
+	if err != nil {
+		t.Fatalf("Error unmarshaling merge options: %s", err)
+	}
+
+	mergeOpts.Merge(&testOpts)
+
+	testutils.CompareOpts(testOpts, mergeOpts, t)
+}
+
+func TestMergeSomeEmptyValues(t *testing.T) {
+	opts := testutils.GetTestOpts()
+	opts.Username = ""
+	opts.RootDir = ""
+
+	testOpts := testutils.GetTestOpts()
+
+	mergeOpts := sad.Options{}
+	data, err := json.Marshal(opts)
+	if err != nil {
+		t.Fatalf("Error marshaling merge options: %s", err)
+	}
+
+	err = json.Unmarshal(data, &mergeOpts)
+	if err != nil {
+		t.Fatalf("Error unmarshaling merge options: %s", err)
+	}
+
+	mergeOpts.Merge(&testOpts)
+
+	opts.Username = testOpts.Username
+	opts.RootDir = testOpts.RootDir
+
+	testutils.CompareOpts(opts, mergeOpts, t)
+}
+
 func TestToBase64PEMString(t *testing.T) {
 	rsaPrivateKey := testutils.GenerateRSAPrivateKey()
 	encoded := rsaPrivateKey.ToBase64PEMString()
