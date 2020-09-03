@@ -1,11 +1,13 @@
 package main_test
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -35,17 +37,34 @@ func TestMain(m *testing.M) {
 }
 
 func TestCLIHelpMessage(t *testing.T) {
+	cmd, out, err := generateCmd()
+
+	if err != nil {
+		t.Fatalf("Error generating command to execute: %s", err)
+	}
+
+	if err := cmd.Run(); err != nil {
+		if exitError, ok := err.(*exec.ExitError); ok && exitError.ExitCode() != 2 {
+			t.Fatalf("Error executing command: %s", err)
+		}
+	}
+
+	if !strings.Contains(out.String(), "Usage of") {
+		t.Errorf("Help message was not printed")
+	}
+}
+
+func generateCmd() (*exec.Cmd, *bytes.Buffer, error) {
 	dir, err := os.Getwd()
 	if err != nil {
-		t.Fatal(err)
+		return nil, nil, err
 	}
 
 	cmdPath := filepath.Join(dir, binName)
 
+	var out bytes.Buffer
 	cmd := exec.Command(cmdPath, "-h")
-	if err := cmd.Run(); err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok && exitError.ExitCode() != 2 {
-			t.Fatal(err)
-		}
-	}
+	cmd.Stdout = &out
+
+	return cmd, &out, nil
 }
