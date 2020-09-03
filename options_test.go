@@ -85,14 +85,9 @@ func TestMergeNoEmptyValues(t *testing.T) {
 	optsToMerge := testutils.GetTestOpts()
 	optsToMergeInto := sad.Options{}
 
-	data, err := json.Marshal(expectedOpts)
+	err := testutils.CloneOptions(&expectedOpts, &optsToMergeInto)
 	if err != nil {
-		t.Fatalf("Error marshaling expected options: %s", err)
-	}
-
-	err = json.Unmarshal(data, &optsToMergeInto)
-	if err != nil {
-		t.Fatalf("Error unmarshaling options to merge into: %s", err)
+		t.Fatalf("Error cloning expected options into options to merge into: %s", err)
 	}
 
 	optsToMergeInto.Merge(&optsToMerge)
@@ -105,14 +100,9 @@ func TestMergeEmptyValues(t *testing.T) {
 	optsToMerge := sad.Options{}
 	optsToMergeInto := sad.Options{}
 
-	data, err := json.Marshal(expectedOpts)
+	err := testutils.CloneOptions(&expectedOpts, &optsToMergeInto)
 	if err != nil {
-		t.Fatalf("Error marshaling expected options: %s", err)
-	}
-
-	err = json.Unmarshal(data, &optsToMerge)
-	if err != nil {
-		t.Fatalf("Error unmarshaling options to merge into: %s", err)
+		t.Fatalf("Error cloning expected options into options to merge into: %s", err)
 	}
 
 	optsToMergeInto.Merge(&optsToMerge)
@@ -128,14 +118,9 @@ func TestMergeSomeEmptyValues(t *testing.T) {
 	expectedOpts.Username = ""
 	expectedOpts.RootDir = ""
 
-	data, err := json.Marshal(expectedOpts)
+	err := testutils.CloneOptions(&expectedOpts, &optsToMergeInto)
 	if err != nil {
-		t.Fatalf("Error marshaling expected options: %s", err)
-	}
-
-	err = json.Unmarshal(data, &optsToMergeInto)
-	if err != nil {
-		t.Fatalf("Error unmarshaling options to merge into: %s", err)
+		t.Fatalf("Error cloning expected options into options to merge into: %s", err)
 	}
 
 	optsToMergeInto.Merge(&optsToMerge)

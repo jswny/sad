@@ -4,6 +4,7 @@ package testutils
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"encoding/json"
 	mathrand "math/rand"
 	"net"
 	"strconv"
@@ -102,6 +103,22 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
+}
+
+// CloneOptions clones options into other options.
+// The options to clone into should ideally be empty.
+func CloneOptions(optionsToClone *sad.Options, optionsToCloneInto *sad.Options) error {
+	data, err := json.Marshal(optionsToClone)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(data, &optionsToCloneInto)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func randString(n int) string {
