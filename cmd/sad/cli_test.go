@@ -37,7 +37,8 @@ func TestMain(m *testing.M) {
 }
 
 func TestCLIHelpMessage(t *testing.T) {
-	cmd, out, err := generateCmd()
+	args := []string{"-h"}
+	cmd, out, err := generateCmd(args)
 
 	if err != nil {
 		t.Fatalf("Error generating command to execute: %s", err)
@@ -54,7 +55,30 @@ func TestCLIHelpMessage(t *testing.T) {
 	}
 }
 
-func generateCmd() (*exec.Cmd, *bytes.Buffer, error) {
+func TestCLIInvalidFlag(t *testing.T) {
+	args := []string{"-invalid"}
+	cmd, out, err := generateCmd(args)
+
+	if err != nil {
+		t.Fatalf("Error generating command to execute: %s", err)
+	}
+
+	if err := cmd.Run(); err != nil {
+		if exitError, ok := err.(*exec.ExitError); ok && exitError.ExitCode() != 1 {
+			t.Fatalf("Error executing command: %s", err)
+		}
+	}
+
+	if !strings.Contains(out.String(), "flag provided but not defined:") {
+		t.Errorf("Flag error was not printed")
+	}
+
+	if !strings.Contains(out.String(), "Usage of") {
+		t.Errorf("Help message was not printed")
+	}
+}
+
+func generateCmd(args []string) (*exec.Cmd, *bytes.Buffer, error) {
 	dir, err := os.Getwd()
 	if err != nil {
 		return nil, nil, err
@@ -63,7 +87,7 @@ func generateCmd() (*exec.Cmd, *bytes.Buffer, error) {
 	cmdPath := filepath.Join(dir, binName)
 
 	var out bytes.Buffer
-	cmd := exec.Command(cmdPath, "-h")
+	cmd := exec.Command(cmdPath, args...)
 	cmd.Stdout = &out
 
 	return cmd, &out, nil
