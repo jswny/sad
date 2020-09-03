@@ -4,25 +4,61 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 
 	"github.com/jswny/sad"
 )
 
+var configFile string = ".sad.json"
+
 func main() {
-	_, output, err := ParseFlags(os.Args[0], os.Args[1:])
-	if err == flag.ErrHelp {
-		fmt.Println(output)
-		os.Exit(2)
-	} else if err != nil {
-		fmt.Println("Error parsing command line arguments: ", err)
-		fmt.Println(output)
+	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:])
+	if err != nil {
+		if commandLineOutput != "" {
+			fmt.Println(commandLineOutput)
+		}
+		if err == flag.ErrHelp {
+			os.Exit(2)
+		}
+
+		fmt.Println("Error retrieving options: ", err)
 		os.Exit(1)
 	}
 
-	log.Println("Starting deployment...")
+	fmt.Println("Starting deployment...")
+
+	MergeOptionsHierarchy(commandLineOpts, environmentOpts, configOpts)
+
+}
+
+// GetAllOptionSources gets options from each different source.
+func GetAllOptionSources(program string, args []string) (commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options, commandLineOutput string, err error) {
+	commandLineOpts, output, err := ParseFlags(program, args)
+	if err != nil {
+		return nil, nil, nil, output, err
+	}
+
+	environmentOpts = &sad.Options{}
+	err = environmentOpts.GetEnv()
+	if err != nil {
+		return nil, nil, nil, "", err
+	}
+
+	configOpts = &sad.Options{}
+	err = configOpts.GetJSON(configFile)
+	if err != nil {
+		return nil, nil, nil, "", err
+	}
+
+	return commandLineOpts, environmentOpts, configOpts, "", nil
+}
+
+// MergeOptionsHierarchy merges options from different sources together.
+// The sources in order of priority are: command line, environment variables, config file.
+func MergeOptionsHierarchy(commandLineOptions *sad.Options, environmentOptions *sad.Options, configOptions *sad.Options) {
+	environmentOptions.Merge(configOptions)
+	commandLineOptions.Merge(environmentOptions)
 }
 
 // ParseFlags parses command line flags into options.
