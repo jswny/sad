@@ -81,70 +81,69 @@ func TestRSAPrivateKeyUnmarshalJSONNil(t *testing.T) {
 }
 
 func TestMergeNoEmptyValues(t *testing.T) {
-	opts := testutils.GetTestOpts()
-	testOpts := testutils.GetTestOpts()
+	expectedOpts := testutils.GetTestOpts()
+	optsToMerge := testutils.GetTestOpts()
+	optsToMergeInto := sad.Options{}
 
-	mergeOpts := sad.Options{}
-	data, err := json.Marshal(opts)
+	data, err := json.Marshal(expectedOpts)
 	if err != nil {
-		t.Fatalf("Error marshaling merge options: %s", err)
+		t.Fatalf("Error marshaling expected options: %s", err)
 	}
 
-	err = json.Unmarshal(data, &mergeOpts)
+	err = json.Unmarshal(data, &optsToMergeInto)
 	if err != nil {
-		t.Fatalf("Error unmarshaling merge options: %s", err)
+		t.Fatalf("Error unmarshaling options to merge into: %s", err)
 	}
 
-	mergeOpts.Merge(&testOpts)
+	optsToMergeInto.Merge(&optsToMerge)
 
-	testutils.CompareOpts(opts, mergeOpts, t)
+	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
 func TestMergeEmptyValues(t *testing.T) {
-	opts := sad.Options{}
+	expectedOpts := testutils.GetTestOpts()
+	optsToMerge := sad.Options{}
+	optsToMergeInto := sad.Options{}
 
-	testOpts := testutils.GetTestOpts()
-
-	mergeOpts := sad.Options{}
-	data, err := json.Marshal(opts)
+	data, err := json.Marshal(expectedOpts)
 	if err != nil {
-		t.Fatalf("Error marshaling merge options: %s", err)
+		t.Fatalf("Error marshaling expected options: %s", err)
 	}
 
-	err = json.Unmarshal(data, &mergeOpts)
+	err = json.Unmarshal(data, &optsToMerge)
 	if err != nil {
-		t.Fatalf("Error unmarshaling merge options: %s", err)
+		t.Fatalf("Error unmarshaling options to merge into: %s", err)
 	}
 
-	mergeOpts.Merge(&testOpts)
+	optsToMergeInto.Merge(&optsToMerge)
 
-	testutils.CompareOpts(testOpts, mergeOpts, t)
+	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
 func TestMergeSomeEmptyValues(t *testing.T) {
-	opts := testutils.GetTestOpts()
-	opts.Username = ""
-	opts.RootDir = ""
+	expectedOpts := testutils.GetTestOpts()
+	optsToMerge := sad.Options{}
+	optsToMergeInto := sad.Options{}
 
-	testOpts := testutils.GetTestOpts()
+	expectedOpts.Username = ""
+	expectedOpts.RootDir = ""
 
-	mergeOpts := sad.Options{}
-	data, err := json.Marshal(opts)
+	data, err := json.Marshal(expectedOpts)
 	if err != nil {
-		t.Fatalf("Error marshaling merge options: %s", err)
+		t.Fatalf("Error marshaling expected options: %s", err)
 	}
 
-	err = json.Unmarshal(data, &mergeOpts)
+	err = json.Unmarshal(data, &optsToMergeInto)
 	if err != nil {
-		t.Fatalf("Error unmarshaling merge options: %s", err)
+		t.Fatalf("Error unmarshaling options to merge into: %s", err)
 	}
 
-	mergeOpts.Merge(&testOpts)
+	optsToMergeInto.Merge(&optsToMerge)
 
-	opts.Username = testOpts.Username
-	opts.RootDir = testOpts.RootDir
+	expectedOpts.Username = optsToMerge.Username
+	expectedOpts.RootDir = optsToMerge.RootDir
 
-	testutils.CompareOpts(opts, mergeOpts, t)
+	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
 func TestToBase64PEMString(t *testing.T) {
