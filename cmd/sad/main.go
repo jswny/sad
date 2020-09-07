@@ -13,7 +13,7 @@ import (
 var configFile string = ".sad.json"
 
 func main() {
-	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:])
+	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFile)
 	if err != nil {
 		if commandLineOutput != "" {
 			fmt.Println(commandLineOutput)
@@ -33,7 +33,7 @@ func main() {
 }
 
 // GetAllOptionSources gets options from each different source.
-func GetAllOptionSources(program string, args []string) (commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options, commandLineOutput string, err error) {
+func GetAllOptionSources(program string, args []string, configFile string) (commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options, commandLineOutput string, err error) {
 	commandLineOpts, output, err := ParseFlags(program, args)
 	if err != nil {
 		return nil, nil, nil, output, err
