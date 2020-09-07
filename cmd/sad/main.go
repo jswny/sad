@@ -55,7 +55,9 @@ func GetAllOptionSources(program string, args []string) (commandLineOpts *sad.Op
 }
 
 // MergeOptionsHierarchy merges options from different sources together.
-// The sources in order of priority are: command line, environment variables, config file.
+// Options are merged in order starting from the options of least precedence to greatest precedence.
+// Thus, the options with greatest precedence will contain the merged options.
+// The sources in order of precedence are: command line, environment variables, config file.
 func MergeOptionsHierarchy(commandLineOptions *sad.Options, environmentOptions *sad.Options, configOptions *sad.Options) {
 	environmentOptions.Merge(configOptions)
 	commandLineOptions.Merge(environmentOptions)
