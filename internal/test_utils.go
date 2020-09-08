@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	mathrand "math/rand"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -36,6 +37,68 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Path = opts.Path
 	stringOpts.EnvVars = strings.Join(opts.EnvVars, ",")
 	stringOpts.Debug = strconv.FormatBool(opts.Debug)
+}
+
+// SetEnv sets environment variables for all string options.
+// UnsetEnv should be called after.
+func (stringOpts *StringOptions) SetEnv() {
+	prefix := sad.EnvVarPrefix
+	var envVarPostfix string
+
+	envVarPostfix = "SERVER"
+	os.Setenv(prefix+envVarPostfix, stringOpts.Server)
+
+	envVarPostfix = "USERNAME"
+	os.Setenv(prefix+envVarPostfix, stringOpts.Username)
+
+	envVarPostfix = "ROOT_DIR"
+	os.Setenv(prefix+envVarPostfix, stringOpts.RootDir)
+
+	envVarPostfix = "PRIVATE_KEY"
+	os.Setenv(prefix+envVarPostfix, stringOpts.PrivateKey)
+
+	envVarPostfix = "CHANNEL"
+	os.Setenv(prefix+envVarPostfix, stringOpts.Channel)
+
+	envVarPostfix = "PATH"
+	os.Setenv(prefix+envVarPostfix, stringOpts.Path)
+
+	envVarPostfix = "ENV_VARS"
+	os.Setenv(prefix+envVarPostfix, stringOpts.EnvVars)
+
+	envVarPostfix = "DEBUG"
+	os.Setenv(prefix+envVarPostfix, stringOpts.Debug)
+}
+
+// UnsetEnv sets environment variables for all string options.
+// Should be called after SetEnv.
+func (stringOpts *StringOptions) UnsetEnv() {
+	prefix := sad.EnvVarPrefix
+	var envVarPostfix string
+
+	envVarPostfix = "SERVER"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "USERNAME"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "ROOT_DIR"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "PRIVATE_KEY"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "CHANNEL"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "PATH"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "ENV_VARS"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "DEBUG"
+	defer os.Unsetenv(prefix + envVarPostfix)
 }
 
 // GetTestOpts retrieves a set of random options for testing.

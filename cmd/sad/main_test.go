@@ -45,60 +45,32 @@ func TestGetAllOptionSources(t *testing.T) {
 		debug,
 	}
 
-	prefix := sad.EnvVarPrefix
-	var envVarPostfix string
-
-	envVarPostfix = "SERVER"
-	os.Setenv(prefix+envVarPostfix, server)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "USERNAME"
-	os.Setenv(prefix+envVarPostfix, username)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "ROOT_DIR"
-	os.Setenv(prefix+envVarPostfix, rootDir)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "PRIVATE_KEY"
-	os.Setenv(prefix+envVarPostfix, stringExpectedOpts.PrivateKey)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "CHANNEL"
-	os.Setenv(prefix+envVarPostfix, stringExpectedOpts.Channel)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "PATH"
-	os.Setenv(prefix+envVarPostfix, stringExpectedOpts.Path)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "ENV_VARS"
-	os.Setenv(prefix+envVarPostfix, stringExpectedOpts.EnvVars)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "DEBUG"
-	os.Setenv(prefix+envVarPostfix, stringExpectedOpts.Debug)
-	defer os.Unsetenv(prefix + envVarPostfix)
+	stringExpectedOpts.SetEnv()
 
 	expectedOptsData, err := json.Marshal(expectedOpts)
 
 	if err != nil {
+		stringExpectedOpts.UnsetEnv()
 		t.Fatalf("Error marshaling expected options: %s", err)
 	}
 
 	tempFile, err := ioutil.TempFile(".", ".sad.json.test.")
 
 	if err != nil {
+		stringExpectedOpts.UnsetEnv()
 		t.Fatalf("Error creating temp file: %s", err)
 	}
 
 	defer os.Remove(tempFile.Name())
 
 	if err := ioutil.WriteFile(tempFile.Name(), expectedOptsData, 0644); err != nil {
+		stringExpectedOpts.UnsetEnv()
 		t.Fatalf("Error writing to temp file: %s", err)
 	}
 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := main.GetAllOptionSources(program, args, tempFile.Name())
+
+	stringExpectedOpts.UnsetEnv()
 
 	if err != nil {
 		t.Errorf("Error getting all option sources: %s", err)

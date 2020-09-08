@@ -244,44 +244,12 @@ func TestOptionsGetEnv(t *testing.T) {
 	stringTestOpts := testutils.StringOptions{}
 	stringTestOpts.FromOptions(&testOpts)
 
-	prefix := sad.EnvVarPrefix
-
-	var envVarPostfix string
-
-	envVarPostfix = "SERVER"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.Server)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "USERNAME"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.Username)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "ROOT_DIR"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.RootDir)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "PRIVATE_KEY"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.PrivateKey)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "CHANNEL"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.Channel)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "PATH"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.Path)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "ENV_VARS"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.EnvVars)
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "DEBUG"
-	os.Setenv(prefix+envVarPostfix, stringTestOpts.Debug)
-	defer os.Unsetenv(prefix + envVarPostfix)
+	stringTestOpts.SetEnv()
 
 	opts := sad.Options{}
 	err := opts.GetEnv()
+
+	stringTestOpts.UnsetEnv()
 
 	if err != nil {
 		t.Fatalf("Error getting options from environment: %s", err)
