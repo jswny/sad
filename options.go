@@ -103,6 +103,18 @@ func (o *Options) Merge(other *Options) {
 	}
 }
 
+// MergeDefaults merges default option values into the given options.
+func (o *Options) MergeDefaults() {
+	defaults := Options{
+		Channel: "beta",
+		Path:    ".",
+		EnvVars: make([]string, 0),
+		Debug:   false,
+	}
+
+	o.Merge(&defaults)
+}
+
 // FromStrings converts strings into options.
 func (o *Options) FromStrings(server string, username string, rootDir string, privateKey string, channel string, path string, envVars string, debug string) error {
 	if server != "" {
