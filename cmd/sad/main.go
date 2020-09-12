@@ -29,7 +29,14 @@ func main() {
 	fmt.Println("Starting deployment...")
 
 	MergeOptionsHierarchy(commandLineOpts, environmentOpts, configOpts)
+	commandLineOpts.MergeDefaults()
 
+	err = commandLineOpts.Verify()
+	if err != nil {
+		fmt.Println("Provided options were invalid!")
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 // GetAllOptionSources gets options from each different source.
