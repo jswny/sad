@@ -139,25 +139,20 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
 	}
 
-	if actualOpts.Username != expectedOpts.Username {
-		t.Errorf("Expected username %s but got %s", expectedOpts.Username, actualOpts.Username)
-	}
+	compareStrings(expectedOpts.Username, actualOpts.Username, "username", t)
 
-	if actualOpts.RootDir != expectedOpts.RootDir {
-		t.Errorf("Expected root directory %s but got %s", expectedOpts.RootDir, actualOpts.RootDir)
-	}
+	compareStrings(expectedOpts.RootDir, actualOpts.RootDir, "root directory", t)
 
 	if (expectedOpts.PrivateKey.PrivateKey != nil && actualOpts.PrivateKey.PrivateKey != nil) && !expectedOpts.PrivateKey.PrivateKey.Equal(actualOpts.PrivateKey.PrivateKey) {
 		t.Errorf("Expected equal private keys but they were not equal")
 	}
 
-	if actualOpts.Channel != expectedOpts.Channel {
-		t.Errorf("Expected channel %s but got %s", expectedOpts.Channel, actualOpts.Channel)
-	}
+	compareStrings(expectedOpts.Channel, actualOpts.Channel, "channel", t)
 
 	if actualOpts.Path != expectedOpts.Path {
 		t.Errorf("Expected path %s but got %s", expectedOpts.Path, actualOpts.Path)
 	}
+	compareStrings(expectedOpts.Path, actualOpts.Path, "path", t)
 
 	if !testEqualSlices(actualOpts.EnvVars, expectedOpts.EnvVars) {
 		t.Errorf("Expected environment variables %s but got %s", expectedOpts.EnvVars, actualOpts.EnvVars)
@@ -165,6 +160,25 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
+	}
+}
+
+// compareStrings compares two strings and calls t.Errorf if they do not match.
+// The name of what is being compared should be provided.
+// Formats empty strings for easier comparison.
+func compareStrings(expected string, actual string, name string, t *testing.T) {
+	if expected != actual {
+		empty := "<empty>"
+
+		if expected == "" {
+			expected = empty
+		}
+
+		if actual == "" {
+			actual = empty
+		}
+
+		t.Errorf("Expected %s %s but got %s", name, expected, actual)
 	}
 }
 
