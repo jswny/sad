@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	testutils "github.com/jswny/sad/internal"
@@ -80,6 +81,31 @@ func TestOptionsMergeDefaults(t *testing.T) {
 	expectedOpts.Path = "."
 
 	testutils.CompareOpts(expectedOpts, opts, t)
+}
+
+func TestOptionsVerifyValid(t *testing.T) {
+	opts := testutils.GetTestOpts()
+
+	err := opts.Verify()
+
+	if err != nil {
+		t.Errorf("Error verifying options: %s", err)
+	}
+}
+
+func TestOptionsVerifyInvalid(t *testing.T) {
+	opts := testutils.GetTestOpts()
+	opts.Username = ""
+
+	err := opts.Verify()
+
+	if err == nil {
+		t.Errorf("No error verifying options")
+	}
+
+	if !strings.ContainsAny(err.Error(), "username is <empty>") {
+		t.Errorf("Error message doesn't contain username error")
+	}
 }
 
 func TestOptionsFromStrings(t *testing.T) {

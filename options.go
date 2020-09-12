@@ -107,10 +107,10 @@ func (o *Options) Verify() error {
 		errorString := "Invalid options! "
 
 		for field, message := range errorMap {
-			errorString += fmt.Sprintf("%s %s ", field, message)
+			errorString += fmt.Sprintf("%s %s, ", field, message)
 		}
 
-		errorString = errorString[:len(errorString)-1]
+		errorString = errorString[:len(errorString)-2]
 
 		return errors.New(errorString)
 	}
