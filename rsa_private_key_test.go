@@ -77,7 +77,7 @@ func TestRSAPrivateKeyUnmarshalJSONNil(t *testing.T) {
 	}
 }
 
-func TestToBase64PEMString(t *testing.T) {
+func TestRSAPrivateKeyToBase64PEMString(t *testing.T) {
 	rsaPrivateKey := testutils.GenerateRSAPrivateKey()
 	encoded := rsaPrivateKey.ToBase64PEMString()
 
@@ -88,7 +88,7 @@ func TestToBase64PEMString(t *testing.T) {
 	}
 }
 
-func TestParseBase64PEMString(t *testing.T) {
+func TestRSAPrivateKeyParseBase64PEMString(t *testing.T) {
 	testRSAPrivateKey := testutils.GenerateRSAPrivateKey()
 	encoded := testRSAPrivateKey.ToBase64PEMString()
 

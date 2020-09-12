@@ -11,7 +11,7 @@ import (
 	"github.com/jswny/sad"
 )
 
-func TestMergeNoEmptyValues(t *testing.T) {
+func TestOptionsMergeNoEmptyValues(t *testing.T) {
 	expectedOpts := testutils.GetTestOpts()
 	optsToMerge := testutils.GetTestOpts()
 	optsToMergeInto := sad.Options{}
@@ -26,7 +26,7 @@ func TestMergeNoEmptyValues(t *testing.T) {
 	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
-func TestMergeEmptyValues(t *testing.T) {
+func TestOptionsMergeEmptyValues(t *testing.T) {
 	expectedOpts := testutils.GetTestOpts()
 	optsToMerge := sad.Options{}
 	optsToMergeInto := sad.Options{}
@@ -41,7 +41,7 @@ func TestMergeEmptyValues(t *testing.T) {
 	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
-func TestMergeSomeEmptyValues(t *testing.T) {
+func TestOptionsMergeSomeEmptyValues(t *testing.T) {
 	expectedOpts := testutils.GetTestOpts()
 	optsToMerge := sad.Options{}
 	optsToMergeInto := sad.Options{}
@@ -62,7 +62,7 @@ func TestMergeSomeEmptyValues(t *testing.T) {
 	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
-func TestMergeDefaults(t *testing.T) {
+func TestOptionsMergeDefaults(t *testing.T) {
 	expectedOpts := testutils.GetTestOpts()
 	opts := sad.Options{}
 
