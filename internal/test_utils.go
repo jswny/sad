@@ -154,19 +154,14 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	}
 	compareStrings(expectedOpts.Path, actualOpts.Path, "path", t)
 
-	if !testEqualSlices(actualOpts.EnvVars, expectedOpts.EnvVars) {
-		t.Errorf("Expected environment variables %s but got %s", expectedOpts.EnvVars, actualOpts.EnvVars)
-	}
+	compareSlices(actualOpts.EnvVars, expectedOpts.EnvVars, "environment variables", t)
 
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
 }
 
-// compareStrings compares two strings and calls t.Errorf if they do not match.
-// The name of what is being compared should be provided.
-// Formats empty strings for easier comparison.
-func compareStrings(expected string, actual string, name string, t *testing.T) {
+func compareStrings(expected, actual, name string, t *testing.T) {
 	if expected != actual {
 		empty := "<empty>"
 
@@ -207,20 +202,24 @@ func randString(n int) string {
 	return string(b)
 }
 
-func testEqualSlices(a, b []string) bool {
-	if (a == nil) != (b == nil) {
-		return false
+func compareSlices(expected, actual []string, name string, t *testing.T) {
+	equal := true
+
+	if (expected == nil) != (actual == nil) {
+		equal = false
 	}
 
-	if len(a) != len(b) {
-		return false
+	if len(expected) != len(actual) {
+		equal = false
 	}
 
-	for i := range a {
-		if a[i] != b[i] {
-			return false
+	for i := range expected {
+		if expected[i] != actual[i] {
+			equal = false
 		}
 	}
 
-	return true
+	if !equal {
+		t.Errorf("Expected %s %s but got %s", name, expected, actual)
+	}
 }
