@@ -131,6 +131,26 @@ func TestMergeSomeEmptyValues(t *testing.T) {
 	testutils.CompareOpts(expectedOpts, optsToMergeInto, t)
 }
 
+func TestMergeDefaults(t *testing.T) {
+	expectedOpts := testutils.GetTestOpts()
+	opts := sad.Options{}
+
+	expectedOpts.Channel = ""
+	expectedOpts.Path = ""
+
+	err := testutils.CloneOptions(&expectedOpts, &opts)
+	if err != nil {
+		t.Fatalf("Error cloning expected options into options: %s", err)
+	}
+
+	opts.MergeDefaults()
+
+	expectedOpts.Channel = "beta"
+	expectedOpts.Path = "."
+
+	testutils.CompareOpts(expectedOpts, opts, t)
+}
+
 func TestToBase64PEMString(t *testing.T) {
 	rsaPrivateKey := testutils.GenerateRSAPrivateKey()
 	encoded := rsaPrivateKey.ToBase64PEMString()
