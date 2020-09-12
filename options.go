@@ -2,6 +2,8 @@ package sad
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"os"
@@ -65,11 +67,55 @@ func (o *Options) MergeDefaults() {
 	defaults := Options{
 		Channel: "beta",
 		Path:    ".",
-		EnvVars: make([]string, 0),
 		Debug:   false,
 	}
 
 	o.Merge(&defaults)
+}
+
+// Verify verifies that the options are valid.
+// Returns an error with information about why the options are invalid.
+func (o *Options) Verify() error {
+	errorMap := make(map[string]string)
+	empty := "<empty>"
+
+	if o.Server == nil {
+		errorMap["server"] = "is nil"
+	}
+
+	if o.Username == "" {
+		errorMap["username"] = fmt.Sprintf("is %s", empty)
+	}
+
+	if o.RootDir == "" {
+		errorMap["root directory"] = fmt.Sprintf("is %s", empty)
+	}
+
+	if o.PrivateKey.PrivateKey == nil {
+		errorMap["private key"] = "is nil"
+	}
+
+	if o.Channel == "" {
+		errorMap["channel"] = fmt.Sprintf("is %s", empty)
+	}
+
+	if o.Path == "" {
+		errorMap["path"] = fmt.Sprintf("is %s", empty)
+	}
+
+	if len(errorMap) != 0 {
+		errorString := "Invalid options! "
+
+		for field, message := range errorMap {
+			errorString += fmt.Sprintf("%s %s ", field, message)
+		}
+
+		errorString = errorString[:len(errorString)-1]
+
+		return errors.New(errorString)
+	}
+
+	return nil
 }
 
 // FromStrings converts strings into options.
