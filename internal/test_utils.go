@@ -172,22 +172,6 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	}
 }
 
-func compareStrings(expected, actual, name string, t *testing.T) {
-	if expected != actual {
-		empty := "<empty>"
-
-		if expected == "" {
-			expected = empty
-		}
-
-		if actual == "" {
-			actual = empty
-		}
-
-		t.Errorf("Expected %s %s but got %s", name, expected, actual)
-	}
-}
-
 // CloneOptions clones options into other options.
 // The options to clone into should ideally be empty.
 func CloneOptions(optionsToClone *sad.Options, optionsToCloneInto *sad.Options) error {
@@ -204,13 +188,20 @@ func CloneOptions(optionsToClone *sad.Options, optionsToCloneInto *sad.Options) 
 	return nil
 }
 
-func randString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[mathrand.Intn(len(letters))]
+func compareStrings(expected, actual, name string, t *testing.T) {
+	if expected != actual {
+		empty := "<empty>"
+
+		if expected == "" {
+			expected = empty
+		}
+
+		if actual == "" {
+			actual = empty
+		}
+
+		t.Errorf("Expected %s %s but got %s", name, expected, actual)
 	}
-	return string(b)
 }
 
 func compareSlices(expected, actual []string, name string, t *testing.T) {
@@ -233,4 +224,13 @@ func compareSlices(expected, actual []string, name string, t *testing.T) {
 	if !equal {
 		t.Errorf("Expected %s %s but got %s", name, expected, actual)
 	}
+}
+
+func randString(n int) string {
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[mathrand.Intn(len(letters))]
+	}
+	return string(b)
 }
