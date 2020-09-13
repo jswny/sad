@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
+	"time"
 
 	scp "github.com/bramvdbogaerde/go-scp"
 	"golang.org/x/crypto/ssh"
 )
 
-func sendFiles(client *scp.Client, opts *Options, files []*os.File) error {
+// SendFiles sends files to a server using the provided SCP client.
+func SendFiles(client *scp.Client, opts *Options, files []*os.File) error {
 	err := client.Connect()
 
 	if err != nil {
@@ -51,10 +52,9 @@ func GetSSHClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 	}
 
 	clientConfig := &ssh.ClientConfig{
-		User: opts.Username,
-		Auth: []ssh.AuthMethod{
-			authMethod,
-		},
+		User:            opts.Username,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Auth:            []ssh.AuthMethod{authMethod},
 	}
 
 	return clientConfig, nil
@@ -63,8 +63,11 @@ func GetSSHClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 // GetSCPClient generates an SCP client based on the given options and SSH client config.
 func GetSCPClient(opts *Options, clientConfig *ssh.ClientConfig) (*scp.Client, error) {
 	port := 22
-	host := fmt.Sprintf("%s:%s", opts.Server, strconv.Itoa(port))
-	scpClient := scp.NewClient(host, clientConfig)
+	host := fmt.Sprintf("%s:%d", opts.Server, port)
+
+	duration, _ := time.ParseDuration("5s")
+
+	scpClient := scp.NewClientWithTimeout(host, clientConfig, duration)
 
 	return &scpClient, nil
 }

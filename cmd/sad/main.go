@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/jswny/sad"
@@ -35,6 +36,58 @@ func main() {
 	if err != nil {
 		fmt.Println("Provided options were invalid!")
 		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Opening SCP connection...")
+	clientConfig, err := sad.GetSSHClientConfig(commandLineOpts)
+
+	if err != nil {
+		fmt.Println("Error getting SSH configuration from options: ", err)
+		os.Exit(1)
+	}
+
+	scpClient, err := sad.GetSCPClient(commandLineOpts, clientConfig)
+
+	if err != nil {
+		fmt.Println("Error getting SCP client: ", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Sending files to server...")
+
+	var filePaths []string
+	var files []*os.File
+
+	fileNames := []string{
+		"docker-compose.yml",
+	}
+
+	for _, fileName := range fileNames {
+		filePath, err := getRelativeFilePath(commandLineOpts, fileName)
+
+		if err != nil {
+			fmt.Println("Error getting path for file ", fileName)
+			os.Exit(1)
+		}
+
+		filePaths = append(filePaths, filePath)
+	}
+
+	for _, filePath := range filePaths {
+		file, err := os.Open(filePath)
+
+		if err != nil {
+			fmt.Println("Error opening file for deployment: ", err)
+			os.Exit(1)
+		}
+
+		files = append(files, file)
+	}
+
+	err = sad.SendFiles(scpClient, commandLineOpts, files)
+	if err != nil {
+		fmt.Println("Error sending files to server: ", err)
 		os.Exit(1)
 	}
 }
@@ -102,4 +155,14 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	}
 
 	return opts, buf.String(), nil
+}
+
+func getRelativeFilePath(opts *sad.Options, fileName string) (string, error) {
+	cwdPath, err := os.Getwd()
+
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(cwdPath, opts.Path, fileName), nil
 }
