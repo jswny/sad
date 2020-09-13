@@ -50,7 +50,8 @@ func getSCPClient(opts *Options, clientConfig *ssh.ClientConfig) (*scp.Client, e
 	return &scpClient, nil
 }
 
-func getClientConfig(opts *Options) (*ssh.ClientConfig, error) {
+// GetSSHClientConfig generates an SSH client config based on the provided options
+func GetSSHClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 	authMethod, err := opts.PrivateKey.ToSSHAuthMethod()
 
 	if err != nil {
