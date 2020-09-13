@@ -17,6 +17,7 @@ import (
 
 // StringOptions represents all options as strings.
 type StringOptions struct {
+	Name       string
 	Server     string
 	Username   string
 	RootDir    string
@@ -29,6 +30,7 @@ type StringOptions struct {
 
 // FromOptions converts options into string options.
 func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
+	stringOpts.Name = opts.Name
 	stringOpts.Server = opts.Server.String()
 	stringOpts.Username = opts.Username
 	stringOpts.RootDir = opts.RootDir
@@ -44,6 +46,9 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.EnvVarPrefix
 	var envVarPostfix string
+
+	envVarPostfix = "NAME"
+	os.Setenv(prefix+envVarPostfix, stringOpts.Name)
 
 	envVarPostfix = "SERVER"
 	os.Setenv(prefix+envVarPostfix, stringOpts.Server)
@@ -75,6 +80,9 @@ func (stringOpts *StringOptions) SetEnv() {
 func (stringOpts *StringOptions) UnsetEnv() {
 	prefix := sad.EnvVarPrefix
 	var envVarPostfix string
+
+	envVarPostfix = "NAME"
+	defer os.Unsetenv(prefix + envVarPostfix)
 
 	envVarPostfix = "SERVER"
 	defer os.Unsetenv(prefix + envVarPostfix)
@@ -108,6 +116,7 @@ func GetTestOpts() sad.Options {
 	randSize := 5
 
 	testOpts := sad.Options{
+		Name:       randString(randSize),
 		Server:     net.ParseIP("1.2.3.4"),
 		Username:   randString(randSize),
 		RootDir:    randString(randSize),
@@ -135,6 +144,8 @@ func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 
 // CompareOpts compares two sets of options in a test environment.
 func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
+	compareStrings(expectedOpts.Name, actualOpts.Name, "name", t)
+
 	if !actualOpts.Server.Equal(expectedOpts.Server) {
 		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
 	}

@@ -16,6 +16,7 @@ var EnvVarPrefix = "SAD_"
 
 // Options for deployment.
 type Options struct {
+	Name       string
 	Server     net.IP
 	Username   string
 	RootDir    string
@@ -29,6 +30,10 @@ type Options struct {
 // Merge merges the other options into the existing options
 // When both fields are populated, the field from the existing options is kept.
 func (o *Options) Merge(other *Options) {
+	if o.Name == "" {
+		o.Name = other.Name
+	}
+
 	if o.Server == nil {
 		o.Server = other.Server
 	}
@@ -79,6 +84,10 @@ func (o *Options) Verify() error {
 	errorMap := make(map[string]string)
 	empty := "<empty>"
 
+	if o.Name == "" {
+		errorMap["name"] = fmt.Sprintf("is %s", empty)
+	}
+
 	if o.Server == nil {
 		errorMap["server"] = "is nil"
 	}
@@ -119,7 +128,9 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(server string, username string, rootDir string, privateKey string, channel string, path string, envVars string, debug string) error {
+func (o *Options) FromStrings(name string, server string, username string, rootDir string, privateKey string, channel string, path string, envVars string, debug string) error {
+	o.Name = name
+
 	if server != "" {
 		o.Server = net.ParseIP(server)
 	}
@@ -182,6 +193,7 @@ func (o *Options) GetJSON(filename string) error {
 func (o *Options) GetEnv() error {
 	prefix := EnvVarPrefix
 
+	name := os.Getenv(prefix + "NAME")
 	server := os.Getenv(prefix + "SERVER")
 	username := os.Getenv(prefix + "USERNAME")
 	rootDir := os.Getenv(prefix + "ROOT_DIR")
@@ -191,7 +203,7 @@ func (o *Options) GetEnv() error {
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
 
-	err := o.FromStrings(server, username, rootDir, privateKey, channel, path, envVars, debug)
+	err := o.FromStrings(name, server, username, rootDir, privateKey, channel, path, envVars, debug)
 
 	if err != nil {
 		return err

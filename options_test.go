@@ -113,6 +113,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	stringTestOpts := testutils.StringOptions{}
 	stringTestOpts.FromOptions(&testOpts)
 
+	name := stringTestOpts.Name
 	server := stringTestOpts.Server
 	username := stringTestOpts.Username
 	rootDir := stringTestOpts.RootDir
@@ -123,7 +124,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	debug := stringTestOpts.Debug
 
 	opts := sad.Options{}
-	err := opts.FromStrings(server, username, rootDir, privateKey, channel, path, envVars, debug)
+	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, path, envVars, debug)
 	if err != nil {
 		t.Fatalf("Error getting options from test options strings: %s", err)
 	}

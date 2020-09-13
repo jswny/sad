@@ -22,7 +22,14 @@ func sendFiles(client *scp.Client, opts *Options, files []*os.File) error {
 	for _, file := range files {
 		defer file.Close()
 
-		remotePath := opts.RootDir
+		basename, err := file.Stat()
+
+		if err != nil {
+			errorMessage := fmt.Sprintf("Error stating file %s: %s", file.Name(), err)
+			return errors.New(errorMessage)
+		}
+
+		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, getFullName(opts), basename)
 		permissions := "0655"
 		err = client.CopyFile(file, remotePath, permissions)
 
@@ -58,4 +65,8 @@ func getClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 	}
 
 	return clientConfig, nil
+}
+
+func getFullName(opts *Options) string {
+	return fmt.Sprintf("%s-%s", opts.Name, opts.Channel)
 }

@@ -16,6 +16,7 @@ func TestGetAllOptionSources(t *testing.T) {
 	stringExpectedOpts := testutils.StringOptions{}
 	stringExpectedOpts.FromOptions(&expectedOpts)
 
+	name := stringExpectedOpts.Name
 	server := stringExpectedOpts.Server
 	username := stringExpectedOpts.Username
 	rootDir := stringExpectedOpts.RootDir
@@ -27,6 +28,8 @@ func TestGetAllOptionSources(t *testing.T) {
 
 	program := "sad"
 	args := []string{
+		"-name",
+		name,
 		"-server",
 		server,
 		"-username",
@@ -119,6 +122,7 @@ func TestParseFlags(t *testing.T) {
 	stringTestOpts := testutils.StringOptions{}
 	stringTestOpts.FromOptions(&testOpts)
 
+	name := stringTestOpts.Name
 	server := stringTestOpts.Server
 	username := stringTestOpts.Username
 	rootDir := stringTestOpts.RootDir
@@ -130,6 +134,8 @@ func TestParseFlags(t *testing.T) {
 
 	program := "sad"
 	args := []string{
+		"-name",
+		name,
 		"-server",
 		server,
 		"-username",

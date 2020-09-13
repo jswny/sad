@@ -78,6 +78,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	var buf bytes.Buffer
 	flags.SetOutput(&buf)
 
+	name := flags.String("name", "", "Name of the app to deploy")
 	server := flags.String("server", "", "Server to deploy to")
 	username := flags.String("username", "", "User to login to on the server")
 	rootDir := flags.String("root-dir", "", "Root directory to deploy to on the server")
@@ -94,7 +95,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 
 	opts = &sad.Options{}
 	debugString := strconv.FormatBool(*debug)
-	err = opts.FromStrings(*server, *username, *rootDir, *privateKey, *channel, *path, *envVars, debugString)
+	err = opts.FromStrings(*name, *server, *username, *rootDir, *privateKey, *channel, *path, *envVars, debugString)
 
 	if err != nil {
 		return nil, buf.String(), err
