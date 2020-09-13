@@ -16,37 +16,9 @@ func TestGetAllOptionSources(t *testing.T) {
 	stringExpectedOpts := testutils.StringOptions{}
 	stringExpectedOpts.FromOptions(&expectedOpts)
 
-	name := stringExpectedOpts.Name
-	server := stringExpectedOpts.Server
-	username := stringExpectedOpts.Username
-	rootDir := stringExpectedOpts.RootDir
-	privateKey := stringExpectedOpts.PrivateKey
-	channel := stringExpectedOpts.Channel
-	path := stringExpectedOpts.Path
-	envVars := stringExpectedOpts.EnvVars
-	debug := stringExpectedOpts.Debug
-
 	program := "sad"
-	args := []string{
-		"-name",
-		name,
-		"-server",
-		server,
-		"-username",
-		username,
-		"-root-dir",
-		rootDir,
-		"-private-key",
-		privateKey,
-		"-channel",
-		channel,
-		"-path",
-		path,
-		"-env-vars",
-		envVars,
-		"-debug",
-		debug,
-	}
+
+	args := buildArgs(&stringExpectedOpts)
 
 	stringExpectedOpts.SetEnv()
 
@@ -122,37 +94,9 @@ func TestParseFlags(t *testing.T) {
 	stringTestOpts := testutils.StringOptions{}
 	stringTestOpts.FromOptions(&testOpts)
 
-	name := stringTestOpts.Name
-	server := stringTestOpts.Server
-	username := stringTestOpts.Username
-	rootDir := stringTestOpts.RootDir
-	privateKey := stringTestOpts.PrivateKey
-	channel := stringTestOpts.Channel
-	path := stringTestOpts.Path
-	envVars := stringTestOpts.EnvVars
-	debug := stringTestOpts.Debug
-
 	program := "sad"
-	args := []string{
-		"-name",
-		name,
-		"-server",
-		server,
-		"-username",
-		username,
-		"-root-dir",
-		rootDir,
-		"-private-key",
-		privateKey,
-		"-channel",
-		channel,
-		"-path",
-		path,
-		"-env-vars",
-		envVars,
-		"-debug",
-		debug,
-	}
+
+	args := buildArgs(&stringTestOpts)
 
 	opts, output, err := main.ParseFlags(program, args)
 	if err != nil {
@@ -182,4 +126,29 @@ func TestParseFlagsEmptyValues(t *testing.T) {
 	}
 
 	testutils.CompareOpts(testOpts, *opts, t)
+}
+
+func buildArgs(stringOpts *testutils.StringOptions) []string {
+	args := []string{
+		"-name",
+		stringOpts.Name,
+		"-server",
+		stringOpts.Server,
+		"-username",
+		stringOpts.Username,
+		"-root-dir",
+		stringOpts.RootDir,
+		"-private-key",
+		stringOpts.PrivateKey,
+		"-channel",
+		stringOpts.Channel,
+		"-path",
+		stringOpts.Path,
+		"-env-vars",
+		stringOpts.EnvVars,
+		"-debug",
+		stringOpts.Debug,
+	}
+
+	return args
 }
