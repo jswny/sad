@@ -29,7 +29,7 @@ func sendFiles(client *scp.Client, opts *Options, files []*os.File) error {
 			return errors.New(errorMessage)
 		}
 
-		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, getFullName(opts), basename)
+		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, GetFullName(opts), basename)
 		permissions := "0655"
 		err = client.CopyFile(file, remotePath, permissions)
 
@@ -67,6 +67,8 @@ func getClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 	return clientConfig, nil
 }
 
-func getFullName(opts *Options) string {
+// GetFullName gets the full name of the app given the provided options.
+// The name is based on the app name and the channel.
+func GetFullName(opts *Options) string {
 	return fmt.Sprintf("%s-%s", opts.Name, opts.Channel)
 }
