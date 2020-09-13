@@ -126,26 +126,26 @@ func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 
 // CompareOpts compares two sets of options in a test environment.
 func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
-	compareStrings(expectedOpts.Name, actualOpts.Name, "name", t)
+	CompareStrings(expectedOpts.Name, actualOpts.Name, "name", t)
 
 	if !actualOpts.Server.Equal(expectedOpts.Server) {
 		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
 	}
 
-	compareStrings(expectedOpts.Username, actualOpts.Username, "username", t)
+	CompareStrings(expectedOpts.Username, actualOpts.Username, "username", t)
 
-	compareStrings(expectedOpts.RootDir, actualOpts.RootDir, "root directory", t)
+	CompareStrings(expectedOpts.RootDir, actualOpts.RootDir, "root directory", t)
 
 	if (expectedOpts.PrivateKey.PrivateKey != nil && actualOpts.PrivateKey.PrivateKey != nil) && !expectedOpts.PrivateKey.PrivateKey.Equal(actualOpts.PrivateKey.PrivateKey) {
 		t.Errorf("Expected equal private keys but they were not equal")
 	}
 
-	compareStrings(expectedOpts.Channel, actualOpts.Channel, "channel", t)
+	CompareStrings(expectedOpts.Channel, actualOpts.Channel, "channel", t)
 
 	if actualOpts.Path != expectedOpts.Path {
 		t.Errorf("Expected path %s but got %s", expectedOpts.Path, actualOpts.Path)
 	}
-	compareStrings(expectedOpts.Path, actualOpts.Path, "path", t)
+	CompareStrings(expectedOpts.Path, actualOpts.Path, "path", t)
 
 	compareSlices(actualOpts.EnvVars, expectedOpts.EnvVars, "environment variables", t)
 
@@ -170,7 +170,8 @@ func CloneOptions(optionsToClone *sad.Options, optionsToCloneInto *sad.Options) 
 	return nil
 }
 
-func compareStrings(expected, actual, name string, t *testing.T) {
+// CompareStrings compares two strings in a test and nicely handles empty strings.
+func CompareStrings(expected, actual, name string, t *testing.T) {
 	if expected != actual {
 		empty := "<empty>"
 
