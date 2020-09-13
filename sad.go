@@ -1,18 +1,44 @@
 package sad
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+
 	scp "github.com/bramvdbogaerde/go-scp"
 	"golang.org/x/crypto/ssh"
 )
 
-func getSCPClient(opts *Options) (*scp.Client, error) {
-	clientConfig, err := getClientConfig(opts)
+func sendFiles(client *scp.Client, opts *Options, files []*os.File) error {
+	err := client.Connect()
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	scpClient := scp.NewClient("example.com:22", clientConfig)
+	defer client.Close()
+
+	for _, file := range files {
+		defer file.Close()
+
+		remotePath := opts.RootDir
+		permissions := "0655"
+		err = client.CopyFile(file, remotePath, permissions)
+
+		if err != nil {
+			errorMessage := fmt.Sprintf("Error copying file %s to remote server: %s", file.Name(), err)
+			return errors.New(errorMessage)
+		}
+	}
+
+	return nil
+}
+
+func getSCPClient(opts *Options, clientConfig *ssh.ClientConfig) (*scp.Client, error) {
+	port := 22
+	host := fmt.Sprintf("%s:%s", opts.Server, strconv.Itoa(port))
+	scpClient := scp.NewClient(host, clientConfig)
 
 	return &scpClient, nil
 }
