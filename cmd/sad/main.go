@@ -56,33 +56,11 @@ func main() {
 
 	fmt.Println("Sending files to server...")
 
-	var filePaths []string
-	var files []*os.File
+	files, err := getRelativeFiles(commandLineOpts)
 
-	fileNames := []string{
-		"docker-compose.yml",
-	}
-
-	for _, fileName := range fileNames {
-		filePath, err := getRelativeFilePath(commandLineOpts, fileName)
-
-		if err != nil {
-			fmt.Println("Error getting path for file ", fileName)
-			os.Exit(1)
-		}
-
-		filePaths = append(filePaths, filePath)
-	}
-
-	for _, filePath := range filePaths {
-		file, err := os.Open(filePath)
-
-		if err != nil {
-			fmt.Println("Error opening file for deployment: ", err)
-			os.Exit(1)
-		}
-
-		files = append(files, file)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	err = sad.SendFiles(scpClient, commandLineOpts, files)
@@ -155,6 +133,41 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	}
 
 	return opts, buf.String(), nil
+}
+
+// Opens files, remember to close.
+func getRelativeFiles(opts *sad.Options) ([]*os.File, error) {
+	var filePaths []string
+	var files []*os.File
+
+	fileNames := []string{
+		"docker-compose.yml",
+	}
+
+	for _, fileName := range fileNames {
+		filePath, err := getRelativeFilePath(opts, fileName)
+
+		if err != nil {
+			err := fmt.Errorf("Error getting relative file path for file %s", fileName)
+			return nil, err
+		}
+
+		filePaths = append(filePaths, filePath)
+	}
+
+	for _, filePath := range filePaths {
+		file, err := os.Open(filePath)
+
+		if err != nil {
+			fmt.Println("Error opening file for deployment: ", err)
+			err := fmt.Errorf("Error opening file from path %s", filePath)
+			return nil, err
+		}
+
+		files = append(files, file)
+	}
+
+	return files, nil
 }
 
 func getRelativeFilePath(opts *sad.Options, fileName string) (string, error) {
