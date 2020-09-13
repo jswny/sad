@@ -95,7 +95,7 @@ func (k *RSAPrivateKey) ParseBase64PEMString(str string) error {
 	return nil
 }
 
-// ToSSHAuthMethod converts an RSA private key into an SSH AuthMethod
+// ToSSHAuthMethod converts an RSA private key into an SSH AuthMethod.
 func (k *RSAPrivateKey) ToSSHAuthMethod() (ssh.AuthMethod, error) {
 	signer, err := ssh.NewSignerFromKey(k.PrivateKey)
 	if err != nil {

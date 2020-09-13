@@ -103,3 +103,12 @@ func TestRSAPrivateKeyParseBase64PEMString(t *testing.T) {
 		t.Errorf("Expected base64 PEM block encoded and decoded private keys to be equal, but they were not")
 	}
 }
+
+func TestRSAPrivateKeyToSSHAuthMethod(t *testing.T) {
+	testRSAPrivateKey := testutils.GenerateRSAPrivateKey()
+	_, err := testRSAPrivateKey.ToSSHAuthMethod()
+
+	if err != nil {
+		t.Errorf("Error converting RSA private key to SSH auth method")
+	}
+}
