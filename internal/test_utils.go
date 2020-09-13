@@ -45,34 +45,16 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 // UnsetEnv should be called after.
 func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.EnvVarPrefix
-	var envVarPostfix string
 
-	envVarPostfix = "NAME"
-	os.Setenv(prefix+envVarPostfix, stringOpts.Name)
-
-	envVarPostfix = "SERVER"
-	os.Setenv(prefix+envVarPostfix, stringOpts.Server)
-
-	envVarPostfix = "USERNAME"
-	os.Setenv(prefix+envVarPostfix, stringOpts.Username)
-
-	envVarPostfix = "ROOT_DIR"
-	os.Setenv(prefix+envVarPostfix, stringOpts.RootDir)
-
-	envVarPostfix = "PRIVATE_KEY"
-	os.Setenv(prefix+envVarPostfix, stringOpts.PrivateKey)
-
-	envVarPostfix = "CHANNEL"
-	os.Setenv(prefix+envVarPostfix, stringOpts.Channel)
-
-	envVarPostfix = "PATH"
-	os.Setenv(prefix+envVarPostfix, stringOpts.Path)
-
-	envVarPostfix = "ENV_VARS"
-	os.Setenv(prefix+envVarPostfix, stringOpts.EnvVars)
-
-	envVarPostfix = "DEBUG"
-	os.Setenv(prefix+envVarPostfix, stringOpts.Debug)
+	setEnvFromPrefixPostfix(prefix, "NAME", stringOpts.Name)
+	setEnvFromPrefixPostfix(prefix, "SERVER", stringOpts.Server)
+	setEnvFromPrefixPostfix(prefix, "USERNAME", stringOpts.Username)
+	setEnvFromPrefixPostfix(prefix, "ROOT_DIR", stringOpts.RootDir)
+	setEnvFromPrefixPostfix(prefix, "PRIVATE_KEY", stringOpts.PrivateKey)
+	setEnvFromPrefixPostfix(prefix, "CHANNEL", stringOpts.Channel)
+	setEnvFromPrefixPostfix(prefix, "PATH", stringOpts.Path)
+	setEnvFromPrefixPostfix(prefix, "ENV_VARS", stringOpts.EnvVars)
+	setEnvFromPrefixPostfix(prefix, "DEBUG", stringOpts.Debug)
 }
 
 // UnsetEnv sets environment variables for all string options.
@@ -233,4 +215,8 @@ func randString(n int) string {
 		b[i] = letters[mathrand.Intn(len(letters))]
 	}
 	return string(b)
+}
+
+func setEnvFromPrefixPostfix(prefix, postfix, value string) {
+	os.Setenv(prefix+postfix, value)
 }
