@@ -42,15 +42,7 @@ func sendFiles(client *scp.Client, opts *Options, files []*os.File) error {
 	return nil
 }
 
-func getSCPClient(opts *Options, clientConfig *ssh.ClientConfig) (*scp.Client, error) {
-	port := 22
-	host := fmt.Sprintf("%s:%s", opts.Server, strconv.Itoa(port))
-	scpClient := scp.NewClient(host, clientConfig)
-
-	return &scpClient, nil
-}
-
-// GetSSHClientConfig generates an SSH client config based on the provided options
+// GetSSHClientConfig generates an SSH client config based on the provided options.
 func GetSSHClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 	authMethod, err := opts.PrivateKey.ToSSHAuthMethod()
 
@@ -66,6 +58,15 @@ func GetSSHClientConfig(opts *Options) (*ssh.ClientConfig, error) {
 	}
 
 	return clientConfig, nil
+}
+
+// GetSCPClient generates an SCP client based on the given options and SSH client config.
+func GetSCPClient(opts *Options, clientConfig *ssh.ClientConfig) (*scp.Client, error) {
+	port := 22
+	host := fmt.Sprintf("%s:%s", opts.Server, strconv.Itoa(port))
+	scpClient := scp.NewClient(host, clientConfig)
+
+	return &scpClient, nil
 }
 
 // GetFullName gets the full name of the app given the provided options.
