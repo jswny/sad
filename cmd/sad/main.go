@@ -56,7 +56,7 @@ func main() {
 
 	fmt.Println("Sending files to server...")
 
-	files, err := getRelativeFiles(commandLineOpts)
+	files, err := GetRelativeDeploymentFiles(commandLineOpts)
 
 	if err != nil {
 		fmt.Println(err)
@@ -135,8 +135,11 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	return opts, buf.String(), nil
 }
 
+// GetRelativeDeploymentFiles gets and opens the files needed for deployment.
+// Files are relative to the current working directory and the path option.
+// Files: "docker-compose.yml".
 // Opens files, remember to close.
-func getRelativeFiles(opts *sad.Options) ([]*os.File, error) {
+func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 	var filePaths []string
 	var files []*os.File
 

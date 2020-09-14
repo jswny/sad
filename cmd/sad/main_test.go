@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/jswny/sad"
@@ -126,6 +127,53 @@ func TestParseFlagsEmptyValues(t *testing.T) {
 	}
 
 	testutils.CompareOpts(testOpts, *opts, t)
+}
+
+func TestGetRelativeDeploymentFiles(t *testing.T) {
+	tempDir := filepath.Join("..", "..", ".test")
+	tempFile := filepath.Join(tempDir, "docker-compose.yml")
+
+	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
+		err := os.Mkdir(tempDir, 0755)
+
+		if err != nil {
+			t.Fatalf("Error creating temp directory: %s", err)
+		}
+	}
+
+	defer os.RemoveAll(tempDir)
+
+	content := []byte("test")
+	if err := ioutil.WriteFile(tempFile, content, 0755); err != nil {
+		t.Fatalf("Error writing to temp file: %s", err)
+	}
+
+	opts := sad.Options{
+		Path: tempDir,
+	}
+
+	files, err := main.GetRelativeDeploymentFiles(&opts)
+
+	if err != nil {
+		t.Fatalf("Error getting relative deployment files: %s", err)
+	}
+
+	expected := 1
+	actual := len(files)
+
+	if actual != expected {
+		t.Errorf("Get relative deployment files returned %d files, expected %d", actual, expected)
+	}
+
+	data, err := ioutil.ReadFile(tempFile)
+
+	if err != nil {
+		t.Fatalf("Error reading from relative deployment file: %s", err)
+	}
+
+	if string(content) != string(data) {
+		t.Errorf("Expected file content %s but got %s", content, data)
+	}
 }
 
 func buildArgs(stringOpts *testutils.StringOptions) []string {
