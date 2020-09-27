@@ -11,6 +11,12 @@ import (
 	"github.com/jswny/sad"
 )
 
+// The name of the Docker Compose file to be loaded for deployment
+var DockerComposeFileName string = "docker-compose.sad.yml"
+
+// The name of the .env file to be loaded for deployment
+var DotEnvFileName string = ".sad.env"
+
 var configFile string = ".sad.json"
 
 func main() {
@@ -137,14 +143,14 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 
 // GetRelativeDeploymentFiles gets and opens the files needed for deployment.
 // Files are relative to the current working directory and the path option.
-// Files: "docker-compose.yml".
+// Files: Docker Compose file (see DockerComposeFileName).
 // Opens files, remember to close.
 func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 	var filePaths []string
 	var files []*os.File
 
 	fileNames := []string{
-		"docker-compose.yml",
+		DockerComposeFileName,
 	}
 
 	for _, fileName := range fileNames {

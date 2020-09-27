@@ -131,7 +131,8 @@ func TestParseFlagsEmptyValues(t *testing.T) {
 
 func TestGetRelativeDeploymentFiles(t *testing.T) {
 	tempDir := filepath.Join("..", "..", ".test")
-	tempFile := filepath.Join(tempDir, "docker-compose.yml")
+	tempFileName := main.DockerComposeFileName
+	tempFile := filepath.Join(tempDir, tempFileName)
 
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
 		err := os.Mkdir(tempDir, 0755)
