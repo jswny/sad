@@ -17,10 +17,10 @@ var DockerComposeFileName string = "docker-compose.sad.yml"
 // The name of the .env file to be loaded for deployment
 var DotEnvFileName string = ".sad.env"
 
-var configFile string = ".sad.json"
+var configFileName string = ".sad.json"
 
 func main() {
-	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFile)
+	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFileName)
 	if err != nil {
 		if commandLineOutput != "" {
 			fmt.Println(commandLineOutput)
@@ -77,7 +77,7 @@ func main() {
 }
 
 // GetAllOptionSources gets options from each different source.
-func GetAllOptionSources(program string, args []string, configFile string) (commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options, commandLineOutput string, err error) {
+func GetAllOptionSources(program string, args []string, configFileName string) (commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options, commandLineOutput string, err error) {
 	commandLineOpts, output, err := ParseFlags(program, args)
 	if err != nil {
 		return nil, nil, nil, output, err
@@ -90,7 +90,7 @@ func GetAllOptionSources(program string, args []string, configFile string) (comm
 	}
 
 	configOpts = &sad.Options{}
-	err = configOpts.GetJSON(configFile)
+	err = configOpts.GetJSON(configFileName)
 	if err != nil {
 		return nil, nil, nil, "", err
 	}
