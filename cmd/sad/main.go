@@ -11,10 +11,10 @@ import (
 	"github.com/jswny/sad"
 )
 
-// The name of the Docker Compose file to be loaded for deployment
+// DockerComposeFileName is the name of the Docker Compose file to be loaded for deployment.
 var DockerComposeFileName string = "docker-compose.sad.yml"
 
-// The name of the .env file to be loaded for deployment
+// DotEnvFileName is the name of the .env file to be loaded for deployment.
 var DotEnvFileName string = ".sad.env"
 
 var configFileName string = ".sad.json"
