@@ -200,7 +200,7 @@ func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 	}
 
 	if foundPath == "" {
-		return "", errors.New("file not found!")
+		return "", errors.New("file not found")
 	}
 
 	return foundPath, nil

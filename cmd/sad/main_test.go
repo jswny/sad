@@ -2,10 +2,10 @@ package main_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/jswny/sad"
@@ -182,15 +182,15 @@ func TestFindFilePathRecursive(t *testing.T) {
 	dirName := "dir.test"
 	fileName := "file.test"
 
-	tempDir, err := ioutil.TempDir("", dirName)
+	tempDirPath, err := ioutil.TempDir("", dirName)
 
 	if err != nil {
 		t.Fatalf("Error creating temp dir: %s", err)
 	}
 
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(tempDirPath)
 
-	tempFile, err := ioutil.TempFile(tempDir, fileName)
+	tempFile, err := ioutil.TempFile(tempDirPath, fileName)
 
 	if err != nil {
 		t.Fatalf("Error creating temp file: %s", err)
@@ -198,7 +198,12 @@ func TestFindFilePathRecursive(t *testing.T) {
 
 	tempFileName := filepath.Base(tempFile.Name())
 
-	path, err := main.FindFilePathRecursive(tempDir, tempFileName)
+	stringPathSeparator := string(os.PathSeparator)
+	splitTempDirPath := strings.Split(tempDirPath, stringPathSeparator)
+	splitTempDirPathLen := len(splitTempDirPath)
+	mainTempDir := strings.Join(splitTempDirPath[:splitTempDirPathLen-1], stringPathSeparator)
+
+	path, err := main.FindFilePathRecursive(mainTempDir, tempFileName)
 
 	if err != nil {
 		t.Fatalf("Error finding recursive file path: %s", err)
@@ -206,8 +211,6 @@ func TestFindFilePathRecursive(t *testing.T) {
 
 	expected := tempFile.Name()
 	actual := path
-
-	fmt.Println(tempDir)
 
 	if actual != expected {
 		t.Errorf("Expected file path %s, got %s", expected, actual)
