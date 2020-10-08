@@ -2,6 +2,7 @@ package main_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -174,6 +175,42 @@ func TestGetRelativeDeploymentFiles(t *testing.T) {
 
 	if string(content) != string(data) {
 		t.Errorf("Expected file content %s but got %s", content, data)
+	}
+}
+
+func TestFindFilePathRecursive(t *testing.T) {
+	dirName := "dir.test"
+	fileName := "file.test"
+
+	tempDir, err := ioutil.TempDir("", dirName)
+
+	if err != nil {
+		t.Fatalf("Error creating temp dir: %s", err)
+	}
+
+	defer os.RemoveAll(tempDir)
+
+	tempFile, err := ioutil.TempFile(tempDir, fileName)
+
+	if err != nil {
+		t.Fatalf("Error creating temp file: %s", err)
+	}
+
+	tempFileName := filepath.Base(tempFile.Name())
+
+	path, err := main.FindFilePathRecursive(tempDir, tempFileName)
+
+	if err != nil {
+		t.Fatalf("Error finding recursive file path: %s", err)
+	}
+
+	expected := tempFile.Name()
+	actual := path
+
+	fmt.Println(tempDir)
+
+	if actual != expected {
+		t.Errorf("Expected file path %s, got %s", expected, actual)
 	}
 }
 

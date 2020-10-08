@@ -185,7 +185,7 @@ func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 	var foundPath string
 
-	foundErrorMessage := "File found"
+	foundErrorMessage := "file found"
 
 	err := filepath.Walk(fromPath, func(path string, info os.FileInfo, err error) error {
 		if err == nil && fileName == info.Name() {
@@ -195,8 +195,12 @@ func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 		return nil
 	})
 
-	if err.Error() != foundErrorMessage {
+	if err != nil && err.Error() != foundErrorMessage {
 		return "", err
+	}
+
+	if foundPath == "" {
+		return "", errors.New("file not found!")
 	}
 
 	return foundPath, nil
