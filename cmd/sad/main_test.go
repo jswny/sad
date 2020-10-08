@@ -212,9 +212,7 @@ func TestFindFilePathRecursive(t *testing.T) {
 	expected := tempFile.Name()
 	actual := path
 
-	if actual != expected {
-		t.Errorf("Expected file path %s, got %s", expected, actual)
-	}
+	testutils.CompareStrings(expected, actual, "file path", t)
 }
 
 func TestFindFilePathRecursiveNotFound(t *testing.T) {
@@ -236,7 +234,7 @@ func TestFindFilePathRecursiveNotFound(t *testing.T) {
 	expected := ""
 	actual := path
 
-	testutils.CompareStrings(expected, actual, "path", t)
+	testutils.CompareStrings(expected, actual, "file path", t)
 }
 
 func buildArgs(stringOpts *testutils.StringOptions) []string {
