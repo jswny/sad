@@ -217,6 +217,28 @@ func TestFindFilePathRecursive(t *testing.T) {
 	}
 }
 
+func TestFindFilePathRecursiveNotFound(t *testing.T) {
+	cwdPath, err := os.Getwd()
+
+	if err != nil {
+		t.Fatalf("Error getting current working directory: %s", err)
+	}
+
+	fileName := "1234556789"
+	path, err := main.FindFilePathRecursive(cwdPath, fileName)
+
+	if err == nil {
+		t.Fatalf("Expected error but got nil!")
+	}
+
+	testutils.CompareStrings(main.FindFilePathRecursiveFileNotFoundErrorMessage, err.Error(), "error", t)
+
+	expected := ""
+	actual := path
+
+	testutils.CompareStrings(expected, actual, "path", t)
+}
+
 func buildArgs(stringOpts *testutils.StringOptions) []string {
 	args := []string{
 		"-name",

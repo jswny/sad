@@ -18,6 +18,9 @@ var DockerComposeFileName string = "docker-compose.sad.yml"
 // DotEnvFileName is the name of the .env file to be loaded for deployment.
 var DotEnvFileName string = ".sad.env"
 
+// The string error message returned when FindFilePathRecursive cannot find the specified file.
+var FindFilePathRecursiveFileNotFoundErrorMessage = "file not found"
+
 var configFileName string = ".sad.json"
 
 func main() {
@@ -182,6 +185,7 @@ func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 
 // FindFilePathRecursive finds a file path recursively that matches the specified file name starting from the specified path.
 // Returns the path of the file if it is found, otherwise returns an error.
+// If the error was only that the file was not found, returns an error containing FindFilePathRecursiveFileNotFoundErrorMessage.
 func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 	var foundPath string
 
@@ -200,7 +204,7 @@ func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 	}
 
 	if foundPath == "" {
-		return "", errors.New("file not found")
+		return "", errors.New(FindFilePathRecursiveFileNotFoundErrorMessage)
 	}
 
 	return foundPath, nil
