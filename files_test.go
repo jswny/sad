@@ -48,6 +48,31 @@ func TestFindFilePathRecursive(t *testing.T) {
 	testutils.CompareStrings(expected, actual, "file path", t)
 }
 
+func TestFindFilePathRecursiveCWD(t *testing.T) {
+	fileName := "file.test"
+
+	tempFile, err := ioutil.TempFile(".", fileName)
+
+	if err != nil {
+		t.Fatalf("Error creating temp file: %s", err)
+	}
+
+	defer os.Remove(tempFile.Name())
+
+	tempFileName := filepath.Base(tempFile.Name())
+
+	path, err := sad.FindFilePathRecursive(".", tempFileName)
+
+	if err != nil {
+		t.Fatalf("Error finding recursive file path: %s", err)
+	}
+
+	expected := tempFile.Name()
+	actual := path
+
+	testutils.CompareStrings(expected, actual, "file path", t)
+}
+
 func TestFindFilePathRecursiveNotFound(t *testing.T) {
 	cwdPath, err := os.Getwd()
 

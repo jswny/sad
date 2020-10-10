@@ -20,7 +20,13 @@ var DotEnvFileName string = ".sad.env"
 var configFileName string = ".sad.json"
 
 func main() {
-	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFileName)
+	configFilePath, err := sad.FindFilePathRecursive(".", configFileName)
+
+	if err != nil && err.Error() != sad.FindFilePathRecursiveFileNotFoundErrorMessage {
+		fmt.Println("Error finding config file: ", err)
+	}
+
+	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
 	if err != nil {
 		if commandLineOutput != "" {
 			fmt.Println(commandLineOutput)
