@@ -12,7 +12,7 @@ import (
 )
 
 // DockerComposeFileName is the name of the Docker Compose file to be loaded for deployment.
-var DockerComposeFileName string = "docker-compose.sad.yml"
+var DockerComposeFileName string = ".sad.docker-compose.yml"
 
 // DotEnvFileName is the name of the .env file to be loaded for deployment.
 var DotEnvFileName string = ".sad.env"
