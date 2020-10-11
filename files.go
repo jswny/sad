@@ -3,8 +3,10 @@ package sad
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // DockerComposeFileName is the name of the Docker Compose file to be loaded for deployment.
@@ -77,4 +79,15 @@ func GetFilesForDeployment(fromPath string) ([]*os.File, error) {
 	}
 
 	return files, nil
+}
+
+// GenerateDotEnvFile generates a file as a reader which contains a properly-formatted .env file.
+func GenerateDotEnvFile(variables map[string]string) io.Reader {
+	var s string
+
+	for name, value := range variables {
+		s += fmt.Sprintln(name, "=", value)
+	}
+
+	return strings.NewReader(s)
 }
