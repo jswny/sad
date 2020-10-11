@@ -211,3 +211,9 @@ func (o *Options) GetEnv() error {
 
 	return nil
 }
+
+// GetFullAppName gets the full name of the app given the provided options.
+// The name is based on the app name and the channel.
+func (o *Options) GetFullAppName() string {
+	return fmt.Sprintf("%s-%s", o.Name, o.Channel)
+}

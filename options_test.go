@@ -221,3 +221,15 @@ func TestOptionsGetEnvEmptyValues(t *testing.T) {
 
 	testutils.CompareOpts(testOpts, opts, t)
 }
+
+func TestGetFullAppName(t *testing.T) {
+	opts := sad.Options{
+		Name:    "foo",
+		Channel: "beta",
+	}
+
+	fullName := opts.GetFullAppName()
+	expected := "foo-beta"
+
+	testutils.CompareStrings(expected, fullName, "full name", t)
+}
