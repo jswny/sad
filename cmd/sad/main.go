@@ -10,10 +10,8 @@ import (
 	"github.com/jswny/sad"
 )
 
-var configFileName string = ".sad.json"
-
 func main() {
-	configFilePath, err := sad.FindFilePathRecursive(".", configFileName)
+	configFilePath, err := sad.FindFilePathRecursive(".", sad.ConfigFileName)
 
 	if err != nil {
 		if err.Error() == sad.FindFilePathRecursiveFileNotFoundErrorMessage {

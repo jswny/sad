@@ -15,6 +15,9 @@ var DockerComposeFileName string = ".sad.docker-compose.yml"
 // DotEnvFileName is the name of the .env file to be loaded for deployment.
 var DotEnvFileName string = ".sad.env"
 
+// ConfigFileName is the name of the configuration file to pull options from.
+var ConfigFileName string = ".sad.json"
+
 // FindFilePathRecursiveFileNotFoundErrorMessage is the string error message returned when FindFilePathRecursive cannot find the specified file.
 var FindFilePathRecursiveFileNotFoundErrorMessage = "file not found"
 
