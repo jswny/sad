@@ -140,11 +140,18 @@ func TestGetFilesForDeployment(t *testing.T) {
 
 	defer os.RemoveAll(tempDirPath)
 
-	tempComposeFilePath := filepath.Join(tempDirPath, main.DockerComposeFileName)
+	fileNames := []string{
+		main.DockerComposeFileName,
+	}
 
 	content := []byte("test")
-	if err := ioutil.WriteFile(tempComposeFilePath, content, 0755); err != nil {
-		t.Fatalf("Error writing to temp compose file: %s", err)
+
+	for _, fileName := range fileNames {
+		filePath := filepath.Join(tempDirPath, fileName)
+
+		if err := ioutil.WriteFile(filePath, content, 0755); err != nil {
+			t.Fatalf("Error writing to temp file \"%s\", %s", filePath, err)
+		}
 	}
 
 	files, err := main.GetFilesForDeployment(tempDirPath)
@@ -153,21 +160,23 @@ func TestGetFilesForDeployment(t *testing.T) {
 		t.Fatalf("Error getting files for deployment: %s", err)
 	}
 
-	expected := 1
+	expected := len(fileNames)
 	actual := len(files)
 
 	if actual != expected {
 		t.Errorf("Getting files for deployment returned %d files, expected %d", actual, expected)
 	}
 
-	data, err := ioutil.ReadFile(files[0].Name())
+	for _, file := range files {
+		data, err := ioutil.ReadFile(file.Name())
 
-	if err != nil {
-		t.Fatalf("Error reading from deployment file: %s", err)
-	}
+		if err != nil {
+			t.Fatalf("Error reading from deployment file: %s", err)
+		}
 
-	if string(content) != string(data) {
-		t.Errorf("Expected file content %s but got %s", content, data)
+		if string(content) != string(data) {
+			t.Errorf("Expected file content %s but got %s", content, data)
+		}
 	}
 }
 
