@@ -12,10 +12,10 @@ import (
 )
 
 func TestFindFilePathRecursive(t *testing.T) {
-	dirName := "dir.test"
-	fileName := "file.test"
+	tempDirName := "dir.test"
+	tempFileName := "file.test"
 
-	tempDirPath, err := ioutil.TempDir("", dirName)
+	tempDirPath, err := ioutil.TempDir("", tempDirName)
 
 	if err != nil {
 		t.Fatalf("Error creating temp dir: %s", err)
@@ -23,20 +23,20 @@ func TestFindFilePathRecursive(t *testing.T) {
 
 	defer os.RemoveAll(tempDirPath)
 
-	tempFile, err := ioutil.TempFile(tempDirPath, fileName)
+	tempFile, err := ioutil.TempFile(tempDirPath, tempFileName)
 
 	if err != nil {
 		t.Fatalf("Error creating temp file: %s", err)
 	}
 
-	tempFileName := filepath.Base(tempFile.Name())
+	generatedTempFileName := filepath.Base(tempFile.Name())
 
 	stringPathSeparator := string(os.PathSeparator)
 	splitTempDirPath := strings.Split(tempDirPath, stringPathSeparator)
 	splitTempDirPathLen := len(splitTempDirPath)
 	mainTempDir := strings.Join(splitTempDirPath[:splitTempDirPathLen-1], stringPathSeparator)
 
-	path, err := sad.FindFilePathRecursive(mainTempDir, tempFileName)
+	path, err := sad.FindFilePathRecursive(mainTempDir, generatedTempFileName)
 
 	if err != nil {
 		t.Fatalf("Error finding recursive file path: %s", err)

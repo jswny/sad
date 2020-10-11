@@ -129,47 +129,41 @@ func TestParseFlagsEmptyValues(t *testing.T) {
 	testutils.CompareOpts(testOpts, *opts, t)
 }
 
-func TestGetRelativeDeploymentFiles(t *testing.T) {
-	tempDir := filepath.Join("..", "..", ".test")
-	tempFileName := main.DockerComposeFileName
-	tempFile := filepath.Join(tempDir, tempFileName)
+func TestGetFilesForDeployment(t *testing.T) {
+	dirName := "dir.test"
 
-	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
-		err := os.Mkdir(tempDir, 0755)
-
-		if err != nil {
-			t.Fatalf("Error creating temp directory: %s", err)
-		}
-	}
-
-	defer os.RemoveAll(tempDir)
-
-	content := []byte("test")
-	if err := ioutil.WriteFile(tempFile, content, 0755); err != nil {
-		t.Fatalf("Error writing to temp file: %s", err)
-	}
-
-	opts := sad.Options{
-		Path: tempDir,
-	}
-
-	files, err := main.GetRelativeDeploymentFiles(&opts)
+	tempDirPath, err := ioutil.TempDir("", dirName)
 
 	if err != nil {
-		t.Fatalf("Error getting relative deployment files: %s", err)
+		t.Fatalf("Error creating temp dir: %s", err)
+	}
+
+	defer os.RemoveAll(tempDirPath)
+
+	tempComposeFilePath := filepath.Join(tempDirPath, main.DockerComposeFileName)
+
+	content := []byte("test")
+	if err := ioutil.WriteFile(tempComposeFilePath, content, 0755); err != nil {
+		t.Fatalf("Error writing to temp compose file: %s", err)
+	}
+
+	files, err := main.GetFilesForDeployment(tempDirPath)
+
+	if err != nil {
+		t.Fatalf("Error getting files for deployment: %s", err)
 	}
 
 	expected := 1
 	actual := len(files)
 
 	if actual != expected {
-		t.Errorf("Get relative deployment files returned %d files, expected %d", actual, expected)
+		t.Errorf("Getting files for deployment returned %d files, expected %d", actual, expected)
 	}
 
-	data, err := ioutil.ReadFile(tempFile)
+	data, err := ioutil.ReadFile(files[0].Name())
 
 	if err != nil {
-		t.Fatalf("Error reading from relative deployment file: %s", err)
+		t.Fatalf("Error reading from deployment file: %s", err)
 	}
 
 	if string(content) != string(data) {

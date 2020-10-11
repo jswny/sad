@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/jswny/sad"
@@ -68,7 +67,7 @@ func main() {
 
 	fmt.Println("Sending files to server...")
 
-	files, err := GetRelativeDeploymentFiles(commandLineOpts)
+	files, err := GetFilesForDeployment(".")
 
 	if err != nil {
 		fmt.Println(err)
@@ -147,11 +146,10 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	return opts, buf.String(), nil
 }
 
-// GetRelativeDeploymentFiles gets and opens the files needed for deployment.
-// Files are relative to the current working directory and the path option.
+// GetFilesForDeployment gets and opens the files needed for deployment by finding them recursively under the provided fromPath.
 // Files: Docker Compose file (see DockerComposeFileName).
 // Opens files, remember to close.
-func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
+func GetFilesForDeployment(fromPath string) ([]*os.File, error) {
 	var filePaths []string
 	var files []*os.File
 
@@ -160,10 +158,10 @@ func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 	}
 
 	for _, fileName := range fileNames {
-		filePath, err := getRelativeFilePath(opts, fileName)
+		filePath, err := sad.FindFilePathRecursive(fromPath, fileName)
 
 		if err != nil {
-			err := fmt.Errorf("Error getting relative file path for file %s", fileName)
+			err := fmt.Errorf("error finding file \"%s\" under path \"%s\": %s", fileName, fromPath, err)
 			return nil, err
 		}
 
@@ -174,8 +172,7 @@ func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 		file, err := os.Open(filePath)
 
 		if err != nil {
-			fmt.Println("Error opening file for deployment: ", err)
-			err := fmt.Errorf("Error opening file from path %s", filePath)
+			err := fmt.Errorf("error opening file for deployment from path \"%s\"", filePath)
 			return nil, err
 		}
 
@@ -183,14 +180,4 @@ func GetRelativeDeploymentFiles(opts *sad.Options) ([]*os.File, error) {
 	}
 
 	return files, nil
-}
-
-func getRelativeFilePath(opts *sad.Options, fileName string) (string, error) {
-	cwdPath, err := os.Getwd()
-
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(cwdPath, opts.Path, fileName), nil
 }
