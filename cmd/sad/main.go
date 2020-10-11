@@ -15,8 +15,13 @@ var configFileName string = ".sad.json"
 func main() {
 	configFilePath, err := sad.FindFilePathRecursive(".", configFileName)
 
-	if err != nil && err.Error() != sad.FindFilePathRecursiveFileNotFoundErrorMessage {
-		fmt.Println("Error finding config file: ", err)
+	if err != nil {
+		if err.Error() == sad.FindFilePathRecursiveFileNotFoundErrorMessage {
+			fmt.Println("Could not find a config file, skipping...")
+		} else {
+			fmt.Println("Error finding config file: ", err)
+			os.Exit(1)
+		}
 	}
 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
