@@ -1,7 +1,6 @@
 package sad_test
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -164,13 +163,13 @@ func TestGenerateDotEnvFile(t *testing.T) {
 
 	actual := builder.String()
 	expected := []string{
-		"foo=bar",
-		"baz=qux",
+		"foo=bar\n",
+		"baz=qux\n",
 	}
 
 	for _, expectedLine := range expected {
 		if !strings.Contains(actual, expectedLine) {
-			fmt.Errorf("Expected line %s in .env contents but got:\n%s", expectedLine, actual)
+			t.Errorf("Expected line %s in .env contents but got:\n%s", expectedLine, actual)
 		}
 	}
 }
