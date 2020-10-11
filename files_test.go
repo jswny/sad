@@ -1,6 +1,8 @@
 package sad_test
 
 import (
+	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -142,6 +144,33 @@ func TestGetFilesForDeployment(t *testing.T) {
 
 		if string(content) != string(data) {
 			t.Errorf("Expected file content %s but got %s", content, data)
+		}
+	}
+}
+
+func TestGenerateDotEnvFile(t *testing.T) {
+	variables := map[string]string{
+		"foo": "bar",
+		"baz": "qux",
+	}
+
+	reader := sad.GenerateDotEnvFile(variables)
+	builder := new(strings.Builder)
+	_, err := io.Copy(builder, reader)
+
+	if err != nil {
+		t.Fatalf("Error copying reader to string builder: %s", err)
+	}
+
+	actual := builder.String()
+	expected := []string{
+		"foo=bar",
+		"baz=qux",
+	}
+
+	for _, expectedLine := range expected {
+		if !strings.Contains(actual, expectedLine) {
+			fmt.Errorf("Expected line %s in .env contents but got:\n%s", expectedLine, actual)
 		}
 	}
 }

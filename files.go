@@ -86,7 +86,7 @@ func GenerateDotEnvFile(variables map[string]string) io.Reader {
 	var s string
 
 	for name, value := range variables {
-		s += fmt.Sprintln(name, "=", value)
+		s += fmt.Sprintf("%s=%s\n", name, value)
 	}
 
 	return strings.NewReader(s)
