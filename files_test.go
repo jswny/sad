@@ -173,3 +173,61 @@ func TestGenerateDotEnvFile(t *testing.T) {
 		}
 	}
 }
+
+func TestFilesToFileNameReaderMap(t *testing.T) {
+	var tempFiles []*os.File
+
+	fileName := "file.test"
+	content := []byte("test")
+	numFiles := 3
+
+	for i := 0; i < numFiles; i++ {
+		tempFile, err := ioutil.TempFile(".", fileName)
+
+		if err != nil {
+			t.Fatalf("Error creating temp file: %s", err)
+		}
+
+		defer os.Remove(tempFile.Name())
+
+		filePath := tempFile.Name()
+
+		if err := ioutil.WriteFile(filePath, content, 0755); err != nil {
+			t.Fatalf("Error writing to temp file \"%s\", %s", filePath, err)
+		}
+
+		tempFiles = append(tempFiles, tempFile)
+	}
+
+	actual := sad.FilesToFileNameReaderMap(tempFiles)
+	numActual := len(actual)
+
+	expected := tempFiles
+	numExpected := len(tempFiles)
+
+	if len(actual) != len(tempFiles) {
+		t.Errorf("Expected %d items in map, got %d", numExpected, numActual)
+	}
+
+	for _, tempFile := range expected {
+		fileName := filepath.Base(tempFile.Name())
+
+		reader := actual[fileName]
+		if reader == nil {
+			t.Errorf("Reader for file %s was nil!", fileName)
+		}
+
+		builder := new(strings.Builder)
+		_, err := io.Copy(builder, reader)
+
+		if err != nil {
+			t.Fatalf("Error copying reader for file %s to string builder: %s", fileName, err)
+		}
+
+		actualContent := builder.String()
+
+		if actualContent != string(content) {
+			t.Errorf("Expected content %s for file %s, got %s", content, fileName, actualContent)
+		}
+	}
+}

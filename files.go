@@ -91,3 +91,15 @@ func GenerateDotEnvFile(variables map[string]string) io.Reader {
 
 	return strings.NewReader(s)
 }
+
+// FilesToFileNameReaderMap converts a slice of files into a map of the file name to a reader for the content.
+func FilesToFileNameReaderMap(files []*os.File) map[string]io.Reader {
+	m := make(map[string]io.Reader)
+
+	for _, file := range files {
+		fileName := filepath.Base(file.Name())
+		m[fileName] = file
+	}
+
+	return m
+}
