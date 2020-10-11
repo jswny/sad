@@ -94,3 +94,54 @@ func TestFindFilePathRecursiveNotFound(t *testing.T) {
 
 	testutils.CompareStrings(expected, actual, "file path", t)
 }
+
+func TestGetFilesForDeployment(t *testing.T) {
+	dirName := "dir.test"
+
+	tempDirPath, err := ioutil.TempDir("", dirName)
+
+	if err != nil {
+		t.Fatalf("Error creating temp dir: %s", err)
+	}
+
+	defer os.RemoveAll(tempDirPath)
+
+	fileNames := []string{
+		sad.DockerComposeFileName,
+	}
+
+	content := []byte("test")
+
+	for _, fileName := range fileNames {
+		filePath := filepath.Join(tempDirPath, fileName)
+
+		if err := ioutil.WriteFile(filePath, content, 0755); err != nil {
+			t.Fatalf("Error writing to temp file \"%s\", %s", filePath, err)
+		}
+	}
+
+	files, err := sad.GetFilesForDeployment(tempDirPath)
+
+	if err != nil {
+		t.Fatalf("Error getting files for deployment: %s", err)
+	}
+
+	expected := len(fileNames)
+	actual := len(files)
+
+	if actual != expected {
+		t.Errorf("Getting files for deployment returned %d files, expected %d", actual, expected)
+	}
+
+	for _, file := range files {
+		data, err := ioutil.ReadFile(file.Name())
+
+		if err != nil {
+			t.Fatalf("Error reading from deployment file: %s", err)
+		}
+
+		if string(content) != string(data) {
+			t.Errorf("Expected file content %s but got %s", content, data)
+		}
+	}
+}

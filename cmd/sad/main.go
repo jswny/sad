@@ -10,12 +10,6 @@ import (
 	"github.com/jswny/sad"
 )
 
-// DockerComposeFileName is the name of the Docker Compose file to be loaded for deployment.
-var DockerComposeFileName string = ".sad.docker-compose.yml"
-
-// DotEnvFileName is the name of the .env file to be loaded for deployment.
-var DotEnvFileName string = ".sad.env"
-
 var configFileName string = ".sad.json"
 
 func main() {
@@ -67,7 +61,7 @@ func main() {
 
 	fmt.Println("Sending files to server...")
 
-	files, err := GetFilesForDeployment(".")
+	files, err := sad.GetFilesForDeployment(".")
 
 	if err != nil {
 		fmt.Println(err)
@@ -143,40 +137,4 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	}
 
 	return opts, buf.String(), nil
-}
-
-// GetFilesForDeployment gets and opens the files needed for deployment by finding them recursively under the provided fromPath.
-// Files: Docker Compose file (see DockerComposeFileName).
-// Opens files, remember to close.
-func GetFilesForDeployment(fromPath string) ([]*os.File, error) {
-	var filePaths []string
-	var files []*os.File
-
-	fileNames := []string{
-		DockerComposeFileName,
-	}
-
-	for _, fileName := range fileNames {
-		filePath, err := sad.FindFilePathRecursive(fromPath, fileName)
-
-		if err != nil {
-			err := fmt.Errorf("error finding file \"%s\" under path \"%s\": %s", fileName, fromPath, err)
-			return nil, err
-		}
-
-		filePaths = append(filePaths, filePath)
-	}
-
-	for _, filePath := range filePaths {
-		file, err := os.Open(filePath)
-
-		if err != nil {
-			err := fmt.Errorf("error opening file for deployment from path \"%s\"", filePath)
-			return nil, err
-		}
-
-		files = append(files, file)
-	}
-
-	return files, nil
 }
