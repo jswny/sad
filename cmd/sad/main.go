@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/jswny/sad"
@@ -68,7 +70,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = sad.SendFiles(scpClient, commandLineOpts, files)
+	for _, file := range files {
+		defer file.Close()
+	}
+
+	fileMap := FilesToFileNameReaderMap(files)
+
+	err = sad.SendFiles(scpClient, commandLineOpts, fileMap)
 	if err != nil {
 		fmt.Println("Error sending files to server: ", err)
 		os.Exit(1)
@@ -137,4 +145,15 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	}
 
 	return opts, buf.String(), nil
+}
+
+func FilesToFileNameReaderMap(files []*os.File) map[string]io.Reader {
+	m := make(map[string]io.Reader)
+
+	for _, file := range files {
+		fileName := filepath.Base(file.Name())
+		m[fileName] = file
+	}
+
+	return m
 }

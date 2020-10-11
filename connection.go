@@ -3,15 +3,17 @@ package sad
 import (
 	"errors"
 	"fmt"
-	"os"
+	"io"
 	"time"
 
 	scp "github.com/bramvdbogaerde/go-scp"
 	"golang.org/x/crypto/ssh"
 )
 
-// SendFiles sends files to a server using the provided SCP client.
-func SendFiles(client *scp.Client, opts *Options, files []*os.File) error {
+// SendFiles sends the specified reader interfaces as files to a server using the provided SCP client.
+// The files are specified as a map of the name of the file to send to the server to a reader which can read the file.
+// The full path name for the file on the remote server will be generatd as <root directory as specified by options>/<app name with channel>/<file name>.
+func SendFiles(client *scp.Client, opts *Options, files map[string]io.Reader) error {
 	err := client.Connect()
 
 	if err != nil {
@@ -20,22 +22,13 @@ func SendFiles(client *scp.Client, opts *Options, files []*os.File) error {
 
 	defer client.Close()
 
-	for _, file := range files {
-		defer file.Close()
-
-		basename, err := file.Stat()
-
-		if err != nil {
-			errorMessage := fmt.Sprintf("Error stating file %s: %s", file.Name(), err)
-			return errors.New(errorMessage)
-		}
-
-		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, opts.GetFullAppName(), basename)
+	for fileName, reader := range files {
+		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, opts.GetFullAppName(), fileName)
 		permissions := "0655"
-		err = client.CopyFile(file, remotePath, permissions)
+		err = client.CopyFile(reader, remotePath, permissions)
 
 		if err != nil {
-			errorMessage := fmt.Sprintf("Error copying file %s to remote server: %s", file.Name(), err)
+			errorMessage := fmt.Sprintf("Error copying file %s to remote server: %s", fileName, err)
 			return errors.New(errorMessage)
 		}
 	}
