@@ -126,7 +126,6 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	rootDir := flags.String("root-dir", "", "Root directory to deploy to on the server")
 	privateKey := flags.String("private-key", "", "Base64 encoded SSH private key to login to the user on the server")
 	channel := flags.String("channel", "", "Deployment channel")
-	path := flags.String("path", "", "Path to the app to be deployed relative to the current directory")
 	envVars := flags.String("env-vars", "", "Local environment variables to be injected into the app deployment")
 	debug := flags.Bool("debug", false, "Debug mode")
 
@@ -137,7 +136,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 
 	opts = &sad.Options{}
 	debugString := strconv.FormatBool(*debug)
-	err = opts.FromStrings(*name, *server, *username, *rootDir, *privateKey, *channel, *path, *envVars, debugString)
+	err = opts.FromStrings(*name, *server, *username, *rootDir, *privateKey, *channel, *envVars, debugString)
 
 	if err != nil {
 		return nil, buf.String(), err

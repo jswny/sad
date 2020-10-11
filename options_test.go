@@ -68,7 +68,6 @@ func TestOptionsMergeDefaults(t *testing.T) {
 	opts := sad.Options{}
 
 	expectedOpts.Channel = ""
-	expectedOpts.Path = ""
 
 	err := testutils.CloneOptions(&expectedOpts, &opts)
 	if err != nil {
@@ -78,7 +77,6 @@ func TestOptionsMergeDefaults(t *testing.T) {
 	opts.MergeDefaults()
 
 	expectedOpts.Channel = "beta"
-	expectedOpts.Path = "."
 
 	testutils.CompareOpts(expectedOpts, opts, t)
 }
@@ -119,12 +117,11 @@ func TestOptionsFromStrings(t *testing.T) {
 	rootDir := stringTestOpts.RootDir
 	privateKey := stringTestOpts.PrivateKey
 	channel := stringTestOpts.Channel
-	path := stringTestOpts.Path
 	envVars := stringTestOpts.EnvVars
 	debug := stringTestOpts.Debug
 
 	opts := sad.Options{}
-	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, path, envVars, debug)
+	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug)
 	if err != nil {
 		t.Fatalf("Error getting options from test options strings: %s", err)
 	}

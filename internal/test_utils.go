@@ -36,7 +36,6 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.RootDir = opts.RootDir
 	stringOpts.PrivateKey = opts.PrivateKey.ToBase64PEMString()
 	stringOpts.Channel = opts.Channel
-	stringOpts.Path = opts.Path
 	stringOpts.EnvVars = strings.Join(opts.EnvVars, ",")
 	stringOpts.Debug = strconv.FormatBool(opts.Debug)
 }
@@ -52,7 +51,6 @@ func (stringOpts *StringOptions) SetEnv() {
 	setEnvFromPrefixPostfix(prefix, "ROOT_DIR", stringOpts.RootDir)
 	setEnvFromPrefixPostfix(prefix, "PRIVATE_KEY", stringOpts.PrivateKey)
 	setEnvFromPrefixPostfix(prefix, "CHANNEL", stringOpts.Channel)
-	setEnvFromPrefixPostfix(prefix, "PATH", stringOpts.Path)
 	setEnvFromPrefixPostfix(prefix, "ENV_VARS", stringOpts.EnvVars)
 	setEnvFromPrefixPostfix(prefix, "DEBUG", stringOpts.Debug)
 }
@@ -104,7 +102,6 @@ func GetTestOpts() sad.Options {
 		RootDir:    randString(randSize),
 		PrivateKey: rsaPrivateKey,
 		Channel:    randString(randSize),
-		Path:       randString(randSize),
 		EnvVars: []string{
 			randString(randSize),
 			randString(randSize),
@@ -141,11 +138,6 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	}
 
 	CompareStrings(expectedOpts.Channel, actualOpts.Channel, "channel", t)
-
-	if actualOpts.Path != expectedOpts.Path {
-		t.Errorf("Expected path %s but got %s", expectedOpts.Path, actualOpts.Path)
-	}
-	CompareStrings(expectedOpts.Path, actualOpts.Path, "path", t)
 
 	compareSlices(actualOpts.EnvVars, expectedOpts.EnvVars, "environment variables", t)
 

@@ -22,7 +22,6 @@ type Options struct {
 	RootDir    string
 	PrivateKey RSAPrivateKey
 	Channel    string
-	Path       string
 	EnvVars    []string
 	Debug      bool
 }
@@ -54,10 +53,6 @@ func (o *Options) Merge(other *Options) {
 		o.Channel = other.Channel
 	}
 
-	if o.Path == "" {
-		o.Path = other.Path
-	}
-
 	if len(o.EnvVars) == 0 {
 		o.EnvVars = other.EnvVars
 	}
@@ -71,7 +66,6 @@ func (o *Options) Merge(other *Options) {
 func (o *Options) MergeDefaults() {
 	defaults := Options{
 		Channel: "beta",
-		Path:    ".",
 		Debug:   false,
 	}
 
@@ -108,10 +102,6 @@ func (o *Options) Verify() error {
 		errorMap["channel"] = fmt.Sprintf("is %s", empty)
 	}
 
-	if o.Path == "" {
-		errorMap["path"] = fmt.Sprintf("is %s", empty)
-	}
-
 	if len(errorMap) != 0 {
 		errorString := "Invalid options! "
 
@@ -128,7 +118,7 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(name string, server string, username string, rootDir string, privateKey string, channel string, path string, envVars string, debug string) error {
+func (o *Options) FromStrings(name string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
 	o.Name = name
 
 	if server != "" {
@@ -148,7 +138,6 @@ func (o *Options) FromStrings(name string, server string, username string, rootD
 	}
 
 	o.Channel = channel
-	o.Path = path
 
 	if envVars != "" {
 		envVarsArr := strings.Split(envVars, ",")
@@ -199,11 +188,10 @@ func (o *Options) GetEnv() error {
 	rootDir := os.Getenv(prefix + "ROOT_DIR")
 	privateKey := os.Getenv(prefix + "PRIVATE_KEY")
 	channel := os.Getenv(prefix + "CHANNEL")
-	path := os.Getenv(prefix + "PATH")
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
 
-	err := o.FromStrings(name, server, username, rootDir, privateKey, channel, path, envVars, debug)
+	err := o.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug)
 
 	if err != nil {
 		return err

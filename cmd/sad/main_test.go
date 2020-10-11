@@ -194,8 +194,6 @@ func buildArgs(stringOpts *testutils.StringOptions) []string {
 		stringOpts.PrivateKey,
 		"-channel",
 		stringOpts.Channel,
-		"-path",
-		stringOpts.Path,
 		"-env-vars",
 		stringOpts.EnvVars,
 		"-debug",
