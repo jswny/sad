@@ -77,6 +77,9 @@ func main() {
 
 	readerMap := sad.FilesToFileNameReaderMap(files)
 
+	env := commandLineOpts.GetEnvValues()
+	readerMap[sad.DotEnvFileName] = sad.GenerateDotEnvFile(env)
+
 	err = sad.SendFiles(scpClient, commandLineOpts, readerMap)
 	if err != nil {
 		fmt.Println("Error sending files to server: ", err)
