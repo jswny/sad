@@ -2,6 +2,7 @@ package sad_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -193,11 +194,10 @@ func TestOptionsGetEnv(t *testing.T) {
 	stringTestOpts.FromOptions(&testOpts)
 
 	stringTestOpts.SetEnv()
+	defer stringTestOpts.UnsetEnv()
 
 	opts := sad.Options{}
 	err := opts.GetEnv()
-
-	stringTestOpts.UnsetEnv()
 
 	if err != nil {
 		t.Fatalf("Error getting options from environment: %s", err)
@@ -229,4 +229,30 @@ func TestGetFullAppName(t *testing.T) {
 	expected := "foo-beta"
 
 	testutils.CompareStrings(expected, fullName, "full name", t)
+}
+
+func TestGetEnvValues(t *testing.T) {
+	opts := sad.Options{
+		EnvVars: []string{
+			"foo",
+			"bar",
+		},
+	}
+
+	content := "test"
+
+	for _, variableName := range opts.EnvVars {
+		os.Setenv(variableName, content)
+		defer os.Unsetenv(variableName)
+	}
+
+	envMap := opts.GetEnvValues()
+
+	for _, variableName := range opts.EnvVars {
+		variableValue := envMap[variableName]
+
+		name := fmt.Sprintf("environment variable %s value", variableName)
+
+		testutils.CompareStrings(content, variableValue, name, t)
+	}
 }

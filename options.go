@@ -205,3 +205,17 @@ func (o *Options) GetEnv() error {
 func (o *Options) GetFullAppName() string {
 	return fmt.Sprintf("%s-%s", o.Name, o.Channel)
 }
+
+// GetEnvValues gets the values of the environment variables specified in the EnvVars field.
+// Returns a map of the variable names to values.
+func (o *Options) GetEnvValues() map[string]string {
+	m := make(map[string]string)
+
+	for _, variableName := range o.EnvVars {
+		value := os.Getenv(variableName)
+
+		m[variableName] = value
+	}
+
+	return m
+}

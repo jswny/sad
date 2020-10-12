@@ -214,7 +214,7 @@ func TestFilesToFileNameReaderMap(t *testing.T) {
 
 		reader := actual[fileName]
 		if reader == nil {
-			t.Errorf("Reader for file %s was nil!", fileName)
+			t.Errorf("Reader for file %s was nil", fileName)
 		}
 
 		builder := new(strings.Builder)
