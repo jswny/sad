@@ -188,7 +188,7 @@ func TestOptionsGetJSONEmtpyValues(t *testing.T) {
 	testutils.CompareOpts(testOpts, opts, t)
 }
 
-func TestOptionsGetEnv(t *testing.T) {
+func TestOptionsFromEnv(t *testing.T) {
 	testOpts := testutils.GetTestOpts()
 	stringTestOpts := testutils.StringOptions{}
 	stringTestOpts.FromOptions(&testOpts)
@@ -197,7 +197,7 @@ func TestOptionsGetEnv(t *testing.T) {
 	defer stringTestOpts.UnsetEnv()
 
 	opts := sad.Options{}
-	err := opts.GetEnv()
+	err := opts.FromEnv()
 
 	if err != nil {
 		t.Fatalf("Error getting options from environment: %s", err)
@@ -206,11 +206,11 @@ func TestOptionsGetEnv(t *testing.T) {
 	testutils.CompareOpts(testOpts, opts, t)
 }
 
-func TestOptionsGetEnvEmptyValues(t *testing.T) {
+func TestOptionsFromEnvEmptyValues(t *testing.T) {
 	testOpts := sad.Options{}
 
 	opts := sad.Options{}
-	err := opts.GetEnv()
+	err := opts.FromEnv()
 
 	if err != nil {
 		t.Fatalf("Error getting options from environment: %s", err)
@@ -231,7 +231,7 @@ func TestGetFullAppName(t *testing.T) {
 	testutils.CompareStrings(expected, fullName, "full name", t)
 }
 
-func TestGetEnvValues(t *testing.T) {
+func TestFromEnvValues(t *testing.T) {
 	opts := sad.Options{
 		EnvVars: []string{
 			"foo",
@@ -246,7 +246,7 @@ func TestGetEnvValues(t *testing.T) {
 		defer os.Unsetenv(variableName)
 	}
 
-	envMap := opts.GetEnvValues()
+	envMap := opts.FromEnvValues()
 
 	for _, variableName := range opts.EnvVars {
 		variableValue := envMap[variableName]

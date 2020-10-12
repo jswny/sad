@@ -175,11 +175,11 @@ func (o *Options) GetJSON(path string) error {
 	return json.Unmarshal(file, o)
 }
 
-// GetEnv parses options from environment variables.
+// FromEnv parses options from environment variables.
 // All variables should be prefixed and they should correspond to the available options with underscores separating words such as "PRIVATE_KEY".
 // The private key should be a base64 encoded string.
 // The environment variables should be a comma-separated string.
-func (o *Options) GetEnv() error {
+func (o *Options) FromEnv() error {
 	prefix := EnvVarPrefix
 
 	name := os.Getenv(prefix + "NAME")
@@ -206,9 +206,9 @@ func (o *Options) GetFullAppName() string {
 	return fmt.Sprintf("%s-%s", o.Name, o.Channel)
 }
 
-// GetEnvValues gets the values of the environment variables specified in the EnvVars field.
+// FromEnvValues gets the values of the environment variables specified in the EnvVars field.
 // Returns a map of the variable names to values.
-func (o *Options) GetEnvValues() map[string]string {
+func (o *Options) FromEnvValues() map[string]string {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {

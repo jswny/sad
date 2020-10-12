@@ -92,7 +92,7 @@ func GetAllOptionSources(program string, args []string, configFileName string) (
 	}
 
 	environmentOpts = &sad.Options{}
-	err = environmentOpts.GetEnv()
+	err = environmentOpts.FromEnv()
 	if err != nil {
 		return nil, nil, nil, "", err
 	}
