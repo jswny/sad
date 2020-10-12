@@ -67,7 +67,7 @@ func main() {
 	files, err := sad.GetFilesForDeployment(".")
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Eror getting files for deployment: ", err)
 		os.Exit(1)
 	}
 
@@ -75,9 +75,9 @@ func main() {
 		defer file.Close()
 	}
 
-	fileMap := sad.FilesToFileNameReaderMap(files)
+	readerMap := sad.FilesToFileNameReaderMap(files)
 
-	err = sad.SendFiles(scpClient, commandLineOpts, fileMap)
+	err = sad.SendFiles(scpClient, commandLineOpts, readerMap)
 	if err != nil {
 		fmt.Println("Error sending files to server: ", err)
 		os.Exit(1)

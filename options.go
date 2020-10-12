@@ -206,9 +206,9 @@ func (o *Options) GetFullAppName() string {
 	return fmt.Sprintf("%s-%s", o.Name, o.Channel)
 }
 
-// FromEnvValues gets the values of the environment variables specified in the EnvVars field.
+// GetEnvValues gets the values of the environment variables specified in the EnvVars field.
 // Returns a map of the variable names to values.
-func (o *Options) FromEnvValues() map[string]string {
+func (o *Options) GetEnvValues() map[string]string {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {

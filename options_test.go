@@ -231,7 +231,7 @@ func TestGetFullAppName(t *testing.T) {
 	testutils.CompareStrings(expected, fullName, "full name", t)
 }
 
-func TestFromEnvValues(t *testing.T) {
+func TestGetEnvValues(t *testing.T) {
 	opts := sad.Options{
 		EnvVars: []string{
 			"foo",
@@ -246,7 +246,7 @@ func TestFromEnvValues(t *testing.T) {
 		defer os.Unsetenv(variableName)
 	}
 
-	envMap := opts.FromEnvValues()
+	envMap := opts.GetEnvValues()
 
 	for _, variableName := range opts.EnvVars {
 		variableValue := envMap[variableName]
