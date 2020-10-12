@@ -98,7 +98,7 @@ func GetAllOptionSources(program string, args []string, configFileName string) (
 	}
 
 	configOpts = &sad.Options{}
-	err = configOpts.GetJSON(configFileName)
+	err = configOpts.FromJSON(configFileName)
 	if err != nil {
 		return nil, nil, nil, "", err
 	}

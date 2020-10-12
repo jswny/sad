@@ -156,8 +156,8 @@ func (o *Options) FromStrings(name string, server string, username string, rootD
 	return nil
 }
 
-// GetJSON parses options from a JSON file.
-func (o *Options) GetJSON(path string) error {
+// FromJSON parses options from a JSON file.
+func (o *Options) FromJSON(path string) error {
 	file, err := ioutil.ReadFile(path)
 
 	if err != nil {

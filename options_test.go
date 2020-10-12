@@ -130,7 +130,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	testutils.CompareOpts(testOpts, opts, t)
 }
 
-func TestOptionsGetJSON(t *testing.T) {
+func TestOptionsFromJSON(t *testing.T) {
 	testOpts := testutils.GetTestOpts()
 	testOptsData, err := json.Marshal(testOpts)
 
@@ -152,14 +152,14 @@ func TestOptionsGetJSON(t *testing.T) {
 
 	opts := sad.Options{}
 
-	if err := opts.GetJSON(tempFile.Name()); err != nil {
+	if err := opts.FromJSON(tempFile.Name()); err != nil {
 		t.Fatalf("Error getting options from file: %s", err)
 	}
 
 	testutils.CompareOpts(testOpts, opts, t)
 }
 
-func TestOptionsGetJSONEmtpyValues(t *testing.T) {
+func TestOptionsFromJSONEmtpyValues(t *testing.T) {
 	testOpts := sad.Options{}
 	testOptsData, err := json.Marshal(testOpts)
 
@@ -181,7 +181,7 @@ func TestOptionsGetJSONEmtpyValues(t *testing.T) {
 
 	opts := sad.Options{}
 
-	if err := opts.GetJSON(tempFile.Name()); err != nil {
+	if err := opts.FromJSON(tempFile.Name()); err != nil {
 		t.Fatalf("Error getting options from file: %s", err)
 	}
 
