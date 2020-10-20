@@ -108,7 +108,7 @@ func TestGetFilesForDeployment(t *testing.T) {
 	defer os.RemoveAll(tempDirPath)
 
 	fileNames := []string{
-		sad.DockerComposeFileName,
+		sad.LocalDockerComposeFileName,
 	}
 
 	content := []byte("test")

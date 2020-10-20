@@ -9,11 +9,14 @@ import (
 	"strings"
 )
 
-// DockerComposeFileName is the name of the Docker Compose file to be loaded for deployment.
-var DockerComposeFileName string = ".sad.docker-compose.yml"
+// LocalDockerComposeFileName is the name of the local Docker Compose file to loade for deployment.
+var LocalDockerComposeFileName string = ".sad.docker-compose.yml"
 
-// DotEnvFileName is the name of the .env file to be loaded for deployment.
-var DotEnvFileName string = ".sad.env"
+// RemoteDockerComposeFileName is the name of the remote Docker Compose file to send to the server.
+var RemoteDockerComposeFileName string = "docker-compose.yml"
+
+// RemoteDotEnvFileName is the name of the remote .env file to send to the server.
+var RemoteDotEnvFileName string = ".env"
 
 // ConfigFileName is the name of the configuration file to pull options from.
 var ConfigFileName string = ".sad.json"
@@ -56,7 +59,7 @@ func GetFilesForDeployment(fromPath string) ([]*os.File, error) {
 	var files []*os.File
 
 	fileNames := []string{
-		DockerComposeFileName,
+		LocalDockerComposeFileName,
 	}
 
 	for _, fileName := range fileNames {
