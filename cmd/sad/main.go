@@ -76,6 +76,8 @@ func main() {
 	}
 
 	readerMap := sad.FilesToFileNameReaderMap(files)
+	readerMap[sad.RemoteDockerComposeFileName] = readerMap[sad.LocalDockerComposeFileName]
+	delete(readerMap, sad.LocalDockerComposeFileName)
 
 	env := commandLineOpts.GetEnvValues()
 	readerMap[sad.RemoteDotEnvFileName] = sad.GenerateDotEnvFile(env)
