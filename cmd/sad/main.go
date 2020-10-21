@@ -50,7 +50,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Opening SCP connection...")
+	fmt.Println("Configuring SSH client...")
 	clientConfig, err := sad.GetSSHClientConfig(commandLineOpts)
 
 	if err != nil {
@@ -58,6 +58,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	fmt.Println("Success!")
+
+	fmt.Println("Configuring SCP client...")
 	scpClient, err := sad.GetSCPClient(commandLineOpts, clientConfig)
 
 	if err != nil {
@@ -97,7 +100,10 @@ func main() {
 
 	fmt.Println("Starting app on server...")
 
-	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, deploymentCommand)
+	remotePath := fmt.Sprintf("%s/%s", commandLineOpts.RootDir, commandLineOpts.GetFullAppName())
+	cmd := fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
+
+	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
 
 	if err != nil {
 		fmt.Println("Error starting app on server:", err)
