@@ -10,6 +10,8 @@ import (
 	"github.com/jswny/sad"
 )
 
+var deploymentCommand string = "docker-compose up -d"
+
 func main() {
 	configFilePath, err := sad.FindFilePathRecursive(".", sad.ConfigFileName)
 
@@ -88,7 +90,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Opening SSH connection...")
+	fmt.Println("Starting app on server...")
+
+	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, deploymentCommand)
+
+	if err != nil {
+		fmt.Println("Error starting app on server: ", err)
+		os.Exit(1)
+	}
+
+	fmt.Println(output)
+
+	fmt.Println("Done!")
 }
 
 // GetAllOptionSources gets options from each different source.
