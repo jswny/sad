@@ -1,9 +1,11 @@
 package sad
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"time"
 
 	scp "github.com/bramvdbogaerde/go-scp"
@@ -63,4 +65,32 @@ func GetSCPClient(opts *Options, clientConfig *ssh.ClientConfig) (*scp.Client, e
 	scpClient := scp.NewClientWithTimeout(host, clientConfig, duration)
 
 	return &scpClient, nil
+}
+
+// SSHRunCommand Runs the specified command via SSH given the server to connect to and a client configuration.
+// Returns the output of the command, or an error.
+func SSHRunCommand(address string, port string, clientConfig *ssh.ClientConfig, cmd string) (string, error) {
+	client, err := ssh.Dial("tcp", net.JoinHostPort(address, port), clientConfig)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to dial SSH connection to address %s:%s: %s", address, port, err)
+	}
+
+	session, err := client.NewSession()
+	if err != nil {
+		return "", err
+	}
+
+	defer session.Close()
+
+	var b bytes.Buffer
+	session.Stdout = &b
+
+	err = session.Run(cmd)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to execute command \"%s\" via SSH connection to address %s:%s: %s", cmd, address, port, err)
+	}
+
+	return b.String(), nil
 }

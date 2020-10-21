@@ -87,6 +87,8 @@ func main() {
 		fmt.Println("Error sending files to server: ", err)
 		os.Exit(1)
 	}
+
+	fmt.Println("Opening SSH connection...")
 }
 
 // GetAllOptionSources gets options from each different source.
