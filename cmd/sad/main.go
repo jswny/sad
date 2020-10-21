@@ -88,6 +88,9 @@ func main() {
 	delete(readerMap, sad.LocalDockerComposeFileName)
 
 	env := commandLineOpts.GetEnvValues()
+	containerName := commandLineOpts.GetFullAppName()
+	env["CONTAINER_NAME"] = containerName
+
 	readerMap[sad.RemoteDotEnvFileName] = sad.GenerateDotEnvFile(env)
 
 	err = sad.SendFiles(scpClient, commandLineOpts, readerMap)
