@@ -19,10 +19,12 @@ func main() {
 		if err.Error() == sad.FindFilePathRecursiveFileNotFoundErrorMessage {
 			fmt.Println("Could not find a config file, skipping...")
 		} else {
-			fmt.Println("Error finding config file: ", err)
+			fmt.Println("Error finding config file:", err)
 			os.Exit(1)
 		}
 	}
+
+	fmt.Println("Found config file:", configFilePath)
 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
 	if err != nil {
@@ -33,7 +35,7 @@ func main() {
 			os.Exit(2)
 		}
 
-		fmt.Println("Error retrieving options: ", err)
+		fmt.Println("Error retrieving options:", err)
 		os.Exit(1)
 	}
 
@@ -44,8 +46,7 @@ func main() {
 
 	err = commandLineOpts.Verify()
 	if err != nil {
-		fmt.Println("Provided options were invalid!")
-		fmt.Println(err)
+		fmt.Println("Provided options were invalid:", err)
 		os.Exit(1)
 	}
 
@@ -53,14 +54,14 @@ func main() {
 	clientConfig, err := sad.GetSSHClientConfig(commandLineOpts)
 
 	if err != nil {
-		fmt.Println("Error getting SSH configuration from options: ", err)
+		fmt.Println("Error getting SSH configuration from options:", err)
 		os.Exit(1)
 	}
 
 	scpClient, err := sad.GetSCPClient(commandLineOpts, clientConfig)
 
 	if err != nil {
-		fmt.Println("Error getting SCP client: ", err)
+		fmt.Println("Error getting SCP client:", err)
 		os.Exit(1)
 	}
 
@@ -71,7 +72,7 @@ func main() {
 	files, err := sad.GetFilesForDeployment(".")
 
 	if err != nil {
-		fmt.Println("Eror getting files for deployment: ", err)
+		fmt.Println("Eror getting files for deployment:", err)
 		os.Exit(1)
 	}
 
@@ -88,7 +89,7 @@ func main() {
 
 	err = sad.SendFiles(scpClient, commandLineOpts, readerMap)
 	if err != nil {
-		fmt.Println("Error sending files to server: ", err)
+		fmt.Println("Error sending files to server:", err)
 		os.Exit(1)
 	}
 
@@ -99,7 +100,7 @@ func main() {
 	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, deploymentCommand)
 
 	if err != nil {
-		fmt.Println("Error starting app on server: ", err)
+		fmt.Println("Error starting app on server:", err)
 		os.Exit(1)
 	}
 

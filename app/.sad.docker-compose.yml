@@ -2,7 +2,7 @@ version: '3'
 services:
   echo:
     build: .
-    image: "${IMAGE}"
+    image: "jswny/sad"
     container_name: "${CONTAINER_NAME}"
     environment:
       - FOO=${FOO}
