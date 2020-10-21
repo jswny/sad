@@ -2,7 +2,6 @@ package sad
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -30,8 +29,7 @@ func SendFiles(client *scp.Client, opts *Options, files map[string]io.Reader) er
 		err = client.CopyFile(reader, remotePath, permissions)
 
 		if err != nil {
-			errorMessage := fmt.Sprintf("Error copying file %s to remote server: %s", fileName, err)
-			return errors.New(errorMessage)
+			return fmt.Errorf("Error copying file %s to remote server: %s", fileName, err)
 		}
 	}
 

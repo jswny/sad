@@ -89,7 +89,7 @@ func main() {
 	files, err := sad.GetFilesForDeployment(".")
 
 	if err != nil {
-		fmt.Println("Eror getting files for deployment:", err)
+		fmt.Println("Error getting files for deployment:", err)
 		os.Exit(1)
 	}
 
@@ -119,7 +119,7 @@ func main() {
 
 	cmd = fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
 
-	output, err = sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
+	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
 
 	if err != nil {
 		fmt.Println("Error starting app on server:", err)
