@@ -60,7 +60,21 @@ func main() {
 
 	fmt.Println("Success!")
 
+	fmt.Println("Creating directory for deployment...")
+
+	remotePath := fmt.Sprintf("%s/%s", commandLineOpts.RootDir, commandLineOpts.GetFullAppName())
+	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
+	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
+
+	if err != nil {
+		fmt.Println("Error creating directory for deployment:", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Success!")
+
 	fmt.Println("Configuring SCP client...")
+
 	scpClient, err := sad.GetSCPClient(commandLineOpts, clientConfig)
 
 	if err != nil {
@@ -103,10 +117,9 @@ func main() {
 
 	fmt.Println("Starting app on server...")
 
-	remotePath := fmt.Sprintf("%s/%s", commandLineOpts.RootDir, commandLineOpts.GetFullAppName())
-	cmd := fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
+	cmd = fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
 
-	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
+	output, err = sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
 
 	if err != nil {
 		fmt.Println("Error starting app on server:", err)
