@@ -64,6 +64,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	fmt.Println("Success!")
+
 	fmt.Println("Sending files to server...")
 
 	files, err := sad.GetFilesForDeployment(".")
@@ -89,6 +91,8 @@ func main() {
 		fmt.Println("Error sending files to server: ", err)
 		os.Exit(1)
 	}
+
+	fmt.Println("Success!")
 
 	fmt.Println("Starting app on server...")
 
