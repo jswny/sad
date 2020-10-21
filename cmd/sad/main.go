@@ -64,7 +64,7 @@ func main() {
 
 	remotePath := fmt.Sprintf("%s/%s", commandLineOpts.RootDir, commandLineOpts.GetFullAppName())
 	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
-	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
+	_, err = sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
 
 	if err != nil {
 		fmt.Println("Error creating directory for deployment:", err)
