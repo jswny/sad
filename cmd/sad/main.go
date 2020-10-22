@@ -21,28 +21,15 @@ func main() {
 
 	clientConfig := configureSSHClient(opts)
 
-	fmt.Print("Opening SSH connection... ")
-
-	address := opts.Server.String()
-	port := "22"
-
-	sshClient, err := ssh.Dial("tcp", net.JoinHostPort(address, port), clientConfig)
-
-	if err != nil {
-		msg := fmt.Sprintf("failed to open SSH connection to address %s:%s: %s", address, port, err)
-		fmt.Println(msg, err)
-		os.Exit(1)
-	}
+	sshClient := openSSHConnection(clientConfig, opts)
 
 	defer sshClient.Close()
-
-	fmt.Println("Success!")
 
 	fmt.Print("Creating directory for deployment... ")
 
 	remotePath := fmt.Sprintf("%s/%s", opts.RootDir, opts.GetFullAppName())
 	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
-	_, err = sad.SSHRunCommand(sshClient, cmd)
+	_, err := sad.SSHRunCommand(sshClient, cmd)
 
 	if err != nil {
 		fmt.Println("Error creating directory for deployment:", err)
@@ -214,4 +201,23 @@ func configureSSHClient(opts *sad.Options) *ssh.ClientConfig {
 	fmt.Println("Success!")
 
 	return clientConfig
+}
+
+func openSSHConnection(clientConfig *ssh.ClientConfig, opts *sad.Options) *ssh.Client {
+	fmt.Print("Opening SSH connection... ")
+
+	address := opts.Server.String()
+	port := "22"
+
+	sshClient, err := ssh.Dial("tcp", net.JoinHostPort(address, port), clientConfig)
+
+	if err != nil {
+		msg := fmt.Sprintf("failed to open SSH connection to address %s:%s: %s", address, port, err)
+		fmt.Println(msg, err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Success!")
+
+	return sshClient
 }
