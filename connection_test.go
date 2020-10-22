@@ -1,7 +1,6 @@
 package sad_test
 
 import (
-	"fmt"
 	"testing"
 
 	testutils "github.com/jswny/sad/internal"
@@ -22,25 +21,4 @@ func TestGetSSHClientConfig(t *testing.T) {
 	if authMethodCount != 1 {
 		t.Errorf("Expected one auth method in SSH client config, got %d", authMethodCount)
 	}
-}
-
-func TestGetSCPClient(t *testing.T) {
-	opts := testutils.GetTestOpts()
-
-	clientConfig, err := sad.GetSSHClientConfig(&opts)
-
-	if err != nil {
-		t.Fatalf("Error getting SSH client config: %s", err)
-	}
-
-	scpClient, err := sad.GetSCPClient(&opts, clientConfig)
-
-	if err != nil {
-		t.Fatalf("Error getting SCP client: %s", err)
-	}
-
-	expected := fmt.Sprintf("%s:%d", opts.Server.String(), 22)
-	actual := scpClient.Host
-
-	testutils.CompareStrings(expected, actual, "SCP client host", t)
 }
