@@ -15,40 +15,14 @@ import (
 var deploymentCommand string = "docker-compose up -d"
 
 func main() {
-	fmt.Print("Loading config... ")
-
-	configFilePath, err := sad.FindFilePathRecursive(".", sad.ConfigFileName)
-
-	if err != nil {
-		if err.Error() == sad.FindFilePathRecursiveFileNotFoundErrorMessage {
-			fmt.Println("Could not find a config file, skipping...")
-		} else {
-			fmt.Println("Error finding config file:", err)
-			os.Exit(1)
-		}
-	}
-
-	fmt.Println("Found config file:", configFilePath)
-
-	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
-	if err != nil {
-		if commandLineOutput != "" {
-			fmt.Println(commandLineOutput)
-		}
-		if err == flag.ErrHelp {
-			os.Exit(2)
-		}
-
-		fmt.Println("Error retrieving options:", err)
-		os.Exit(1)
-	}
+	commandLineOpts, environmentOpts, configOpts := loadOptions()
 
 	fmt.Println("Starting deployment...")
 
 	MergeOptionsHierarchy(commandLineOpts, environmentOpts, configOpts)
 	commandLineOpts.MergeDefaults()
 
-	err = commandLineOpts.Verify()
+	err := commandLineOpts.Verify()
 	if err != nil {
 		fmt.Println("Provided options were invalid:", err)
 		os.Exit(1)
@@ -204,4 +178,37 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	}
 
 	return opts, buf.String(), nil
+}
+
+func loadOptions() (commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options) {
+	fmt.Print("Loading config... ")
+
+	configFilePath, err := sad.FindFilePathRecursive(".", sad.ConfigFileName)
+
+	if err != nil {
+		if err.Error() == sad.FindFilePathRecursiveFileNotFoundErrorMessage {
+			fmt.Println("Could not find a config file, skipping...")
+		} else {
+			fmt.Println("Error finding config file:", err)
+			os.Exit(1)
+		}
+	}
+
+	fmt.Print("Found config file:", configFilePath, "... ")
+
+	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
+	if err != nil {
+		if commandLineOutput != "" {
+			fmt.Println(commandLineOutput)
+		}
+		if err == flag.ErrHelp {
+			os.Exit(2)
+		}
+
+		fmt.Println("Error retrieving options:", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Success!")
+	return commandLineOpts, environmentOpts, configOpts
 }
