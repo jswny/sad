@@ -62,26 +62,16 @@ func main() {
 
 	fmt.Print("Sending files to server... ")
 
-	files, err := sad.GetFilesForDeployment(".")
-
-	if err != nil {
-		fmt.Println("Error getting files for deployment:", err)
-		os.Exit(1)
-	}
+	readerMap, files, err := sad.GetEntitiesForDeployment(".", opts)
 
 	for _, file := range files {
 		defer file.Close()
 	}
 
-	readerMap := sad.FilesToFileNameReaderMap(files)
-	readerMap[sad.RemoteDockerComposeFileName] = readerMap[sad.LocalDockerComposeFileName]
-	delete(readerMap, sad.LocalDockerComposeFileName)
-
-	env := opts.GetEnvValues()
-	containerName := opts.GetFullAppName()
-	env["CONTAINER_NAME"] = containerName
-
-	readerMap[sad.RemoteDotEnvFileName] = sad.GenerateDotEnvFile(env)
+	if err != nil {
+		fmt.Println("Error getting files for deployment:", err)
+		os.Exit(1)
+	}
 
 	err = sad.SendFiles(sshClient, opts, readerMap)
 	if err != nil {

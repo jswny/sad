@@ -51,10 +51,55 @@ func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 	return foundPath, nil
 }
 
-// GetFilesForDeployment gets and opens the files needed for deployment by finding them recursively under the provided fromPath.
+// GetEntitiesForDeployment gets (and opens if necessary) the entities needed for deployment.
+// Files are locaed by finding them recursively under the provided path .
 // Files: Docker Compose file (see DockerComposeFileName).
+// Other: generated .env file.
 // Opens files, remember to close.
-func GetFilesForDeployment(fromPath string) ([]*os.File, error) {
+func GetEntitiesForDeployment(fromPath string, opts *Options) (map[string]io.Reader, []*os.File, error) {
+	files, err := getFilesForDeployment(fromPath)
+
+	if err != nil {
+		return nil, files, fmt.Errorf("error getting files for deployment: %s", err)
+	}
+
+	readerMap := FilesToFileNameReaderMap(files)
+	readerMap[RemoteDockerComposeFileName] = readerMap[LocalDockerComposeFileName]
+	delete(readerMap, LocalDockerComposeFileName)
+
+	env := opts.GetEnvValues()
+	containerName := opts.GetFullAppName()
+	env["CONTAINER_NAME"] = containerName
+
+	readerMap[RemoteDotEnvFileName] = GenerateDotEnvFile(env)
+
+	return readerMap, files, nil
+}
+
+// GenerateDotEnvFile generates a file as a reader which contains a properly-formatted .env file.
+func GenerateDotEnvFile(variables map[string]string) io.Reader {
+	var s string
+
+	for name, value := range variables {
+		s += fmt.Sprintf("%s=%s\n", name, value)
+	}
+
+	return strings.NewReader(s)
+}
+
+// FilesToFileNameReaderMap converts a slice of files into a map of the file name to a reader for the content.
+func FilesToFileNameReaderMap(files []*os.File) map[string]io.Reader {
+	m := make(map[string]io.Reader)
+
+	for _, file := range files {
+		fileName := filepath.Base(file.Name())
+		m[fileName] = file
+	}
+
+	return m
+}
+
+func getFilesForDeployment(fromPath string) ([]*os.File, error) {
 	var filePaths []string
 	var files []*os.File
 
@@ -85,27 +130,4 @@ func GetFilesForDeployment(fromPath string) ([]*os.File, error) {
 	}
 
 	return files, nil
-}
-
-// GenerateDotEnvFile generates a file as a reader which contains a properly-formatted .env file.
-func GenerateDotEnvFile(variables map[string]string) io.Reader {
-	var s string
-
-	for name, value := range variables {
-		s += fmt.Sprintf("%s=%s\n", name, value)
-	}
-
-	return strings.NewReader(s)
-}
-
-// FilesToFileNameReaderMap converts a slice of files into a map of the file name to a reader for the content.
-func FilesToFileNameReaderMap(files []*os.File) map[string]io.Reader {
-	m := make(map[string]io.Reader)
-
-	for _, file := range files {
-		fileName := filepath.Base(file.Name())
-		m[fileName] = file
-	}
-
-	return m
 }
