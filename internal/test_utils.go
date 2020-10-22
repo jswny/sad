@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/json"
+	"io"
 	mathrand "math/rand"
 	"net"
 	"os"
@@ -177,6 +178,29 @@ func CompareStrings(expected, actual, name string, t *testing.T) {
 
 		t.Errorf("Expected %s %s but got %s", name, expected, actual)
 	}
+}
+
+// CompareReaderLines compares the contents of a reader to a slice of lines.
+func CompareReaderLines(name string, reader io.Reader, expectedLines []string, t *testing.T) {
+	actual := ReadFromReader(name, reader, t)
+
+	for _, expectedLine := range expectedLines {
+		if !strings.Contains(actual, expectedLine) {
+			t.Errorf("Expected line \"%s\" in reader contents for %s but got:\n%s", expectedLine, name, actual)
+		}
+	}
+}
+
+// ReadFromReader reads a reader into a string or errors out fatally.
+func ReadFromReader(name string, reader io.Reader, t *testing.T) string {
+	buffer := new(strings.Builder)
+	_, err := io.Copy(buffer, reader)
+
+	if err != nil {
+		t.Fatalf("Error reading from reader for %s: %s", name, err)
+	}
+
+	return buffer.String()
 }
 
 func compareSlices(expected, actual []string, name string, t *testing.T) {
