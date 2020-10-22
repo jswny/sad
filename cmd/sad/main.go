@@ -19,16 +19,7 @@ func main() {
 
 	opts := checkOptions(commandLineOpts, environmentOpts, configOpts)
 
-	fmt.Print("Configuring SSH client... ")
-
-	clientConfig, err := sad.GetSSHClientConfig(opts)
-
-	if err != nil {
-		fmt.Println("Error getting SSH configuration from options:", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("Success!")
+	clientConfig := configureSSHClient(opts)
 
 	fmt.Print("Opening SSH connection... ")
 
@@ -208,4 +199,19 @@ func checkOptions(commandLineOpts *sad.Options, environmentOpts *sad.Options, co
 
 	fmt.Println("Success!")
 	return commandLineOpts
+}
+
+func configureSSHClient(opts *sad.Options) *ssh.ClientConfig {
+	fmt.Print("Configuring SSH client... ")
+
+	clientConfig, err := sad.GetSSHClientConfig(opts)
+
+	if err != nil {
+		fmt.Println("Error getting SSH configuration from options:", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Success!")
+
+	return clientConfig
 }
