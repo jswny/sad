@@ -17,20 +17,11 @@ var deploymentCommand string = "docker-compose up -d"
 func main() {
 	commandLineOpts, environmentOpts, configOpts := loadOptions()
 
-	fmt.Println("Starting deployment...")
-
-	MergeOptionsHierarchy(commandLineOpts, environmentOpts, configOpts)
-	commandLineOpts.MergeDefaults()
-
-	err := commandLineOpts.Verify()
-	if err != nil {
-		fmt.Println("Provided options were invalid:", err)
-		os.Exit(1)
-	}
+	opts := checkOptions(commandLineOpts, environmentOpts, configOpts)
 
 	fmt.Print("Configuring SSH client... ")
 
-	clientConfig, err := sad.GetSSHClientConfig(commandLineOpts)
+	clientConfig, err := sad.GetSSHClientConfig(opts)
 
 	if err != nil {
 		fmt.Println("Error getting SSH configuration from options:", err)
@@ -41,7 +32,7 @@ func main() {
 
 	fmt.Print("Opening SSH connection... ")
 
-	address := commandLineOpts.Server.String()
+	address := opts.Server.String()
 	port := "22"
 
 	sshClient, err := ssh.Dial("tcp", net.JoinHostPort(address, port), clientConfig)
@@ -58,7 +49,7 @@ func main() {
 
 	fmt.Print("Creating directory for deployment... ")
 
-	remotePath := fmt.Sprintf("%s/%s", commandLineOpts.RootDir, commandLineOpts.GetFullAppName())
+	remotePath := fmt.Sprintf("%s/%s", opts.RootDir, opts.GetFullAppName())
 	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
 	_, err = sad.SSHRunCommand(sshClient, cmd)
 
@@ -86,13 +77,13 @@ func main() {
 	readerMap[sad.RemoteDockerComposeFileName] = readerMap[sad.LocalDockerComposeFileName]
 	delete(readerMap, sad.LocalDockerComposeFileName)
 
-	env := commandLineOpts.GetEnvValues()
-	containerName := commandLineOpts.GetFullAppName()
+	env := opts.GetEnvValues()
+	containerName := opts.GetFullAppName()
 	env["CONTAINER_NAME"] = containerName
 
 	readerMap[sad.RemoteDotEnvFileName] = sad.GenerateDotEnvFile(env)
 
-	err = sad.SendFiles(sshClient, commandLineOpts, readerMap)
+	err = sad.SendFiles(sshClient, opts, readerMap)
 	if err != nil {
 		fmt.Println("Error sending files to server:", err)
 		os.Exit(1)
@@ -194,7 +185,7 @@ func loadOptions() (commandLineOpts *sad.Options, environmentOpts *sad.Options, 
 		}
 	}
 
-	fmt.Print("Found config file:", configFilePath, "... ")
+	fmt.Print("found config file: ", configFilePath, "... ")
 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
 	if err != nil {
@@ -211,4 +202,20 @@ func loadOptions() (commandLineOpts *sad.Options, environmentOpts *sad.Options, 
 
 	fmt.Println("Success!")
 	return commandLineOpts, environmentOpts, configOpts
+}
+
+func checkOptions(commandLineOpts *sad.Options, environmentOpts *sad.Options, configOpts *sad.Options) *sad.Options {
+	fmt.Print("Verifying config... ")
+
+	MergeOptionsHierarchy(commandLineOpts, environmentOpts, configOpts)
+	commandLineOpts.MergeDefaults()
+
+	err := commandLineOpts.Verify()
+	if err != nil {
+		fmt.Println("Provided options were invalid:", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Success!")
+	return commandLineOpts
 }
