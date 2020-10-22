@@ -28,20 +28,7 @@ func main() {
 
 	deployFiles(sshClient, opts)
 
-	fmt.Println("Starting app on server... ")
-
-	cmd := fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
-
-	output, err := sad.SSHRunCommand(sshClient, cmd)
-
-	if err != nil {
-		fmt.Println("Error starting app on server:", err)
-		os.Exit(1)
-	}
-
-	fmt.Println(output)
-
-	fmt.Println("Done!")
+	startApp(sshClient, remotePath, deploymentCommand)
 }
 
 // GetAllOptionSources gets options from each different source.
@@ -227,6 +214,23 @@ func deployFiles(sshClient *ssh.Client, opts *sad.Options) {
 		fmt.Println("Error sending files to server:", err)
 		os.Exit(1)
 	}
+
+	fmt.Println("Success!")
+}
+
+func startApp(sshClient *ssh.Client, remotePath string, deploymentCommand string) {
+	fmt.Println("Starting app on server... ")
+
+	cmd := fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
+
+	output, err := sad.SSHRunCommand(sshClient, cmd)
+
+	if err != nil {
+		fmt.Println("Error starting app on server:", err)
+		os.Exit(1)
+	}
+
+	fmt.Println(output)
 
 	fmt.Println("Success!")
 }
