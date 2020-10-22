@@ -185,7 +185,7 @@ func loadOptions() (commandLineOpts *sad.Options, environmentOpts *sad.Options, 
 		}
 	}
 
-	fmt.Print("found config file: ", configFilePath, "... ")
+	fmt.Print("Found config file: ", configFilePath, "... ")
 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
 	if err != nil {
