@@ -26,26 +26,7 @@ func main() {
 
 	remotePath := createDeploymentDir(sshClient, opts)
 
-	fmt.Print("Sending files to server... ")
-
-	readerMap, files, err := sad.GetEntitiesForDeployment(".", opts)
-
-	for _, file := range files {
-		defer file.Close()
-	}
-
-	if err != nil {
-		fmt.Println("Error getting files for deployment:", err)
-		os.Exit(1)
-	}
-
-	err = sad.SendFiles(sshClient, opts, readerMap)
-	if err != nil {
-		fmt.Println("Error sending files to server:", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("Success!")
+	deployFiles(sshClient, opts)
 
 	fmt.Println("Starting app on server... ")
 
@@ -225,4 +206,27 @@ func createDeploymentDir(sshClient *ssh.Client, opts *sad.Options) string {
 	fmt.Println("Success!")
 
 	return remotePath
+}
+
+func deployFiles(sshClient *ssh.Client, opts *sad.Options) {
+	fmt.Print("Sending files to server... ")
+
+	readerMap, files, err := sad.GetEntitiesForDeployment(".", opts)
+
+	for _, file := range files {
+		defer file.Close()
+	}
+
+	if err != nil {
+		fmt.Println("Error getting files for deployment:", err)
+		os.Exit(1)
+	}
+
+	err = sad.SendFiles(sshClient, opts, readerMap)
+	if err != nil {
+		fmt.Println("Error sending files to server:", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Success!")
 }
