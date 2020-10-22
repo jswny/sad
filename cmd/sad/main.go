@@ -4,15 +4,19 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"strconv"
 
 	"github.com/jswny/sad"
+	"golang.org/x/crypto/ssh"
 )
 
 var deploymentCommand string = "docker-compose up -d"
 
 func main() {
+	fmt.Print("Loading config... ")
+
 	configFilePath, err := sad.FindFilePathRecursive(".", sad.ConfigFileName)
 
 	if err != nil {
@@ -50,7 +54,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Configuring SSH client...")
+	fmt.Print("Configuring SSH client... ")
+
 	clientConfig, err := sad.GetSSHClientConfig(commandLineOpts)
 
 	if err != nil {
@@ -60,11 +65,28 @@ func main() {
 
 	fmt.Println("Success!")
 
-	fmt.Println("Creating directory for deployment...")
+	fmt.Print("Opening SSH connection... ")
+
+	address := commandLineOpts.Server.String()
+	port := "22"
+
+	sshClient, err := ssh.Dial("tcp", net.JoinHostPort(address, port), clientConfig)
+
+	if err != nil {
+		msg := fmt.Sprintf("failed to open SSH connection to address %s:%s: %s", address, port, err)
+		fmt.Println(msg, err)
+		os.Exit(1)
+	}
+
+	defer sshClient.Close()
+
+	fmt.Println("Success!")
+
+	fmt.Print("Creating directory for deployment... ")
 
 	remotePath := fmt.Sprintf("%s/%s", commandLineOpts.RootDir, commandLineOpts.GetFullAppName())
 	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
-	_, err = sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
+	_, err = sad.SSHRunCommand(sshClient, cmd)
 
 	if err != nil {
 		fmt.Println("Error creating directory for deployment:", err)
@@ -73,18 +95,7 @@ func main() {
 
 	fmt.Println("Success!")
 
-	fmt.Println("Configuring SCP client...")
-
-	scpClient, err := sad.GetSCPClient(commandLineOpts, clientConfig)
-
-	if err != nil {
-		fmt.Println("Error getting SCP client:", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("Success!")
-
-	fmt.Println("Sending files to server...")
+	fmt.Print("Sending files to server... ")
 
 	files, err := sad.GetFilesForDeployment(".")
 
@@ -107,7 +118,7 @@ func main() {
 
 	readerMap[sad.RemoteDotEnvFileName] = sad.GenerateDotEnvFile(env)
 
-	err = sad.SendFiles(scpClient, commandLineOpts, readerMap)
+	err = sad.SendFiles(sshClient, commandLineOpts, readerMap)
 	if err != nil {
 		fmt.Println("Error sending files to server:", err)
 		os.Exit(1)
@@ -115,11 +126,11 @@ func main() {
 
 	fmt.Println("Success!")
 
-	fmt.Println("Starting app on server...")
+	fmt.Println("Starting app on server... ")
 
 	cmd = fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
 
-	output, err := sad.SSHRunCommand(commandLineOpts.Server.String(), "22", clientConfig, cmd)
+	output, err := sad.SSHRunCommand(sshClient, cmd)
 
 	if err != nil {
 		fmt.Println("Error starting app on server:", err)
