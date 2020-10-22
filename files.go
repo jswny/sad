@@ -55,7 +55,7 @@ func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 // Files are locaed by finding them recursively under the provided path .
 // Files: Docker Compose file (see DockerComposeFileName).
 // Other: generated .env file.
-// Opens files, remember to close.
+// Files are only returned so they can be closed by the caller.
 func GetEntitiesForDeployment(fromPath string, opts *Options) (map[string]io.Reader, []*os.File, error) {
 	files, err := getFilesForDeployment(fromPath)
 

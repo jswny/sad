@@ -1,7 +1,6 @@
 package sad_test
 
 import (
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -96,7 +95,7 @@ func TestFindFilePathRecursiveNotFound(t *testing.T) {
 	testutils.CompareStrings(expected, actual, "file path", t)
 }
 
-func TestGetFilesForDeployment(t *testing.T) {
+func TestGetEntitesForDeployment(t *testing.T) {
 	dirName := "dir.test"
 
 	tempDirPath, err := ioutil.TempDir("", dirName)
@@ -121,7 +120,41 @@ func TestGetFilesForDeployment(t *testing.T) {
 		}
 	}
 
-	files, err := sad.GetFilesForDeployment(tempDirPath)
+	variables := map[string]string{
+		"foo": "bar",
+		"baz": "qux",
+	}
+
+	envVarNames := make([]string, len(variables))
+
+	i := 0
+	for variableName := range variables {
+		envVarNames[i] = variableName
+		i++
+	}
+
+	opts := &sad.Options{
+		EnvVars: envVarNames,
+	}
+
+	variableContent := "test"
+
+	for _, variableName := range opts.EnvVars {
+		os.Setenv(variableName, variableContent)
+		defer os.Unsetenv(variableName)
+	}
+
+	// envMap := opts.GetEnvValues()
+
+	// for _, variableName := range opts.EnvVars {
+	// 	variableValue := envMap[variableName]
+
+	// 	name := fmt.Sprintf("environment variable %s value", variableName)
+
+	// 	testutils.CompareStrings(variableContent, variableValue, name, t)
+	// }
+
+	readerMap, files, err := sad.GetEntitiesForDeployment(tempDirPath, opts)
 
 	if err != nil {
 		t.Fatalf("Error getting files for deployment: %s", err)
@@ -131,20 +164,44 @@ func TestGetFilesForDeployment(t *testing.T) {
 	actual := len(files)
 
 	if actual != expected {
-		t.Errorf("Getting files for deployment returned %d files, expected %d", actual, expected)
+		t.Errorf("Returned %d files, expected %d", actual, expected)
 	}
 
 	for _, file := range files {
 		data, err := ioutil.ReadFile(file.Name())
 
 		if err != nil {
-			t.Fatalf("Error reading from deployment file: %s", err)
+			t.Fatalf("Error reading returned from file: %s", err)
 		}
 
 		if string(content) != string(data) {
-			t.Errorf("Expected file content %s but got %s", content, data)
+			t.Errorf("Expected returned file content %s but got %s", content, data)
 		}
 	}
+
+	expected = 2
+	actual = len(readerMap)
+
+	if actual != expected {
+		t.Errorf("Returned %d readers, expected %d", actual, expected)
+	}
+
+	composeReader := readerMap[sad.RemoteDockerComposeFileName]
+
+	name := "Docker Compose file"
+
+	data := testutils.ReadFromReader(name, composeReader, t)
+
+	testutils.CompareStrings(string(content), data, name, t)
+
+	reader := readerMap[sad.RemoteDotEnvFileName]
+
+	expectedContent := []string{
+		"foo=test\n",
+		"baz=test\n",
+	}
+
+	testutils.CompareReaderLines(".env file", reader, expectedContent, t)
 }
 
 func TestGenerateDotEnvFile(t *testing.T) {
@@ -154,24 +211,13 @@ func TestGenerateDotEnvFile(t *testing.T) {
 	}
 
 	reader := sad.GenerateDotEnvFile(variables)
-	builder := new(strings.Builder)
-	_, err := io.Copy(builder, reader)
 
-	if err != nil {
-		t.Fatalf("Error copying reader to string builder: %s", err)
-	}
-
-	actual := builder.String()
 	expected := []string{
 		"foo=bar\n",
 		"baz=qux\n",
 	}
 
-	for _, expectedLine := range expected {
-		if !strings.Contains(actual, expectedLine) {
-			t.Errorf("Expected line %s in .env contents but got:\n%s", expectedLine, actual)
-		}
-	}
+	testutils.CompareReaderLines(".env file", reader, expected, t)
 }
 
 func TestFilesToFileNameReaderMap(t *testing.T) {
@@ -217,14 +263,7 @@ func TestFilesToFileNameReaderMap(t *testing.T) {
 			t.Errorf("Reader for file %s was nil", fileName)
 		}
 
-		builder := new(strings.Builder)
-		_, err := io.Copy(builder, reader)
-
-		if err != nil {
-			t.Fatalf("Error copying reader for file %s to string builder: %s", fileName, err)
-		}
-
-		actualContent := builder.String()
+		actualContent := testutils.ReadFromReader(fileName, reader, t)
 
 		if actualContent != string(content) {
 			t.Errorf("Expected content %s for file %s, got %s", content, fileName, actualContent)
