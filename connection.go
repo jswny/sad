@@ -55,16 +55,20 @@ func SSHRunCommand(client *ssh.Client, cmd string) (string, error) {
 
 	defer session.Close()
 
-	var b bytes.Buffer
-	session.Stdout = &b
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	session.Stdout = &stdout
+	session.Stderr = &stderr
 
 	err = session.Run(cmd)
 
+	output := stdout.String() + stderr.String()
+
 	if err != nil {
-		return "", fmt.Errorf("failed to execute command \"%s\" via SSH client: %s", cmd, err)
+		return output, fmt.Errorf("failed to execute command \"%s\" via SSH client: %s", cmd, err)
 	}
 
-	return b.String(), nil
+	return output, nil
 }
 
 func copyFile(fileName string, reader io.Reader, remotePath string, permissions string, sshClient *ssh.Client) error {

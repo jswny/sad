@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/jswny/sad"
 	"golang.org/x/crypto/ssh"
@@ -189,13 +190,15 @@ func createDeploymentDir(sshClient *ssh.Client, remotePath string) {
 	fmt.Print("Creating directory for deployment... ")
 
 	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
-	_, err := sad.SSHRunCommand(sshClient, cmd)
+	output, err := sad.SSHRunCommand(sshClient, cmd)
 
 	if err != nil {
 		fmt.Println("Error creating directory for deployment:", err)
+		maybePrettyPrintOutput(output)
 		os.Exit(1)
 	}
 
+	maybePrettyPrintOutput(output)
 	fmt.Println("Success!")
 }
 
@@ -223,7 +226,7 @@ func deployFiles(sshClient *ssh.Client, opts *sad.Options) {
 }
 
 func startApp(sshClient *ssh.Client, remotePath string, deploymentCommand string) {
-	fmt.Println("Starting app on server... ")
+	fmt.Print("Starting app on server... ")
 
 	cmd := fmt.Sprintf("cd %s && %s", remotePath, deploymentCommand)
 
@@ -231,10 +234,28 @@ func startApp(sshClient *ssh.Client, remotePath string, deploymentCommand string
 
 	if err != nil {
 		fmt.Println("Error starting app on server:", err)
+		maybePrettyPrintOutput(output)
 		os.Exit(1)
 	}
 
-	fmt.Println(output)
-
 	fmt.Println("Success!")
+
+	maybePrettyPrintOutput(output)
+}
+
+func maybePrettyPrintOutput(output string) {
+	lines := strings.Split(output, "\n")
+
+	var prettyOutput string
+
+	prefix := "|"
+	for _, line := range lines {
+		if line != "" {
+			prettyOutput += prefix + " " + line + "\n"
+		}
+	}
+
+	if prettyOutput != "" {
+		fmt.Println(prettyOutput)
+	}
 }
