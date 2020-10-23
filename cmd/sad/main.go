@@ -24,7 +24,9 @@ func main() {
 	sshClient := openSSHConnection(clientConfig, opts)
 	defer sshClient.Close()
 
-	remotePath := createDeploymentDir(sshClient, opts)
+	remotePath := getRemotePath(opts)
+
+	createDeploymentDir(sshClient, remotePath)
 
 	deployFiles(sshClient, opts)
 
@@ -178,10 +180,14 @@ func openSSHConnection(clientConfig *ssh.ClientConfig, opts *sad.Options) *ssh.C
 	return sshClient
 }
 
-func createDeploymentDir(sshClient *ssh.Client, opts *sad.Options) string {
+func getRemotePath(opts *sad.Options) string {
+	remotePath := fmt.Sprintf("%s/%s", opts.RootDir, opts.GetFullAppName())
+	return remotePath
+}
+
+func createDeploymentDir(sshClient *ssh.Client, remotePath string) {
 	fmt.Print("Creating directory for deployment... ")
 
-	remotePath := fmt.Sprintf("%s/%s", opts.RootDir, opts.GetFullAppName())
 	cmd := fmt.Sprintf("mkdir -p %s", remotePath)
 	_, err := sad.SSHRunCommand(sshClient, cmd)
 
@@ -191,8 +197,6 @@ func createDeploymentDir(sshClient *ssh.Client, opts *sad.Options) string {
 	}
 
 	fmt.Println("Success!")
-
-	return remotePath
 }
 
 func deployFiles(sshClient *ssh.Client, opts *sad.Options) {
