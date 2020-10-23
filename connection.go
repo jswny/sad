@@ -16,7 +16,8 @@ func SendFiles(sshClient *ssh.Client, opts *Options, files map[string]io.Reader)
 	for fileName, reader := range files {
 		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, opts.GetFullAppName(), fileName)
 
-		err := copyFile(fileName, reader, remotePath, sshClient)
+		permissions := "0644"
+		err := copyFile(fileName, reader, remotePath, permissions, sshClient)
 
 		if err != nil {
 			return err
@@ -66,7 +67,7 @@ func SSHRunCommand(client *ssh.Client, cmd string) (string, error) {
 	return b.String(), nil
 }
 
-func copyFile(fileName string, reader io.Reader, remotePath string, sshClient *ssh.Client) error {
+func copyFile(fileName string, reader io.Reader, remotePath string, permissions string, sshClient *ssh.Client) error {
 	client, err := scp.NewClientBySSH(sshClient)
 
 	if err != nil {
@@ -75,7 +76,6 @@ func copyFile(fileName string, reader io.Reader, remotePath string, sshClient *s
 
 	defer client.Close()
 
-	permissions := "0655"
 	err = client.CopyFile(reader, remotePath, permissions)
 
 	if err != nil {
