@@ -2,7 +2,6 @@ package sad
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -112,7 +111,7 @@ func (o *Options) Verify() error {
 	}
 
 	if len(errorMap) != 0 {
-		errorString := "Invalid options! "
+		errorString := "invalid options! "
 
 		for field, message := range errorMap {
 			errorString += fmt.Sprintf("%s %s, ", field, message)
@@ -120,7 +119,7 @@ func (o *Options) Verify() error {
 
 		errorString = errorString[:len(errorString)-2]
 
-		return errors.New(errorString)
+		return fmt.Errorf(errorString)
 	}
 
 	return nil

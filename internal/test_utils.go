@@ -147,9 +147,9 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 
 	CompareStrings(expectedOpts.Channel, actualOpts.Channel, "channel", t)
 
-	compareSlices(actualOpts.EnvVars, expectedOpts.EnvVars, "environment variables", t)
+	compareSlices(expectedOpts.EnvVars, actualOpts.EnvVars, "environment variables", t)
 
-	if actualOpts.Debug != expectedOpts.Debug {
+	if expectedOpts.Debug != actualOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
 
