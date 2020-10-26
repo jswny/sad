@@ -240,7 +240,7 @@ func (o *Options) GetEnvValues() map[string]string {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {
-		value := os.Getenv(variableName)
+		value := os.Getenv(EnvVarPrefix + variableName)
 
 		m[variableName] = value
 	}

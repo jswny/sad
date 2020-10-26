@@ -260,10 +260,8 @@ func TestGetEnvValues(t *testing.T) {
 
 	content := "test"
 
-	for _, variableName := range opts.EnvVars {
-		os.Setenv(variableName, content)
-		defer os.Unsetenv(variableName)
-	}
+	testutils.SetEnvVarsWithPrefix(&opts, content)
+	defer testutils.UnsetEnvVarsWithPrefix(&opts)
 
 	envMap := opts.GetEnvValues()
 

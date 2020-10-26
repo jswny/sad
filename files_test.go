@@ -142,10 +142,8 @@ func TestGetEntitesForDeployment(t *testing.T) {
 
 	variableContent := "test"
 
-	for _, variableName := range opts.EnvVars {
-		os.Setenv(variableName, variableContent)
-		defer os.Unsetenv(variableName)
-	}
+	testutils.SetEnvVarsWithPrefix(opts, variableContent)
+	defer testutils.UnsetEnvVarsWithPrefix(opts)
 
 	readerMap, files, err := sad.GetEntitiesForDeployment(tempDirPath, opts)
 

@@ -232,6 +232,22 @@ func ReadFromReader(name string, reader io.Reader, t *testing.T) string {
 	return buffer.String()
 }
 
+// SetEnvVarsWithPrefix sets the environment variables efined by the specified options.
+// Each variable is prefixed by the default prefix.
+func SetEnvVarsWithPrefix(opts *sad.Options, content string) {
+	for _, variableName := range opts.EnvVars {
+		os.Setenv(sad.EnvVarPrefix+variableName, content)
+	}
+}
+
+// UnsetEnvVarsWithPrefix unsets the environment variables efined by the specified options.
+// Each variable is prefixed by the default prefix.
+func UnsetEnvVarsWithPrefix(opts *sad.Options) {
+	for _, variableName := range opts.EnvVars {
+		os.Unsetenv(sad.EnvVarPrefix + variableName)
+	}
+}
+
 func compareSlices(name string, expected, actual []string, t *testing.T) {
 	equal := true
 
