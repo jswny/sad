@@ -112,7 +112,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	stringTestOpts := testutils.StringOptions{}
 	stringTestOpts.FromOptions(&testOpts)
 
-	name := stringTestOpts.Name
+	repository := stringTestOpts.Repository
 	server := stringTestOpts.Server
 	username := stringTestOpts.Username
 	rootDir := stringTestOpts.RootDir
@@ -123,7 +123,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	imageDigest := stringTestOpts.ImageDigest
 
 	opts := sad.Options{}
-	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
+	err := opts.FromStrings(repository, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
 	if err != nil {
 		t.Fatalf("Error getting options from test options strings: %s", err)
 	}
@@ -222,8 +222,8 @@ func TestOptionsFromEnvEmptyValues(t *testing.T) {
 
 func TestGetFullAppName(t *testing.T) {
 	opts := sad.Options{
-		Name:    "user/foo",
-		Channel: "beta",
+		Repository: "user/foo",
+		Channel:    "beta",
 	}
 
 	fullName, err := opts.GetFullAppName()

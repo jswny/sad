@@ -16,7 +16,7 @@ var EnvVarPrefix = "SAD_"
 
 // Options for deployment.
 type Options struct {
-	Name        string
+	Repository  string
 	Server      net.IP
 	Username    string
 	RootDir     string
@@ -30,8 +30,8 @@ type Options struct {
 // Merge merges the other options into the existing options
 // When both fields are populated, the field from the existing options is kept.
 func (o *Options) Merge(other *Options) {
-	if o.Name == "" {
-		o.Name = other.Name
+	if o.Repository == "" {
+		o.Repository = other.Repository
 	}
 
 	if o.Server == nil {
@@ -83,8 +83,8 @@ func (o *Options) Verify() error {
 	errorMap := make(map[string]string)
 	empty := "<empty>"
 
-	if o.Name == "" {
-		errorMap["name"] = fmt.Sprintf("is %s", empty)
+	if o.Repository == "" {
+		errorMap["repository"] = fmt.Sprintf("is %s", empty)
 	}
 
 	if o.Server == nil {
@@ -127,8 +127,8 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(name string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string, imageDigest string) error {
-	o.Name = name
+func (o *Options) FromStrings(repository string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string, imageDigest string) error {
+	o.Repository = repository
 
 	if server != "" {
 		o.Server = net.ParseIP(server)
@@ -193,7 +193,7 @@ func (o *Options) FromJSON(path string) error {
 func (o *Options) FromEnv() error {
 	prefix := EnvVarPrefix
 
-	name := os.Getenv(prefix + "NAME")
+	repository := os.Getenv(prefix + "REPOSITORY")
 	server := os.Getenv(prefix + "SERVER")
 	username := os.Getenv(prefix + "USERNAME")
 	rootDir := os.Getenv(prefix + "ROOT_DIR")
@@ -203,7 +203,7 @@ func (o *Options) FromEnv() error {
 	debug := os.Getenv(prefix + "DEBUG")
 	imageDigest := os.Getenv(prefix + "IMAGE_DIGEST")
 
-	err := o.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
+	err := o.FromStrings(repository, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
 
 	if err != nil {
 		return err
@@ -213,7 +213,7 @@ func (o *Options) FromEnv() error {
 }
 
 // GetFullAppName gets the full name of the app given the provided options.
-// The name is based on the app name and the channel.
+// The name is based on the repository and the channel.
 // All non-alphanumeric characters are replaced by dashes.
 func (o *Options) GetFullAppName() (string, error) {
 	regStr := "[^a-zA-Z0-9]+"
@@ -223,7 +223,7 @@ func (o *Options) GetFullAppName() (string, error) {
 		return "", fmt.Errorf("error compiling regex %s: %s", regStr, err)
 	}
 
-	fullName := fmt.Sprintf("%s-%s", o.Name, o.Channel)
+	fullName := fmt.Sprintf("%s-%s", o.Repository, o.Channel)
 	fullName = reg.ReplaceAllString(fullName, "-")
 
 	return fullName, nil

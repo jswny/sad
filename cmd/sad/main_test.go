@@ -130,8 +130,8 @@ func TestParseFlagsEmptyValues(t *testing.T) {
 
 func buildArgs(stringOpts *testutils.StringOptions) []string {
 	args := []string{
-		"-name",
-		stringOpts.Name,
+		"-repository",
+		stringOpts.Repository,
 		"-server",
 		stringOpts.Server,
 		"-username",
