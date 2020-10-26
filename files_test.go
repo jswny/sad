@@ -178,10 +178,10 @@ func TestGetEntitesForDeployment(t *testing.T) {
 	reader := readerMap[sad.RemoteDotEnvFileName]
 
 	expectedContent := []string{
-		"foo=test\n",
-		"baz=test\n",
-		"IMAGE=user/repo@abc123\n",
-		"CONTAINER_NAME=user-repo-beta\n",
+		"foo=test",
+		"baz=test",
+		"IMAGE=user/repo@abc123",
+		"CONTAINER_NAME=user-repo-beta",
 	}
 
 	testutils.CompareReaderLines(".env file", reader, expectedContent, t)
