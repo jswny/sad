@@ -68,12 +68,16 @@ func GetEntitiesForDeployment(fromPath string, opts *Options) (map[string]io.Rea
 	delete(readerMap, LocalDockerComposeFileName)
 
 	env := opts.GetEnvValues()
+
+	imageSpecifier := opts.GetImageSpecifier()
+
 	deploymentName, err := opts.GetDeploymentName()
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting full app name: %s", err)
+		return nil, nil, fmt.Errorf("error getting deployment name: %s", err)
 	}
 
+	env["IMAGE"] = imageSpecifier
 	env["CONTAINER_NAME"] = deploymentName
 
 	readerMap[RemoteDotEnvFileName] = GenerateDotEnvFile(env)

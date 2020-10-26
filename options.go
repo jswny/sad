@@ -228,10 +228,10 @@ func (o *Options) GetDeploymentName() (string, error) {
 
 // GetImageSpecifier gets the full image specifier for the deployment.
 // The specifier is based on the repository and the image digest.
-func (o *Options) GetImageSpecifier() (string, error) {
+func (o *Options) GetImageSpecifier() string {
 	deploymentName := fmt.Sprintf("%s@%s", o.Repository, o.ImageDigest)
 
-	return deploymentName, nil
+	return deploymentName
 }
 
 // GetEnvValues gets the values of the environment variables specified in the EnvVars field.

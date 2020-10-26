@@ -243,11 +243,7 @@ func TestGetImageSpecifier(t *testing.T) {
 		ImageDigest: "sha256:abc123",
 	}
 
-	deploymentName, err := opts.GetImageSpecifier()
-
-	if err != nil {
-		t.Fatalf("Error getting image specifier: %s", err)
-	}
+	deploymentName := opts.GetImageSpecifier()
 
 	expected := "user/foo@sha256:abc123"
 
