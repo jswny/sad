@@ -212,7 +212,7 @@ func (o *Options) FromEnv() error {
 	return nil
 }
 
-// GetDeploymentName gets the full name of the deployment given the provided options.
+// GetDeploymentName gets the full name of the deployment.
 // The name is based on the repository and the channel.
 // All non-alphanumeric characters are replaced by dashes.
 func (o *Options) GetDeploymentName() (string, error) {
@@ -222,6 +222,14 @@ func (o *Options) GetDeploymentName() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error replacing non-alphanumeric characters in deployment name: %s", err)
 	}
+
+	return deploymentName, nil
+}
+
+// GetImageSpecifier gets the full image specifier for the deployment.
+// The specifier is based on the repository and the image digest.
+func (o *Options) GetImageSpecifier() (string, error) {
+	deploymentName := fmt.Sprintf("%s@%s", o.Repository, o.ImageDigest)
 
 	return deploymentName, nil
 }

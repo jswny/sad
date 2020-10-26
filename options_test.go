@@ -223,16 +223,33 @@ func TestOptionsFromEnvEmptyValues(t *testing.T) {
 func TestGetDeploymentName(t *testing.T) {
 	opts := sad.Options{
 		Repository: "user/foo",
-		Channel:    "beta",
+		Channel:    "beta/123",
 	}
 
 	deploymentName, err := opts.GetDeploymentName()
 
 	if err != nil {
-		t.Fatalf("Error getting full app name: %s", err)
+		t.Fatalf("Error getting deployment name: %s", err)
 	}
 
-	expected := "user-foo-beta"
+	expected := "user-foo-beta-123"
+
+	testutils.CompareStrings(expected, deploymentName, "full name", t)
+}
+
+func TestGetImageSpecifier(t *testing.T) {
+	opts := sad.Options{
+		Repository:  "user/foo",
+		ImageDigest: "sha256:abc123",
+	}
+
+	deploymentName, err := opts.GetImageSpecifier()
+
+	if err != nil {
+		t.Fatalf("Error getting image specifier: %s", err)
+	}
+
+	expected := "user/foo@sha256:abc123"
 
 	testutils.CompareStrings(expected, deploymentName, "full name", t)
 }
