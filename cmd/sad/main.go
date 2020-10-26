@@ -81,6 +81,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	channel := flags.String("channel", "", "Deployment channel")
 	envVars := flags.String("env-vars", "", "Local environment variables to be injected into the app deployment")
 	debug := flags.Bool("debug", false, "Debug mode")
+	imageDigest := flags.String("image-digest", "", "Docker image digest to deploy")
 
 	err = flags.Parse(args)
 	if err != nil {
@@ -89,7 +90,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 
 	opts = &sad.Options{}
 	debugString := strconv.FormatBool(*debug)
-	err = opts.FromStrings(*name, *server, *username, *rootDir, *privateKey, *channel, *envVars, debugString)
+	err = opts.FromStrings(*name, *server, *username, *rootDir, *privateKey, *channel, *envVars, debugString, *imageDigest)
 
 	if err != nil {
 		return nil, buf.String(), err

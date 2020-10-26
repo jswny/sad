@@ -145,7 +145,8 @@ func buildArgs(stringOpts *testutils.StringOptions) []string {
 		"-env-vars",
 		stringOpts.EnvVars,
 		"-debug",
-		stringOpts.Debug,
+		"-image-digest",
+		stringOpts.ImageDigest,
 	}
 
 	return args
