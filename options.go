@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -213,8 +214,19 @@ func (o *Options) FromEnv() error {
 
 // GetFullAppName gets the full name of the app given the provided options.
 // The name is based on the app name and the channel.
-func (o *Options) GetFullAppName() string {
-	return fmt.Sprintf("%s-%s", o.Name, o.Channel)
+// All non-alphanumeric characters are replaced by dashes.
+func (o *Options) GetFullAppName() (string, error) {
+	regStr := "[^a-zA-Z0-9]+"
+	reg, err := regexp.Compile(regStr)
+
+	if err != nil {
+		return "", fmt.Errorf("error compiling regex %s: %s", regStr, err)
+	}
+
+	fullName := fmt.Sprintf("%s-%s", o.Name, o.Channel)
+	fullName = reg.ReplaceAllString(fullName, "-")
+
+	return fullName, nil
 }
 
 // GetEnvValues gets the values of the environment variables specified in the EnvVars field.

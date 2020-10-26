@@ -222,12 +222,17 @@ func TestOptionsFromEnvEmptyValues(t *testing.T) {
 
 func TestGetFullAppName(t *testing.T) {
 	opts := sad.Options{
-		Name:    "foo",
+		Name:    "user/foo",
 		Channel: "beta",
 	}
 
-	fullName := opts.GetFullAppName()
-	expected := "foo-beta"
+	fullName, err := opts.GetFullAppName()
+
+	if err != nil {
+		t.Fatalf("Error getting full app name: %s", err)
+	}
+
+	expected := "user-foo-beta"
 
 	testutils.CompareStrings(expected, fullName, "full name", t)
 }

@@ -183,7 +183,19 @@ func openSSHConnection(clientConfig *ssh.ClientConfig, opts *sad.Options) *ssh.C
 }
 
 func getRemotePath(opts *sad.Options) string {
-	remotePath := fmt.Sprintf("%s/%s", opts.RootDir, opts.GetFullAppName())
+	fmt.Print("Generating remote path... ")
+
+	fullName, err := opts.GetFullAppName()
+
+	if err != nil {
+		fmt.Println("Error getting full app name:", err)
+		os.Exit(1)
+	}
+
+	remotePath := fmt.Sprintf("%s/%s", opts.RootDir, fullName)
+
+	fmt.Println("Success!")
+
 	return remotePath
 }
 
