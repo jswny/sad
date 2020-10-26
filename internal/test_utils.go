@@ -131,29 +131,29 @@ func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 
 // CompareOpts compares two sets of options in a test environment.
 func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
-	CompareStrings(expectedOpts.Repository, actualOpts.Repository, "repository", t)
+	CompareStrings("repository", expectedOpts.Repository, actualOpts.Repository, t)
 
 	if !actualOpts.Server.Equal(expectedOpts.Server) {
 		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
 	}
 
-	CompareStrings(expectedOpts.Username, actualOpts.Username, "username", t)
+	CompareStrings("username", expectedOpts.Username, actualOpts.Username, t)
 
-	CompareStrings(expectedOpts.RootDir, actualOpts.RootDir, "root directory", t)
+	CompareStrings("root directory", expectedOpts.RootDir, actualOpts.RootDir, t)
 
 	if (expectedOpts.PrivateKey.PrivateKey != nil && actualOpts.PrivateKey.PrivateKey != nil) && !expectedOpts.PrivateKey.PrivateKey.Equal(actualOpts.PrivateKey.PrivateKey) {
 		t.Errorf("Expected equal private keys but they were not equal")
 	}
 
-	CompareStrings(expectedOpts.Channel, actualOpts.Channel, "channel", t)
+	CompareStrings("channel", expectedOpts.Channel, actualOpts.Channel, t)
 
-	compareSlices(expectedOpts.EnvVars, actualOpts.EnvVars, "environment variables", t)
+	compareSlices("environment variables", expectedOpts.EnvVars, actualOpts.EnvVars, t)
 
 	if expectedOpts.Debug != actualOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
 
-	CompareStrings(expectedOpts.ImageDigest, actualOpts.ImageDigest, "image digest", t)
+	CompareStrings("image digest", expectedOpts.ImageDigest, actualOpts.ImageDigest, t)
 }
 
 // CloneOptions clones options into other options.
@@ -173,7 +173,7 @@ func CloneOptions(optionsToClone *sad.Options, optionsToCloneInto *sad.Options) 
 }
 
 // CompareStrings compares two strings in a test and nicely handles empty strings.
-func CompareStrings(expected, actual, name string, t *testing.T) {
+func CompareStrings(name, expected, actual string, t *testing.T) {
 	if expected != actual {
 		empty := "<empty>"
 
@@ -190,8 +190,8 @@ func CompareStrings(expected, actual, name string, t *testing.T) {
 }
 
 // CompareReaderLines compares the contents of a reader to a slice of lines.
-func CompareReaderLines(name string, reader io.Reader, expectedLines []string, t *testing.T) {
-	actual := ReadFromReader(name, reader, t)
+func CompareReaderLines(name string, expectedLines []string, actualReader io.Reader, t *testing.T) {
+	actual := ReadFromReader(name, actualReader, t)
 
 	expectedNumLines := len(expectedLines)
 
@@ -232,7 +232,7 @@ func ReadFromReader(name string, reader io.Reader, t *testing.T) string {
 	return buffer.String()
 }
 
-func compareSlices(expected, actual []string, name string, t *testing.T) {
+func compareSlices(name string, expected, actual []string, t *testing.T) {
 	equal := true
 
 	if (expected == nil) != (actual == nil) {

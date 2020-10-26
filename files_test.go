@@ -45,7 +45,7 @@ func TestFindFilePathRecursive(t *testing.T) {
 	expected := tempFile.Name()
 	actual := path
 
-	testutils.CompareStrings(expected, actual, "file path", t)
+	testutils.CompareStrings("file path", expected, actual, t)
 }
 
 func TestFindFilePathRecursiveCWD(t *testing.T) {
@@ -70,7 +70,7 @@ func TestFindFilePathRecursiveCWD(t *testing.T) {
 	expected := tempFile.Name()
 	actual := path
 
-	testutils.CompareStrings(expected, actual, "file path", t)
+	testutils.CompareStrings("file path", expected, actual, t)
 }
 
 func TestFindFilePathRecursiveNotFound(t *testing.T) {
@@ -87,12 +87,12 @@ func TestFindFilePathRecursiveNotFound(t *testing.T) {
 		t.Fatalf("Expected error but got nil!")
 	}
 
-	testutils.CompareStrings(sad.FindFilePathRecursiveFileNotFoundErrorMessage, err.Error(), "error", t)
+	testutils.CompareStrings("error", sad.FindFilePathRecursiveFileNotFoundErrorMessage, err.Error(), t)
 
 	expected := ""
 	actual := path
 
-	testutils.CompareStrings(expected, actual, "file path", t)
+	testutils.CompareStrings("file path", expected, actual, t)
 }
 
 func TestGetEntitesForDeployment(t *testing.T) {
@@ -173,7 +173,7 @@ func TestGetEntitesForDeployment(t *testing.T) {
 
 	data := testutils.ReadFromReader(name, composeReader, t)
 
-	testutils.CompareStrings(string(content), data, name, t)
+	testutils.CompareStrings(name, string(content), data, t)
 
 	reader := readerMap[sad.RemoteDotEnvFileName]
 
@@ -184,7 +184,7 @@ func TestGetEntitesForDeployment(t *testing.T) {
 		"CONTAINER_NAME=user-repo-beta",
 	}
 
-	testutils.CompareReaderLines(".env file", reader, expectedContent, t)
+	testutils.CompareReaderLines(".env file", expectedContent, reader, t)
 
 	expected = len(fileNames)
 	actual = len(files)
@@ -219,7 +219,7 @@ func TestGenerateDotEnvFile(t *testing.T) {
 		"baz=qux\n",
 	}
 
-	testutils.CompareReaderLines(".env file", reader, expected, t)
+	testutils.CompareReaderLines(".env file", expected, reader, t)
 }
 
 func TestFilesToFileNameReaderMap(t *testing.T) {

@@ -234,7 +234,7 @@ func TestGetDeploymentName(t *testing.T) {
 
 	expected := "user-foo-beta-123"
 
-	testutils.CompareStrings(expected, deploymentName, "full name", t)
+	testutils.CompareStrings("full name", expected, deploymentName, t)
 }
 
 func TestGetImageSpecifier(t *testing.T) {
@@ -247,7 +247,7 @@ func TestGetImageSpecifier(t *testing.T) {
 
 	expected := "user/foo@sha256:abc123"
 
-	testutils.CompareStrings(expected, deploymentName, "full name", t)
+	testutils.CompareStrings("full name", expected, deploymentName, t)
 }
 
 func TestGetEnvValues(t *testing.T) {
@@ -272,6 +272,6 @@ func TestGetEnvValues(t *testing.T) {
 
 		name := fmt.Sprintf("environment variable %s value", variableName)
 
-		testutils.CompareStrings(content, variableValue, name, t)
+		testutils.CompareStrings(name, content, variableValue, t)
 	}
 }
