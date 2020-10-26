@@ -134,7 +134,10 @@ func TestGetEntitesForDeployment(t *testing.T) {
 	}
 
 	opts := &sad.Options{
-		EnvVars: envVarNames,
+		Repository:  "user/repo",
+		Channel:     "beta",
+		EnvVars:     envVarNames,
+		ImageDigest: "abc123",
 	}
 
 	variableContent := "test"
@@ -144,39 +147,17 @@ func TestGetEntitesForDeployment(t *testing.T) {
 		defer os.Unsetenv(variableName)
 	}
 
-	// envMap := opts.GetEnvValues()
-
-	// for _, variableName := range opts.EnvVars {
-	// 	variableValue := envMap[variableName]
-
-	// 	name := fmt.Sprintf("environment variable %s value", variableName)
-
-	// 	testutils.CompareStrings(variableContent, variableValue, name, t)
-	// }
-
 	readerMap, files, err := sad.GetEntitiesForDeployment(tempDirPath, opts)
 
 	if err != nil {
 		t.Fatalf("Error getting files for deployment: %s", err)
 	}
 
-	expected := len(fileNames)
-	actual := len(files)
+	expected := 1 + len(fileNames)
+	actual := len(readerMap)
 
 	if actual != expected {
-		t.Errorf("Returned %d files, expected %d", actual, expected)
-	}
-
-	for _, file := range files {
-		data, err := ioutil.ReadFile(file.Name())
-
-		if err != nil {
-			t.Fatalf("Error reading returned from file: %s", err)
-		}
-
-		if string(content) != string(data) {
-			t.Errorf("Expected returned file content %s but got %s", content, data)
-		}
+		t.Errorf("Returned %d readers, expected %d", actual, expected)
 	}
 
 	expected = 2
@@ -199,9 +180,30 @@ func TestGetEntitesForDeployment(t *testing.T) {
 	expectedContent := []string{
 		"foo=test\n",
 		"baz=test\n",
+		"IMAGE=user/repo@abc123\n",
+		"CONTAINER_NAME=user-repo-beta\n",
 	}
 
 	testutils.CompareReaderLines(".env file", reader, expectedContent, t)
+
+	expected = len(fileNames)
+	actual = len(files)
+
+	if actual != expected {
+		t.Errorf("Returned %d files, expected %d", actual, expected)
+	}
+
+	for _, file := range files {
+		data, err := ioutil.ReadFile(file.Name())
+
+		if err != nil {
+			t.Fatalf("Error reading returned from file: %s", err)
+		}
+
+		if string(content) != string(data) {
+			t.Errorf("Expected returned file content %s but got %s", content, data)
+		}
+	}
 }
 
 func TestGenerateDotEnvFile(t *testing.T) {

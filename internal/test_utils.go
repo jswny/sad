@@ -193,6 +193,26 @@ func CompareStrings(expected, actual, name string, t *testing.T) {
 func CompareReaderLines(name string, reader io.Reader, expectedLines []string, t *testing.T) {
 	actual := ReadFromReader(name, reader, t)
 
+	expectedNumLines := len(expectedLines)
+
+	actualLines := strings.Split(actual, "\n")
+
+	actualNumLines := len(actualLines)
+
+	var strippedActualLines []string
+
+	for _, actualLine := range actualLines {
+		if actualLine != "" {
+			strippedActualLines = append(strippedActualLines, actualLine)
+		}
+	}
+
+	strippedActualNumLines := len(strippedActualLines)
+
+	if strippedActualNumLines != expectedNumLines {
+		t.Errorf("Expected %d non-empty lines in reader contents for %s but got %d out of a total of %d lines", expectedNumLines, name, strippedActualNumLines, actualNumLines)
+	}
+
 	for _, expectedLine := range expectedLines {
 		if !strings.Contains(actual, expectedLine) {
 			t.Errorf("Expected line \"%s\" in reader contents for %s but got:\n%s", expectedLine, name, actual)

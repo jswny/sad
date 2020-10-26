@@ -52,7 +52,7 @@ func FindFilePathRecursive(fromPath string, fileName string) (string, error) {
 }
 
 // GetEntitiesForDeployment gets (and opens if necessary) the entities needed for deployment.
-// Files are locaed by finding them recursively under the provided path .
+// Files are locaed by finding them recursively under the provided path.
 // Files: Docker Compose file (see DockerComposeFileName).
 // Other: generated .env file.
 // Files are only returned so they can be closed by the caller.
