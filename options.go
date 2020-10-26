@@ -16,14 +16,15 @@ var EnvVarPrefix = "SAD_"
 
 // Options for deployment.
 type Options struct {
-	Name       string
-	Server     net.IP
-	Username   string
-	RootDir    string
-	PrivateKey RSAPrivateKey
-	Channel    string
-	EnvVars    []string
-	Debug      bool
+	Name        string
+	Server      net.IP
+	Username    string
+	RootDir     string
+	PrivateKey  RSAPrivateKey
+	Channel     string
+	EnvVars     []string
+	Debug       bool
+	ImageDigest string
 }
 
 // Merge merges the other options into the existing options
@@ -59,6 +60,10 @@ func (o *Options) Merge(other *Options) {
 
 	if !o.Debug {
 		o.Debug = other.Debug
+	}
+
+	if o.ImageDigest == "" {
+		o.ImageDigest = other.ImageDigest
 	}
 }
 
@@ -102,6 +107,10 @@ func (o *Options) Verify() error {
 		errorMap["channel"] = fmt.Sprintf("is %s", empty)
 	}
 
+	if o.ImageDigest == "" {
+		errorMap["image digest"] = fmt.Sprintf("is %s", empty)
+	}
+
 	if len(errorMap) != 0 {
 		errorString := "Invalid options! "
 
@@ -118,7 +127,7 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(name string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
+func (o *Options) FromStrings(name string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string, imageDigest string) error {
 	o.Name = name
 
 	if server != "" {
@@ -152,6 +161,8 @@ func (o *Options) FromStrings(name string, server string, username string, rootD
 
 		o.Debug = debugBool
 	}
+
+	o.ImageDigest = imageDigest
 
 	return nil
 }
@@ -190,8 +201,9 @@ func (o *Options) FromEnv() error {
 	channel := os.Getenv(prefix + "CHANNEL")
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
+	imageDigest := os.Getenv(prefix + "IMAGE_DIGEST")
 
-	err := o.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug)
+	err := o.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
 
 	if err != nil {
 		return err
