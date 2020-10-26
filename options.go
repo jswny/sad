@@ -216,15 +216,12 @@ func (o *Options) FromEnv() error {
 // The name is based on the repository and the channel.
 // All non-alphanumeric characters are replaced by dashes.
 func (o *Options) GetDeploymentName() (string, error) {
-	regStr := "[^a-zA-Z0-9]+"
-	reg, err := regexp.Compile(regStr)
+	deploymentName := fmt.Sprintf("%s-%s", o.Repository, o.Channel)
+	deploymentName, err := replaceNonAlphanumeric(deploymentName, "-")
 
 	if err != nil {
-		return "", fmt.Errorf("error compiling regex %s: %s", regStr, err)
+		return "", fmt.Errorf("error replacing non-alphanumeric characters in deployment name: %s", err)
 	}
-
-	deploymentName := fmt.Sprintf("%s-%s", o.Repository, o.Channel)
-	deploymentName = reg.ReplaceAllString(deploymentName, "-")
 
 	return deploymentName, nil
 }
@@ -241,4 +238,15 @@ func (o *Options) GetEnvValues() map[string]string {
 	}
 
 	return m
+}
+
+func replaceNonAlphanumeric(input string, replaceWith string) (string, error) {
+	regStr := "[^a-zA-Z0-9]+"
+	reg, err := regexp.Compile(regStr)
+
+	if err != nil {
+		return "", fmt.Errorf("error compiling regex %s: %s", regStr, err)
+	}
+
+	return reg.ReplaceAllString(input, replaceWith), nil
 }
