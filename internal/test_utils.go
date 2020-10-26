@@ -18,15 +18,16 @@ import (
 
 // StringOptions represents all options as strings.
 type StringOptions struct {
-	Name       string
-	Server     string
-	Username   string
-	RootDir    string
-	PrivateKey string
-	Channel    string
-	Path       string
-	EnvVars    string
-	Debug      string
+	Name        string
+	Server      string
+	Username    string
+	RootDir     string
+	PrivateKey  string
+	Channel     string
+	Path        string
+	EnvVars     string
+	Debug       string
+	ImageDigest string
 }
 
 // FromOptions converts options into string options.
@@ -39,6 +40,7 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Channel = opts.Channel
 	stringOpts.EnvVars = strings.Join(opts.EnvVars, ",")
 	stringOpts.Debug = strconv.FormatBool(opts.Debug)
+	stringOpts.ImageDigest = opts.ImageDigest
 }
 
 // SetEnv sets environment variables for all string options.
@@ -54,6 +56,7 @@ func (stringOpts *StringOptions) SetEnv() {
 	setEnvFromPrefixPostfix(prefix, "CHANNEL", stringOpts.Channel)
 	setEnvFromPrefixPostfix(prefix, "ENV_VARS", stringOpts.EnvVars)
 	setEnvFromPrefixPostfix(prefix, "DEBUG", stringOpts.Debug)
+	setEnvFromPrefixPostfix(prefix, "IMAGE_DIGEST", stringOpts.ImageDigest)
 }
 
 // UnsetEnv sets environment variables for all string options.
@@ -88,6 +91,9 @@ func (stringOpts *StringOptions) UnsetEnv() {
 
 	envVarPostfix = "DEBUG"
 	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "IMAGE_DIGEST"
+	defer os.Unsetenv(prefix + envVarPostfix)
 }
 
 // GetTestOpts retrieves a set of random options for testing.
@@ -108,6 +114,7 @@ func GetTestOpts() sad.Options {
 			randString(randSize),
 		},
 		Debug: true,
+		ImageDigest: randString(randSize)
 	}
 
 	return testOpts
@@ -145,6 +152,8 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
+	
+	CompareStrings(expectedOpts.ImageDigest, actualOpts.ImageDigest, "image digest", t)
 }
 
 // CloneOptions clones options into other options.

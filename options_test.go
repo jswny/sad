@@ -120,6 +120,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	channel := stringTestOpts.Channel
 	envVars := stringTestOpts.EnvVars
 	debug := stringTestOpts.Debug
+	imageDigest := stringTestOpts.ImageDigest
 
 	opts := sad.Options{}
 	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug)
