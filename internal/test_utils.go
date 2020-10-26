@@ -232,7 +232,7 @@ func ReadFromReader(name string, reader io.Reader, t *testing.T) string {
 	return buffer.String()
 }
 
-// SetEnvVarsWithPrefix sets the environment variables efined by the specified options.
+// SetEnvVarsWithPrefix sets the environment variables defined by the specified options.
 // Each variable is prefixed by the default prefix.
 func SetEnvVarsWithPrefix(opts *sad.Options, content string) {
 	for _, variableName := range opts.EnvVars {
@@ -240,7 +240,7 @@ func SetEnvVarsWithPrefix(opts *sad.Options, content string) {
 	}
 }
 
-// UnsetEnvVarsWithPrefix unsets the environment variables efined by the specified options.
+// UnsetEnvVarsWithPrefix unsets the environment variables defined by the specified options.
 // Each variable is prefixed by the default prefix.
 func UnsetEnvVarsWithPrefix(opts *sad.Options) {
 	for _, variableName := range opts.EnvVars {

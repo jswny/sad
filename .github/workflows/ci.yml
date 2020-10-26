@@ -52,15 +52,15 @@ jobs:
         run: gocov convert cover.out | gocov report
       - name: Line Coverage Report
         run: gocov convert cover.out | gocov annotate -
-  demo-deploy-beta:
+  deploy-example-beta:
     runs-on: ubuntu-latest
-    name: Deploy Beta Demo App
+    name: Deploy Example App
     if: ${{ !contains(github.ref, 'refs/tags') }}
     steps:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
         with:
-          repository: ${{ github.repository }}
+          repository: ${{ format('{0}-{1}', github.repository, 'example')}}
           path: 'app'
           tag_with_ref: true
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -68,21 +68,15 @@ jobs:
       - name: Deploy
         uses: ./
         id: deploy
-        with:
-          deploy_server: ${{ secrets.deploy_server }}
-          deploy_username: ${{ secrets.deploy_username }}
-          deploy_root_dir: '/srv'
-          ssh_key: ${{ secrets.ssh_key }}
-          path: 'app'
-          channel: 'beta'
-          debug: ${{ secrets.actions_step_debug }}
-          env_vars: 'FOO,BAR'
         env:
-          FOO: ${{ secrets.FOO_BETA }}
-          BAR: ${{ secrets.BAR_BETA }}
-          FOO_STABLE: ${{ secrets.FOO_STABLE }}
-          BAR_STABLE: ${{ secrets.BAR_STABLE }}
-  demo-deploy-stable:
+          SAD_REPOSITORY: ${{ github.repository }}
+          SAD_SERVER: ${{ secrets.SERVER }}
+          SAD_USERNAME: ${{ secrets.USERNAME }}
+          SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SAD_CHANNEL: 'beta'
+          SAD_FOO: ${{ secrets.FOO_BETA }}
+          SAD_BAR: ${{ secrets.BAR_BETA }}
+  deploy-example-stable:
     runs-on: ubuntu-latest
     name: Deploy Stable Demo App
     if: ${{ contains(github.ref, 'refs/tags') }}
