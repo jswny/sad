@@ -68,7 +68,7 @@ func GetEntitiesForDeployment(fromPath string, opts *Options) (map[string]io.Rea
 	delete(readerMap, LocalDockerComposeFileName)
 
 	env := opts.GetEnvValues()
-	containerName, err := opts.GetFullAppName()
+	containerName, err := opts.GetDeploymentName()
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting full app name: %s", err)

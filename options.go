@@ -212,10 +212,10 @@ func (o *Options) FromEnv() error {
 	return nil
 }
 
-// GetFullAppName gets the full name of the app given the provided options.
+// GetDeploymentName gets the full name of the deployment given the provided options.
 // The name is based on the repository and the channel.
 // All non-alphanumeric characters are replaced by dashes.
-func (o *Options) GetFullAppName() (string, error) {
+func (o *Options) GetDeploymentName() (string, error) {
 	regStr := "[^a-zA-Z0-9]+"
 	reg, err := regexp.Compile(regStr)
 
@@ -223,10 +223,10 @@ func (o *Options) GetFullAppName() (string, error) {
 		return "", fmt.Errorf("error compiling regex %s: %s", regStr, err)
 	}
 
-	fullName := fmt.Sprintf("%s-%s", o.Repository, o.Channel)
-	fullName = reg.ReplaceAllString(fullName, "-")
+	deploymentName := fmt.Sprintf("%s-%s", o.Repository, o.Channel)
+	deploymentName = reg.ReplaceAllString(deploymentName, "-")
 
-	return fullName, nil
+	return deploymentName, nil
 }
 
 // GetEnvValues gets the values of the environment variables specified in the EnvVars field.

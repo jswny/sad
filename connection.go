@@ -14,13 +14,13 @@ import (
 // The full path name for the file on the remote server will be generatd as <root directory as specified by options>/<app name with channel>/<file name>.
 func SendFiles(sshClient *ssh.Client, opts *Options, files map[string]io.Reader) error {
 	for fileName, reader := range files {
-		fullName, err := opts.GetFullAppName()
+		deploymentName, err := opts.GetDeploymentName()
 
 		if err != nil {
 			return fmt.Errorf("error getting full app name: %s", err)
 		}
 
-		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, fullName, fileName)
+		remotePath := fmt.Sprintf("%s/%s/%s", opts.RootDir, deploymentName, fileName)
 
 		permissions := "0644"
 		err = copyFile(fileName, reader, remotePath, permissions, sshClient)
