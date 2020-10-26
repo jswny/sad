@@ -113,8 +113,8 @@ func GetTestOpts() sad.Options {
 			randString(randSize),
 			randString(randSize),
 		},
-		Debug: true,
-		ImageDigest: randString(randSize)
+		Debug:       true,
+		ImageDigest: randString(randSize),
 	}
 
 	return testOpts
@@ -152,7 +152,7 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if actualOpts.Debug != expectedOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
-	
+
 	CompareStrings(expectedOpts.ImageDigest, actualOpts.ImageDigest, "image digest", t)
 }
 

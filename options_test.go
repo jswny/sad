@@ -123,7 +123,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	imageDigest := stringTestOpts.ImageDigest
 
 	opts := sad.Options{}
-	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug)
+	err := opts.FromStrings(name, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
 	if err != nil {
 		t.Fatalf("Error getting options from test options strings: %s", err)
 	}
