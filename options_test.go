@@ -160,7 +160,7 @@ func TestOptionsFromJSON(t *testing.T) {
 	testutils.CompareOpts(testOpts, opts, t)
 }
 
-func TestOptionsFromJSONEmtpyValues(t *testing.T) {
+func TestOptionsFromJSONEmptyValues(t *testing.T) {
 	testOpts := sad.Options{}
 	testOptsData, err := json.Marshal(testOpts)
 
@@ -250,7 +250,7 @@ func TestGetImageSpecifier(t *testing.T) {
 	testutils.CompareStrings("full name", expected, deploymentName, t)
 }
 
-func TestGetEnvValues(t *testing.T) {
+func TestDeploymentGetEnvValues(t *testing.T) {
 	opts := sad.Options{
 		EnvVars: []string{
 			"foo",
@@ -260,10 +260,11 @@ func TestGetEnvValues(t *testing.T) {
 
 	content := "test"
 
-	testutils.SetEnvVarsWithPrefix(&opts, content)
-	defer testutils.UnsetEnvVarsWithPrefix(&opts)
+	prefix := sad.DeploymentEnvVarPrefix
+	testutils.SetEnvVarsWithPrefix(&opts, prefix, content)
+	defer testutils.UnsetEnvVarsWithPrefix(&opts, prefix)
 
-	envMap, err := opts.GetEnvValues()
+	envMap, err := opts.GetDeploymentEnvValues()
 
 	if err != nil {
 		t.Fatalf("Error getting referenced environment variables: %s", err)
@@ -288,13 +289,14 @@ func TestGetEnvValuesBlank(t *testing.T) {
 
 	content := "test"
 
-	testutils.SetEnvVarsWithPrefix(&opts, content)
+	prefix := sad.DeploymentEnvVarPrefix
+	testutils.SetEnvVarsWithPrefix(&opts, prefix, content)
 
 	toUnset := opts.EnvVars[0]
-	os.Unsetenv(sad.OptionEnvVarPrefix + toUnset)
-	defer testutils.UnsetEnvVarsWithPrefix(&opts)
+	os.Unsetenv(prefix + toUnset)
+	defer testutils.UnsetEnvVarsWithPrefix(&opts, prefix)
 
-	envMap, err := opts.GetEnvValues()
+	envMap, err := opts.GetDeploymentEnvValues()
 
 	if err == nil {
 		t.Errorf("Expected error getting referenced environment variables but got: %s", err)

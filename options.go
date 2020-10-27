@@ -15,7 +15,7 @@ import (
 var OptionEnvVarPrefix = "SAD_"
 
 // DeploymentEnvVarPrefix represents the prefix that all dynamic environment variables which will be injected into the deployment should have to be read properly.
-var DeploymentEnvVarPrefix = OptionEnvVarPrefix + "ENV_"
+var DeploymentEnvVarPrefix = OptionEnvVarPrefix + "DEPLOY_"
 
 // Options for deployment.
 type Options struct {
@@ -237,13 +237,13 @@ func (o *Options) GetImageSpecifier() string {
 	return deploymentName
 }
 
-// GetEnvValues gets the values of the environment variables specified in the EnvVars field.
+// GetDeploymentEnvValues gets the values of the environment variables specified in the EnvVars field to be injected into the deployment.
 // Returns a map of the variable names to values, or an error if any of the variables are blank or unset.
-func (o *Options) GetEnvValues() (map[string]string, error) {
+func (o *Options) GetDeploymentEnvValues() (map[string]string, error) {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {
-		variableNameWithPrefix := OptionEnvVarPrefix + variableName
+		variableNameWithPrefix := DeploymentEnvVarPrefix + variableName
 		value := os.Getenv(variableNameWithPrefix)
 
 		if value == "" {

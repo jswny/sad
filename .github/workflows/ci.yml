@@ -96,5 +96,5 @@ jobs:
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SAD_CHANNEL: ${{ steps.prep.outputs.channel }}
           SAD_DIGEST: ${{ steps.docker_build.outputs.digest }}
-          SAD_FOO: ${{ secrets.FOO_BETA }}
-          SAD_BAR: ${{ secrets.BAR_BETA }}
+          SAD_DEPLOY_FOO: ${{ secrets.FOO }}
+          SAD_DEPLOY_BAR: ${{ secrets.BAR }}
