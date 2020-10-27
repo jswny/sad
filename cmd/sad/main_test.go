@@ -132,6 +132,8 @@ func buildArgs(stringOpts *testutils.StringOptions) []string {
 	args := []string{
 		"-repository",
 		stringOpts.Repository,
+		"-image-digest",
+		stringOpts.ImageDigest,
 		"-server",
 		stringOpts.Server,
 		"-username",
@@ -145,8 +147,6 @@ func buildArgs(stringOpts *testutils.StringOptions) []string {
 		"-env-vars",
 		stringOpts.EnvVars,
 		"-debug",
-		"-image-digest",
-		stringOpts.ImageDigest,
 	}
 
 	return args

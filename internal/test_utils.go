@@ -19,6 +19,7 @@ import (
 // StringOptions represents all options as strings.
 type StringOptions struct {
 	Repository  string
+	ImageDigest string
 	Server      string
 	Username    string
 	RootDir     string
@@ -27,12 +28,12 @@ type StringOptions struct {
 	Path        string
 	EnvVars     string
 	Debug       string
-	ImageDigest string
 }
 
 // FromOptions converts options into string options.
 func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Repository = opts.Repository
+	stringOpts.ImageDigest = opts.ImageDigest
 	stringOpts.Server = opts.Server.String()
 	stringOpts.Username = opts.Username
 	stringOpts.RootDir = opts.RootDir
@@ -40,7 +41,6 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Channel = opts.Channel
 	stringOpts.EnvVars = strings.Join(opts.EnvVars, ",")
 	stringOpts.Debug = strconv.FormatBool(opts.Debug)
-	stringOpts.ImageDigest = opts.ImageDigest
 }
 
 // SetEnv sets environment variables for all string options.
@@ -49,6 +49,7 @@ func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.EnvVarPrefix
 
 	setEnvFromPrefixPostfix(prefix, "REPOSITORY", stringOpts.Repository)
+	setEnvFromPrefixPostfix(prefix, "IMAGE_DIGEST", stringOpts.ImageDigest)
 	setEnvFromPrefixPostfix(prefix, "SERVER", stringOpts.Server)
 	setEnvFromPrefixPostfix(prefix, "USERNAME", stringOpts.Username)
 	setEnvFromPrefixPostfix(prefix, "ROOT_DIR", stringOpts.RootDir)
@@ -56,7 +57,6 @@ func (stringOpts *StringOptions) SetEnv() {
 	setEnvFromPrefixPostfix(prefix, "CHANNEL", stringOpts.Channel)
 	setEnvFromPrefixPostfix(prefix, "ENV_VARS", stringOpts.EnvVars)
 	setEnvFromPrefixPostfix(prefix, "DEBUG", stringOpts.Debug)
-	setEnvFromPrefixPostfix(prefix, "IMAGE_DIGEST", stringOpts.ImageDigest)
 }
 
 // UnsetEnv sets environment variables for all string options.
@@ -103,18 +103,18 @@ func GetTestOpts() sad.Options {
 	randSize := 5
 
 	testOpts := sad.Options{
-		Repository: randString(randSize),
-		Server:     net.ParseIP("1.2.3.4"),
-		Username:   randString(randSize),
-		RootDir:    randString(randSize),
-		PrivateKey: rsaPrivateKey,
-		Channel:    randString(randSize),
+		Repository:  randString(randSize),
+		ImageDigest: randString(randSize),
+		Server:      net.ParseIP("1.2.3.4"),
+		Username:    randString(randSize),
+		RootDir:     randString(randSize),
+		PrivateKey:  rsaPrivateKey,
+		Channel:     randString(randSize),
 		EnvVars: []string{
 			randString(randSize),
 			randString(randSize),
 		},
-		Debug:       true,
-		ImageDigest: randString(randSize),
+		Debug: true,
 	}
 
 	return testOpts
@@ -132,6 +132,8 @@ func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 // CompareOpts compares two sets of options in a test environment.
 func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
 	CompareStrings("repository", expectedOpts.Repository, actualOpts.Repository, t)
+
+	CompareStrings("image digest", expectedOpts.ImageDigest, actualOpts.ImageDigest, t)
 
 	if !actualOpts.Server.Equal(expectedOpts.Server) {
 		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
@@ -152,8 +154,6 @@ func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T)
 	if expectedOpts.Debug != actualOpts.Debug {
 		t.Errorf("Expected debug %t but got %t", expectedOpts.Debug, actualOpts.Debug)
 	}
-
-	CompareStrings("image digest", expectedOpts.ImageDigest, actualOpts.ImageDigest, t)
 }
 
 // CloneOptions clones options into other options.

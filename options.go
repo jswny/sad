@@ -17,6 +17,7 @@ var EnvVarPrefix = "SAD_"
 // Options for deployment.
 type Options struct {
 	Repository  string
+	ImageDigest string
 	Server      net.IP
 	Username    string
 	RootDir     string
@@ -24,7 +25,6 @@ type Options struct {
 	Channel     string
 	EnvVars     []string
 	Debug       bool
-	ImageDigest string
 }
 
 // Merge merges the other options into the existing options
@@ -32,6 +32,10 @@ type Options struct {
 func (o *Options) Merge(other *Options) {
 	if o.Repository == "" {
 		o.Repository = other.Repository
+	}
+
+	if o.ImageDigest == "" {
+		o.ImageDigest = other.ImageDigest
 	}
 
 	if o.Server == nil {
@@ -61,10 +65,6 @@ func (o *Options) Merge(other *Options) {
 	if !o.Debug {
 		o.Debug = other.Debug
 	}
-
-	if o.ImageDigest == "" {
-		o.ImageDigest = other.ImageDigest
-	}
 }
 
 // MergeDefaults merges default option values into the given options.
@@ -87,6 +87,10 @@ func (o *Options) Verify() error {
 		errorMap["repository"] = fmt.Sprintf("is %s", empty)
 	}
 
+	if o.ImageDigest == "" {
+		errorMap["image digest"] = fmt.Sprintf("is %s", empty)
+	}
+
 	if o.Server == nil {
 		errorMap["server"] = "is nil"
 	}
@@ -107,10 +111,6 @@ func (o *Options) Verify() error {
 		errorMap["channel"] = fmt.Sprintf("is %s", empty)
 	}
 
-	if o.ImageDigest == "" {
-		errorMap["image digest"] = fmt.Sprintf("is %s", empty)
-	}
-
 	if len(errorMap) != 0 {
 		errorString := "invalid options! "
 
@@ -127,8 +127,10 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(repository string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string, imageDigest string) error {
+func (o *Options) FromStrings(repository string, imageDigest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
 	o.Repository = repository
+
+	o.ImageDigest = imageDigest
 
 	if server != "" {
 		o.Server = net.ParseIP(server)
@@ -162,8 +164,6 @@ func (o *Options) FromStrings(repository string, server string, username string,
 		o.Debug = debugBool
 	}
 
-	o.ImageDigest = imageDigest
-
 	return nil
 }
 
@@ -194,6 +194,7 @@ func (o *Options) FromEnv() error {
 	prefix := EnvVarPrefix
 
 	repository := os.Getenv(prefix + "REPOSITORY")
+	imageDigest := os.Getenv(prefix + "IMAGE_DIGEST")
 	server := os.Getenv(prefix + "SERVER")
 	username := os.Getenv(prefix + "USERNAME")
 	rootDir := os.Getenv(prefix + "ROOT_DIR")
@@ -201,9 +202,8 @@ func (o *Options) FromEnv() error {
 	channel := os.Getenv(prefix + "CHANNEL")
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
-	imageDigest := os.Getenv(prefix + "IMAGE_DIGEST")
 
-	err := o.FromStrings(repository, server, username, rootDir, privateKey, channel, envVars, debug, imageDigest)
+	err := o.FromStrings(repository, imageDigest, server, username, rootDir, privateKey, channel, envVars, debug)
 
 	if err != nil {
 		return err
