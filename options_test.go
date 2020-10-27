@@ -291,7 +291,7 @@ func TestGetEnvValuesBlank(t *testing.T) {
 	testutils.SetEnvVarsWithPrefix(&opts, content)
 
 	toUnset := opts.EnvVars[0]
-	os.Unsetenv(sad.EnvVarPrefix + toUnset)
+	os.Unsetenv(sad.OptionEnvVarPrefix + toUnset)
 	defer testutils.UnsetEnvVarsWithPrefix(&opts)
 
 	envMap, err := opts.GetEnvValues()

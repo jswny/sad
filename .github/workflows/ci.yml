@@ -94,7 +94,7 @@ jobs:
           SAD_SERVER: ${{ secrets.SERVER }}
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SAD_CHANNEL: 'beta'
+          SAD_CHANNEL: ${{ steps.prep.outputs.channel }}
           SAD_DIGEST: ${{ steps.docker_build.outputs.digest }}
           SAD_FOO: ${{ secrets.FOO_BETA }}
           SAD_BAR: ${{ secrets.BAR_BETA }}

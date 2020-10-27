@@ -11,8 +11,11 @@ import (
 	"strings"
 )
 
-// EnvVarPrefix represents the prefix that all environment variables should have to be read properly.
-var EnvVarPrefix = "SAD_"
+// OptionEnvVarPrefix represents the prefix that all environment variables representing options should have to be read properly.
+var OptionEnvVarPrefix = "SAD_"
+
+// DeploymentEnvVarPrefix represents the prefix that all dynamic environment variables which will be injected into the deployment should have to be read properly.
+var DeploymentEnvVarPrefix = OptionEnvVarPrefix + "ENV_"
 
 // Options for deployment.
 type Options struct {
@@ -191,7 +194,7 @@ func (o *Options) FromJSON(path string) error {
 // The private key should be a base64 encoded string.
 // The environment variables should be a comma-separated string.
 func (o *Options) FromEnv() error {
-	prefix := EnvVarPrefix
+	prefix := OptionEnvVarPrefix
 
 	repository := os.Getenv(prefix + "REPOSITORY")
 	digest := os.Getenv(prefix + "DIGEST")
@@ -240,7 +243,7 @@ func (o *Options) GetEnvValues() (map[string]string, error) {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {
-		variableNameWithPrefix := EnvVarPrefix + variableName
+		variableNameWithPrefix := OptionEnvVarPrefix + variableName
 		value := os.Getenv(variableNameWithPrefix)
 
 		if value == "" {

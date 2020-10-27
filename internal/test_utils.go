@@ -46,7 +46,7 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 // SetEnv sets environment variables for all string options.
 // UnsetEnv should be called after.
 func (stringOpts *StringOptions) SetEnv() {
-	prefix := sad.EnvVarPrefix
+	prefix := sad.OptionEnvVarPrefix
 
 	setEnvFromPrefixPostfix(prefix, "REPOSITORY", stringOpts.Repository)
 	setEnvFromPrefixPostfix(prefix, "DIGEST", stringOpts.Digest)
@@ -62,7 +62,7 @@ func (stringOpts *StringOptions) SetEnv() {
 // UnsetEnv sets environment variables for all string options.
 // Should be called after SetEnv.
 func (stringOpts *StringOptions) UnsetEnv() {
-	prefix := sad.EnvVarPrefix
+	prefix := sad.OptionEnvVarPrefix
 	var envVarPostfix string
 
 	envVarPostfix = "REPOSITORY"
@@ -236,7 +236,7 @@ func ReadFromReader(name string, reader io.Reader, t *testing.T) string {
 // Each variable is prefixed by the default prefix.
 func SetEnvVarsWithPrefix(opts *sad.Options, content string) {
 	for _, variableName := range opts.EnvVars {
-		os.Setenv(sad.EnvVarPrefix+variableName, content)
+		os.Setenv(sad.OptionEnvVarPrefix+variableName, content)
 	}
 }
 
@@ -244,7 +244,7 @@ func SetEnvVarsWithPrefix(opts *sad.Options, content string) {
 // Each variable is prefixed by the default prefix.
 func UnsetEnvVarsWithPrefix(opts *sad.Options) {
 	for _, variableName := range opts.EnvVars {
-		os.Unsetenv(sad.EnvVarPrefix + variableName)
+		os.Unsetenv(sad.OptionEnvVarPrefix + variableName)
 	}
 }
 
