@@ -121,7 +121,7 @@ jobs:
           SAD_FOO: ${{ secrets.FOO_BETA }}
           SAD_BAR: ${{ secrets.BAR_BETA }}
       - uses: webfactory/ssh-agent@v0.4.1
-      with:
+        with:
           ssh-private-key: |
             echo ${{ secrets.PRIVATE_KEY }} | base64 -d
       - name: Test Deployment
