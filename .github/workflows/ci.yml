@@ -2,15 +2,6 @@ name: CI
 on: [push]
 
 jobs:
-  shellcheck:
-    name: ShellCheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
-        env:
-          SHELLCHECK_OPTS: -e SC2029
   hadolint:
     name: Hadolint Action
     runs-on: ubuntu-latest
