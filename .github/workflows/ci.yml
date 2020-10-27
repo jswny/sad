@@ -64,6 +64,7 @@ jobs:
           DOCKER_IMAGE="${{ format('{0}-{1}', github.repository, 'example')}}"
           TAGS='latest'
           CHANNEL='stable'
+          echo $TAGS
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=channel::${CHANNEL}
