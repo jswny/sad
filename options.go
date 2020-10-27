@@ -16,15 +16,15 @@ var EnvVarPrefix = "SAD_"
 
 // Options for deployment.
 type Options struct {
-	Repository  string
-	ImageDigest string
-	Server      net.IP
-	Username    string
-	RootDir     string
-	PrivateKey  RSAPrivateKey
-	Channel     string
-	EnvVars     []string
-	Debug       bool
+	Repository string
+	Digest     string
+	Server     net.IP
+	Username   string
+	RootDir    string
+	PrivateKey RSAPrivateKey
+	Channel    string
+	EnvVars    []string
+	Debug      bool
 }
 
 // Merge merges the other options into the existing options
@@ -34,8 +34,8 @@ func (o *Options) Merge(other *Options) {
 		o.Repository = other.Repository
 	}
 
-	if o.ImageDigest == "" {
-		o.ImageDigest = other.ImageDigest
+	if o.Digest == "" {
+		o.Digest = other.Digest
 	}
 
 	if o.Server == nil {
@@ -87,8 +87,8 @@ func (o *Options) Verify() error {
 		errorMap["repository"] = fmt.Sprintf("is %s", empty)
 	}
 
-	if o.ImageDigest == "" {
-		errorMap["image digest"] = fmt.Sprintf("is %s", empty)
+	if o.Digest == "" {
+		errorMap["digest"] = fmt.Sprintf("is %s", empty)
 	}
 
 	if o.Server == nil {
@@ -127,10 +127,10 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(repository string, imageDigest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
+func (o *Options) FromStrings(repository string, digest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
 	o.Repository = repository
 
-	o.ImageDigest = imageDigest
+	o.Digest = digest
 
 	if server != "" {
 		o.Server = net.ParseIP(server)
@@ -194,7 +194,7 @@ func (o *Options) FromEnv() error {
 	prefix := EnvVarPrefix
 
 	repository := os.Getenv(prefix + "REPOSITORY")
-	imageDigest := os.Getenv(prefix + "IMAGE_DIGEST")
+	digest := os.Getenv(prefix + "DIGEST")
 	server := os.Getenv(prefix + "SERVER")
 	username := os.Getenv(prefix + "USERNAME")
 	rootDir := os.Getenv(prefix + "ROOT_DIR")
@@ -203,7 +203,7 @@ func (o *Options) FromEnv() error {
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
 
-	err := o.FromStrings(repository, imageDigest, server, username, rootDir, privateKey, channel, envVars, debug)
+	err := o.FromStrings(repository, digest, server, username, rootDir, privateKey, channel, envVars, debug)
 
 	if err != nil {
 		return err
@@ -229,7 +229,7 @@ func (o *Options) GetDeploymentName() (string, error) {
 // GetImageSpecifier gets the full image specifier for the deployment.
 // The specifier is based on the repository and the image digest.
 func (o *Options) GetImageSpecifier() string {
-	deploymentName := fmt.Sprintf("%s@%s", o.Repository, o.ImageDigest)
+	deploymentName := fmt.Sprintf("%s@%s", o.Repository, o.Digest)
 
 	return deploymentName
 }

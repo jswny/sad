@@ -134,10 +134,10 @@ func TestGetEntitesForDeployment(t *testing.T) {
 	}
 
 	opts := &sad.Options{
-		Repository:  "user/repo",
-		ImageDigest: "abc123",
-		Channel:     "beta",
-		EnvVars:     envVarNames,
+		Repository: "user/repo",
+		Digest:     "abc123",
+		Channel:    "beta",
+		EnvVars:    envVarNames,
 	}
 
 	variableContent := "test"

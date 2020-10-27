@@ -132,8 +132,8 @@ func buildArgs(stringOpts *testutils.StringOptions) []string {
 	args := []string{
 		"-repository",
 		stringOpts.Repository,
-		"-image-digest",
-		stringOpts.ImageDigest,
+		"-digest",
+		stringOpts.Digest,
 		"-server",
 		stringOpts.Server,
 		"-username",

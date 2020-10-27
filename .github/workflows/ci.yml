@@ -117,6 +117,6 @@ jobs:
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SAD_CHANNEL: 'beta'
-          SAD_IMAGE_DIGEST: ${{ steps.docker_build.outputs.digest }}
+          SAD_DIGEST: ${{ steps.docker_build.outputs.digest }}
           SAD_FOO: ${{ secrets.FOO_BETA }}
           SAD_BAR: ${{ secrets.BAR_BETA }}

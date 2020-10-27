@@ -113,7 +113,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	stringTestOpts.FromOptions(&testOpts)
 
 	repository := stringTestOpts.Repository
-	imageDigest := stringTestOpts.ImageDigest
+	digest := stringTestOpts.Digest
 	server := stringTestOpts.Server
 	username := stringTestOpts.Username
 	rootDir := stringTestOpts.RootDir
@@ -123,7 +123,7 @@ func TestOptionsFromStrings(t *testing.T) {
 	debug := stringTestOpts.Debug
 
 	opts := sad.Options{}
-	err := opts.FromStrings(repository, imageDigest, server, username, rootDir, privateKey, channel, envVars, debug)
+	err := opts.FromStrings(repository, digest, server, username, rootDir, privateKey, channel, envVars, debug)
 	if err != nil {
 		t.Fatalf("Error getting options from test options strings: %s", err)
 	}
@@ -239,8 +239,8 @@ func TestGetDeploymentName(t *testing.T) {
 
 func TestGetImageSpecifier(t *testing.T) {
 	opts := sad.Options{
-		Repository:  "user/foo",
-		ImageDigest: "sha256:abc123",
+		Repository: "user/foo",
+		Digest:     "sha256:abc123",
 	}
 
 	deploymentName := opts.GetImageSpecifier()

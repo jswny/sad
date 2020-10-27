@@ -18,22 +18,22 @@ import (
 
 // StringOptions represents all options as strings.
 type StringOptions struct {
-	Repository  string
-	ImageDigest string
-	Server      string
-	Username    string
-	RootDir     string
-	PrivateKey  string
-	Channel     string
-	Path        string
-	EnvVars     string
-	Debug       string
+	Repository string
+	Digest     string
+	Server     string
+	Username   string
+	RootDir    string
+	PrivateKey string
+	Channel    string
+	Path       string
+	EnvVars    string
+	Debug      string
 }
 
 // FromOptions converts options into string options.
 func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Repository = opts.Repository
-	stringOpts.ImageDigest = opts.ImageDigest
+	stringOpts.Digest = opts.Digest
 	stringOpts.Server = opts.Server.String()
 	stringOpts.Username = opts.Username
 	stringOpts.RootDir = opts.RootDir
@@ -49,7 +49,7 @@ func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.EnvVarPrefix
 
 	setEnvFromPrefixPostfix(prefix, "REPOSITORY", stringOpts.Repository)
-	setEnvFromPrefixPostfix(prefix, "IMAGE_DIGEST", stringOpts.ImageDigest)
+	setEnvFromPrefixPostfix(prefix, "DIGEST", stringOpts.Digest)
 	setEnvFromPrefixPostfix(prefix, "SERVER", stringOpts.Server)
 	setEnvFromPrefixPostfix(prefix, "USERNAME", stringOpts.Username)
 	setEnvFromPrefixPostfix(prefix, "ROOT_DIR", stringOpts.RootDir)
@@ -66,6 +66,9 @@ func (stringOpts *StringOptions) UnsetEnv() {
 	var envVarPostfix string
 
 	envVarPostfix = "REPOSITORY"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "DIGEST"
 	defer os.Unsetenv(prefix + envVarPostfix)
 
 	envVarPostfix = "SERVER"
@@ -91,9 +94,6 @@ func (stringOpts *StringOptions) UnsetEnv() {
 
 	envVarPostfix = "DEBUG"
 	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "IMAGE_DIGEST"
-	defer os.Unsetenv(prefix + envVarPostfix)
 }
 
 // GetTestOpts retrieves a set of random options for testing.
@@ -103,13 +103,13 @@ func GetTestOpts() sad.Options {
 	randSize := 5
 
 	testOpts := sad.Options{
-		Repository:  randString(randSize),
-		ImageDigest: randString(randSize),
-		Server:      net.ParseIP("1.2.3.4"),
-		Username:    randString(randSize),
-		RootDir:     randString(randSize),
-		PrivateKey:  rsaPrivateKey,
-		Channel:     randString(randSize),
+		Repository: randString(randSize),
+		Digest:     randString(randSize),
+		Server:     net.ParseIP("1.2.3.4"),
+		Username:   randString(randSize),
+		RootDir:    randString(randSize),
+		PrivateKey: rsaPrivateKey,
+		Channel:    randString(randSize),
 		EnvVars: []string{
 			randString(randSize),
 			randString(randSize),
@@ -133,7 +133,7 @@ func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
 	CompareStrings("repository", expectedOpts.Repository, actualOpts.Repository, t)
 
-	CompareStrings("image digest", expectedOpts.ImageDigest, actualOpts.ImageDigest, t)
+	CompareStrings("digest", expectedOpts.Digest, actualOpts.Digest, t)
 
 	if !actualOpts.Server.Equal(expectedOpts.Server) {
 		t.Errorf("Expected server IP %s but got %s", expectedOpts.Server, actualOpts.Server)
