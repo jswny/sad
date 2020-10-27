@@ -1,9 +1,0 @@
-version: '3'
-services:
-  echo:
-    build: .
-    image: "${IMAGE}"
-    container_name: "${CONTAINER_NAME}"
-    environment:
-      - FOO=${FOO}
-      - BAR=${BAR}
