@@ -263,7 +263,11 @@ func TestGetEnvValues(t *testing.T) {
 	testutils.SetEnvVarsWithPrefix(&opts, content)
 	defer testutils.UnsetEnvVarsWithPrefix(&opts)
 
-	envMap := opts.GetEnvValues()
+	envMap, err := opts.GetEnvValues()
+
+	if err != nil {
+		t.Fatalf("Error getting referenced environment variables: %s", err)
+	}
 
 	for _, variableName := range opts.EnvVars {
 		variableValue := envMap[variableName]
@@ -271,5 +275,37 @@ func TestGetEnvValues(t *testing.T) {
 		name := fmt.Sprintf("environment variable %s value", variableName)
 
 		testutils.CompareStrings(name, content, variableValue, t)
+	}
+}
+
+func TestGetEnvValuesBlank(t *testing.T) {
+	opts := sad.Options{
+		EnvVars: []string{
+			"foo",
+			"bar",
+		},
+	}
+
+	content := "test"
+
+	testutils.SetEnvVarsWithPrefix(&opts, content)
+
+	toUnset := opts.EnvVars[0]
+	os.Unsetenv(sad.EnvVarPrefix + toUnset)
+	defer testutils.UnsetEnvVarsWithPrefix(&opts)
+
+	envMap, err := opts.GetEnvValues()
+
+	if err == nil {
+		t.Errorf("Expected error getting referenced environment variables but got: %s", err)
+	}
+
+	containsVarName := strings.Contains(err.Error(), toUnset)
+	if !containsVarName {
+		t.Errorf("Expected error getting referenced environment variable %s but got: %s", toUnset, err)
+	}
+
+	if envMap != nil {
+		t.Errorf("Expected nil returned environment variables but got: %s", envMap)
 	}
 }

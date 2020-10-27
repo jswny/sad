@@ -235,17 +235,21 @@ func (o *Options) GetImageSpecifier() string {
 }
 
 // GetEnvValues gets the values of the environment variables specified in the EnvVars field.
-// Returns a map of the variable names to values.
-func (o *Options) GetEnvValues() map[string]string {
+// Returns a map of the variable names to values, or an error if any of the variables are blank or unset.
+func (o *Options) GetEnvValues() (map[string]string, error) {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {
 		value := os.Getenv(EnvVarPrefix + variableName)
 
+		if value == "" {
+			return nil, fmt.Errorf("environment variable %s is blank or unset", variableName)
+		}
+
 		m[variableName] = value
 	}
 
-	return m
+	return m, nil
 }
 
 func replaceNonAlphanumeric(input string, replaceWith string) (string, error) {

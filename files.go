@@ -67,14 +67,18 @@ func GetEntitiesForDeployment(fromPath string, opts *Options) (map[string]io.Rea
 	readerMap[RemoteDockerComposeFileName] = readerMap[LocalDockerComposeFileName]
 	delete(readerMap, LocalDockerComposeFileName)
 
-	env := opts.GetEnvValues()
+	env, err := opts.GetEnvValues()
+
+	if err != nil {
+		return nil, files, fmt.Errorf("error getting referenced environment variables: %s", err)
+	}
 
 	imageSpecifier := opts.GetImageSpecifier()
 
 	deploymentName, err := opts.GetDeploymentName()
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting deployment name: %s", err)
+		return nil, files, fmt.Errorf("error getting deployment name: %s", err)
 	}
 
 	env["IMAGE"] = imageSpecifier
