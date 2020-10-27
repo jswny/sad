@@ -120,12 +120,10 @@ jobs:
           SAD_IMAGE_DIGEST: ${{ steps.docker_build.outputs.digest }}
           SAD_FOO: ${{ secrets.FOO_BETA }}
           SAD_BAR: ${{ secrets.BAR_BETA }}
-      - uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: |
-            echo ${{ secrets.PRIVATE_KEY }} | base64 -d
       - name: Test Deployment
         run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "$(echo ${{ secrets.PRIVATE_KEY }} | base64 -d)"
           result=$(ssh ${{ secrets.SERVER }} cd jswny-sad-example-beta && docker-compose logs)
           if echo "$result" | grep -q 'not found'; then
             echo "One or more environment variables were not loaded correctly!"
