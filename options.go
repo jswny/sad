@@ -240,10 +240,11 @@ func (o *Options) GetEnvValues() (map[string]string, error) {
 	m := make(map[string]string)
 
 	for _, variableName := range o.EnvVars {
-		value := os.Getenv(EnvVarPrefix + variableName)
+		variableNameWithPrefix := EnvVarPrefix + variableName
+		value := os.Getenv(variableNameWithPrefix)
 
 		if value == "" {
-			return nil, fmt.Errorf("environment variable %s is blank or unset", variableName)
+			return nil, fmt.Errorf("environment variable %s is blank or unset", variableNameWithPrefix)
 		}
 
 		m[variableName] = value
