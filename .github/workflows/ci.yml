@@ -55,6 +55,7 @@ jobs:
   deploy-example:
     runs-on: ubuntu-latest
     name: Deploy Example App
+    needs: [go-lint, test]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
