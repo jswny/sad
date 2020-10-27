@@ -124,7 +124,7 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add - <<< "$(echo ${{ secrets.PRIVATE_KEY }} | base64 -d)"
-          result=$(ssh ${{ secrets.SERVER }} cd jswny-sad-example-beta && docker-compose logs)
+          result=$(ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER }} cd jswny-sad-example-beta && docker-compose logs)
           if echo "$result" | grep -q 'not found'; then
             echo "One or more environment variables were not loaded correctly!"
             echo "$result"
