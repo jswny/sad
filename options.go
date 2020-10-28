@@ -91,10 +91,6 @@ func (o *Options) Verify() error {
 	errorMap := make(map[string]string)
 	empty := "<empty>"
 
-	if o.Registry == "" {
-		errorMap["registry"] = fmt.Sprintf("is %s", empty)
-	}
-
 	if o.Image == "" {
 		errorMap["image"] = fmt.Sprintf("is %s", empty)
 	}
