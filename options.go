@@ -19,7 +19,7 @@ var DeploymentEnvVarPrefix = OptionEnvVarPrefix + "DEPLOY_"
 
 // Options for deployment.
 type Options struct {
-	Repository string
+	Registry   string
 	Digest     string
 	Server     net.IP
 	Username   string
@@ -33,8 +33,8 @@ type Options struct {
 // Merge merges the other options into the existing options
 // When both fields are populated, the field from the existing options is kept.
 func (o *Options) Merge(other *Options) {
-	if o.Repository == "" {
-		o.Repository = other.Repository
+	if o.Registry == "" {
+		o.Registry = other.Registry
 	}
 
 	if o.Digest == "" {
@@ -86,8 +86,8 @@ func (o *Options) Verify() error {
 	errorMap := make(map[string]string)
 	empty := "<empty>"
 
-	if o.Repository == "" {
-		errorMap["repository"] = fmt.Sprintf("is %s", empty)
+	if o.Registry == "" {
+		errorMap["registry"] = fmt.Sprintf("is %s", empty)
 	}
 
 	if o.Digest == "" {
@@ -130,8 +130,8 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(repository string, digest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
-	o.Repository = repository
+func (o *Options) FromStrings(registry string, digest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
+	o.Registry = registry
 
 	o.Digest = digest
 
@@ -196,7 +196,7 @@ func (o *Options) FromJSON(path string) error {
 func (o *Options) FromEnv() error {
 	prefix := OptionEnvVarPrefix
 
-	repository := os.Getenv(prefix + "REPOSITORY")
+	registry := os.Getenv(prefix + "REPOSITORY")
 	digest := os.Getenv(prefix + "DIGEST")
 	server := os.Getenv(prefix + "SERVER")
 	username := os.Getenv(prefix + "USERNAME")
@@ -206,7 +206,7 @@ func (o *Options) FromEnv() error {
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
 
-	err := o.FromStrings(repository, digest, server, username, rootDir, privateKey, channel, envVars, debug)
+	err := o.FromStrings(registry, digest, server, username, rootDir, privateKey, channel, envVars, debug)
 
 	if err != nil {
 		return err
@@ -216,10 +216,10 @@ func (o *Options) FromEnv() error {
 }
 
 // GetDeploymentName gets the full name of the deployment.
-// The name is based on the repository and the channel.
+// The name is based on the registry and the channel.
 // All non-alphanumeric characters are replaced by dashes.
 func (o *Options) GetDeploymentName() (string, error) {
-	deploymentName := fmt.Sprintf("%s-%s", o.Repository, o.Channel)
+	deploymentName := fmt.Sprintf("%s-%s", o.Registry, o.Channel)
 	deploymentName, err := replaceNonAlphanumeric(deploymentName, "-")
 
 	if err != nil {
@@ -230,9 +230,9 @@ func (o *Options) GetDeploymentName() (string, error) {
 }
 
 // GetImageSpecifier gets the full image specifier for the deployment.
-// The specifier is based on the repository and the image digest.
+// The specifier is based on the registry and the image digest.
 func (o *Options) GetImageSpecifier() string {
-	deploymentName := fmt.Sprintf("%s@%s", o.Repository, o.Digest)
+	deploymentName := fmt.Sprintf("%s@%s", o.Registry, o.Digest)
 
 	return deploymentName
 }

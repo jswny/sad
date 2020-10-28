@@ -130,8 +130,8 @@ func TestParseFlagsEmptyValues(t *testing.T) {
 
 func buildArgs(stringOpts *testutils.StringOptions) []string {
 	args := []string{
-		"-repository",
-		stringOpts.Repository,
+		"-registry",
+		stringOpts.Registry,
 		"-digest",
 		stringOpts.Digest,
 		"-server",
