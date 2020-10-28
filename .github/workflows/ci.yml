@@ -56,7 +56,7 @@ jobs:
         id: prep
         run: |
           REGISTRY='ghcr.io'
-          DOCKER_IMAGE="${{ format('{0}-{2}', github.repository, 'example')}}"
+          DOCKER_IMAGE="${{ format('{0}-{1}', github.repository, 'example')}}"
           VERSION='latest'
           TAGS="$REGISTRY/$DOCKER_IMAGE:$VERSION"
           CHANNEL='stable'
