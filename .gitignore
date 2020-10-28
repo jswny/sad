@@ -8,6 +8,3 @@ sad
 !cmd/sad/
 main
 cover.out
-
-# Config files
-.sad.json
