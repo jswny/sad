@@ -238,7 +238,7 @@ func TestGetDeploymentName(t *testing.T) {
 	testutils.CompareStrings("full name", expected, deploymentName, t)
 }
 
-func TestGetImageSpecifier(t *testing.T) {
+func TestGetImageSpecifierNoRegistry(t *testing.T) {
 	opts := sad.Options{
 		Image:  "user/foo",
 		Digest: "sha256:abc123",
@@ -248,7 +248,21 @@ func TestGetImageSpecifier(t *testing.T) {
 
 	expected := "user/foo@sha256:abc123"
 
-	testutils.CompareStrings("full name", expected, deploymentName, t)
+	testutils.CompareStrings("image specifier", expected, deploymentName, t)
+}
+
+func TestGetImageSpecifierRegistry(t *testing.T) {
+	opts := sad.Options{
+		Registry: "registry.io",
+		Image:    "user/foo",
+		Digest:   "sha256:abc123",
+	}
+
+	deploymentName := opts.GetImageSpecifier()
+
+	expected := "registry.io/user/foo@sha256:abc123"
+
+	testutils.CompareStrings("image specifier", expected, deploymentName, t)
 }
 
 func TestGetDeploymentEnvValues(t *testing.T) {

@@ -244,9 +244,15 @@ func (o *Options) GetDeploymentName() (string, error) {
 // GetImageSpecifier gets the full image specifier for the deployment.
 // The specifier is based on the image and the digest.
 func (o *Options) GetImageSpecifier() string {
-	deploymentName := fmt.Sprintf("%s@%s", o.Image, o.Digest)
+	separator := ""
 
-	return deploymentName
+	if o.Registry != "" {
+		separator = "/"
+	}
+
+	specifier := fmt.Sprintf("%s%s%s@%s", o.Registry, separator, o.Image, o.Digest)
+
+	return specifier
 }
 
 // GetDeploymentEnvValues gets the values of the environment variables specified in the EnvVars field to be injected into the deployment.

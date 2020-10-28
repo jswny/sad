@@ -84,7 +84,7 @@ jobs:
         id: deploy
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          SAD_REPOSITORY: ${{ steps.prep.outputs.docker_image }}
+          SAD_IMAGE: ${{ steps.prep.outputs.docker_image }}
           SAD_SERVER: ${{ secrets.SERVER }}
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
