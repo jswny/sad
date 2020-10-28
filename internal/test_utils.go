@@ -51,7 +51,7 @@ func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.OptionEnvVarPrefix
 
 	variablesToValues := map[string]string{
-		"REPOSITORY":  stringOpts.Registry,
+		"REGISTRY":    stringOpts.Registry,
 		"IMAGE":       stringOpts.Image,
 		"DIGEST":      stringOpts.Digest,
 		"SERVER":      stringOpts.Server,
@@ -270,7 +270,7 @@ func randString(n int) string {
 
 func envVarNames() []string {
 	names := []string{
-		"REPOSITORY",
+		"REGISTRY",
 		"IMAGE",
 		"DIGEST",
 		"SERVER",
