@@ -49,20 +49,7 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 // UnsetEnv should be called after.
 func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.OptionEnvVarPrefix
-
-	variablesToValues := map[string]string{
-		"REGISTRY":    stringOpts.Registry,
-		"IMAGE":       stringOpts.Image,
-		"DIGEST":      stringOpts.Digest,
-		"SERVER":      stringOpts.Server,
-		"USERNAME":    stringOpts.Username,
-		"ROOT_DIR":    stringOpts.RootDir,
-		"PRIVATE_KEY": stringOpts.PrivateKey,
-		"CHANNEL":     stringOpts.Channel,
-		"ENV_VARS":    stringOpts.EnvVars,
-		"DEBUG":       stringOpts.Debug,
-	}
-
+	_, variablesToValues := stringOpts.getEnvVarsAndValues()
 	SetEnvVars(variablesToValues, prefix)
 }
 
@@ -70,7 +57,8 @@ func (stringOpts *StringOptions) SetEnv() {
 // Should be called after SetEnv.
 func (stringOpts *StringOptions) UnsetEnv() {
 	prefix := sad.OptionEnvVarPrefix
-	UnsetEnvVars(envVarNames(), prefix)
+	variables, _ := stringOpts.getEnvVarsAndValues()
+	UnsetEnvVars(variables, prefix)
 }
 
 // GetTestOpts retrieves a set of random options for testing.
@@ -268,19 +256,25 @@ func randString(n int) string {
 	return string(b)
 }
 
-func envVarNames() []string {
-	names := []string{
-		"REGISTRY",
-		"IMAGE",
-		"DIGEST",
-		"SERVER",
-		"USERNAME",
-		"ROOT_DIR",
-		"PRIVATE_KEY",
-		"CHANNEL",
-		"ENV_VARS",
-		"DEBUG",
+func (stringOpts *StringOptions) getEnvVarsAndValues() ([]string, map[string]string) {
+	variablesToValues := map[string]string{
+		"REGISTRY":    stringOpts.Registry,
+		"IMAGE":       stringOpts.Image,
+		"DIGEST":      stringOpts.Digest,
+		"SERVER":      stringOpts.Server,
+		"USERNAME":    stringOpts.Username,
+		"ROOT_DIR":    stringOpts.RootDir,
+		"PRIVATE_KEY": stringOpts.PrivateKey,
+		"CHANNEL":     stringOpts.Channel,
+		"ENV_VARS":    stringOpts.EnvVars,
+		"DEBUG":       stringOpts.Debug,
 	}
 
-	return names
+	variables := make([]string, 0, len(variablesToValues))
+
+	for variableName := range variablesToValues {
+		variables = append(variables, variableName)
+	}
+
+	return variables, variablesToValues
 }

@@ -203,7 +203,7 @@ func (o *Options) FromJSON(path string) error {
 func (o *Options) FromEnv() error {
 	prefix := OptionEnvVarPrefix
 
-	registry := os.Getenv(prefix + "REPOSITORY")
+	registry := os.Getenv(prefix + "REGISTRY")
 	image := os.Getenv(prefix + "IMAGE")
 	digest := os.Getenv(prefix + "DIGEST")
 	server := os.Getenv(prefix + "SERVER")
