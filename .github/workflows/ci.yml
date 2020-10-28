@@ -55,7 +55,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          REGISTRY='gcr.io'
+          REGISTRY='ghcr.io'
           DOCKER_IMAGE="${{ format('{0}/{1}-{2}', github.repository_owner, github.repository, 'example')}}"
           VERSION='latest'
           TAGS="$REGISTRY/$DOCKER_IMAGE:$VERSION"
