@@ -8,7 +8,7 @@ RUN apk add --no-cache \
   openssl=${OPENSSL_VERSION} \
   openssh=${OPENSSH_VERSION}
 
-WORKDIR /go/src/app
+WORKDIR /go/src/example
 
 COPY . .
 

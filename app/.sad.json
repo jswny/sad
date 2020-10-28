@@ -1,5 +1,0 @@
-{
-  "rootDir": "/srv",
-  "envVars": ["FOO", "BAR"],
-  "debug": true
-}
