@@ -74,6 +74,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 	flags.SetOutput(&buf)
 
 	registry := flags.String("registry", "", "Docker image registry")
+	image := flags.String("image", "", "Docker image to deploy")
 	digest := flags.String("digest", "", "Docker image digest to deploy")
 	server := flags.String("server", "", "Server to deploy to")
 	username := flags.String("username", "", "User to login to on the server")
@@ -90,7 +91,7 @@ func ParseFlags(program string, args []string) (opts *sad.Options, output string
 
 	opts = &sad.Options{}
 	debugString := strconv.FormatBool(*debug)
-	err = opts.FromStrings(*registry, *digest, *server, *username, *rootDir, *privateKey, *channel, *envVars, debugString)
+	err = opts.FromStrings(*registry, *image, *digest, *server, *username, *rootDir, *privateKey, *channel, *envVars, debugString)
 
 	if err != nil {
 		return nil, buf.String(), err

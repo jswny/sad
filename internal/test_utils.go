@@ -19,6 +19,7 @@ import (
 // StringOptions represents all options as strings.
 type StringOptions struct {
 	Registry   string
+	Image      string
 	Digest     string
 	Server     string
 	Username   string
@@ -33,6 +34,7 @@ type StringOptions struct {
 // FromOptions converts options into string options.
 func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 	stringOpts.Registry = opts.Registry
+	stringOpts.Image = opts.Image
 	stringOpts.Digest = opts.Digest
 	stringOpts.Server = opts.Server.String()
 	stringOpts.Username = opts.Username
@@ -49,6 +51,7 @@ func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.OptionEnvVarPrefix
 
 	setEnvFromPrefixPostfix(prefix, "REPOSITORY", stringOpts.Registry)
+	setEnvFromPrefixPostfix(prefix, "IMAGE", stringOpts.Image)
 	setEnvFromPrefixPostfix(prefix, "DIGEST", stringOpts.Digest)
 	setEnvFromPrefixPostfix(prefix, "SERVER", stringOpts.Server)
 	setEnvFromPrefixPostfix(prefix, "USERNAME", stringOpts.Username)
@@ -66,6 +69,9 @@ func (stringOpts *StringOptions) UnsetEnv() {
 	var envVarPostfix string
 
 	envVarPostfix = "REPOSITORY"
+	defer os.Unsetenv(prefix + envVarPostfix)
+
+	envVarPostfix = "IMAGE"
 	defer os.Unsetenv(prefix + envVarPostfix)
 
 	envVarPostfix = "DIGEST"
@@ -104,6 +110,7 @@ func GetTestOpts() sad.Options {
 
 	testOpts := sad.Options{
 		Registry:   randString(randSize),
+		Image:      randString(randSize),
 		Digest:     randString(randSize),
 		Server:     net.ParseIP("1.2.3.4"),
 		Username:   randString(randSize),
@@ -132,6 +139,8 @@ func GenerateRSAPrivateKey() sad.RSAPrivateKey {
 // CompareOpts compares two sets of options in a test environment.
 func CompareOpts(expectedOpts sad.Options, actualOpts sad.Options, t *testing.T) {
 	CompareStrings("registry", expectedOpts.Registry, actualOpts.Registry, t)
+
+	CompareStrings("image", expectedOpts.Image, actualOpts.Image, t)
 
 	CompareStrings("digest", expectedOpts.Digest, actualOpts.Digest, t)
 

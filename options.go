@@ -20,6 +20,7 @@ var DeploymentEnvVarPrefix = OptionEnvVarPrefix + "DEPLOY_"
 // Options for deployment.
 type Options struct {
 	Registry   string
+	Image      string
 	Digest     string
 	Server     net.IP
 	Username   string
@@ -35,6 +36,10 @@ type Options struct {
 func (o *Options) Merge(other *Options) {
 	if o.Registry == "" {
 		o.Registry = other.Registry
+	}
+
+	if o.Image == "" {
+		o.Image = other.Image
 	}
 
 	if o.Digest == "" {
@@ -90,6 +95,10 @@ func (o *Options) Verify() error {
 		errorMap["registry"] = fmt.Sprintf("is %s", empty)
 	}
 
+	if o.Image == "" {
+		errorMap["image"] = fmt.Sprintf("is %s", empty)
+	}
+
 	if o.Digest == "" {
 		errorMap["digest"] = fmt.Sprintf("is %s", empty)
 	}
@@ -130,8 +139,10 @@ func (o *Options) Verify() error {
 }
 
 // FromStrings converts strings into options.
-func (o *Options) FromStrings(registry string, digest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
+func (o *Options) FromStrings(registry string, image string, digest string, server string, username string, rootDir string, privateKey string, channel string, envVars string, debug string) error {
 	o.Registry = registry
+
+	o.Image = image
 
 	o.Digest = digest
 
@@ -197,6 +208,7 @@ func (o *Options) FromEnv() error {
 	prefix := OptionEnvVarPrefix
 
 	registry := os.Getenv(prefix + "REPOSITORY")
+	image := os.Getenv(prefix + "IMAGE")
 	digest := os.Getenv(prefix + "DIGEST")
 	server := os.Getenv(prefix + "SERVER")
 	username := os.Getenv(prefix + "USERNAME")
@@ -206,7 +218,7 @@ func (o *Options) FromEnv() error {
 	envVars := os.Getenv(prefix + "ENV_VARS")
 	debug := os.Getenv(prefix + "DEBUG")
 
-	err := o.FromStrings(registry, digest, server, username, rootDir, privateKey, channel, envVars, debug)
+	err := o.FromStrings(registry, image, digest, server, username, rootDir, privateKey, channel, envVars, debug)
 
 	if err != nil {
 		return err
@@ -216,10 +228,10 @@ func (o *Options) FromEnv() error {
 }
 
 // GetDeploymentName gets the full name of the deployment.
-// The name is based on the registry and the channel.
+// The name is based on the image and the channel.
 // All non-alphanumeric characters are replaced by dashes.
 func (o *Options) GetDeploymentName() (string, error) {
-	deploymentName := fmt.Sprintf("%s-%s", o.Registry, o.Channel)
+	deploymentName := fmt.Sprintf("%s-%s", o.Image, o.Channel)
 	deploymentName, err := replaceNonAlphanumeric(deploymentName, "-")
 
 	if err != nil {
@@ -230,9 +242,9 @@ func (o *Options) GetDeploymentName() (string, error) {
 }
 
 // GetImageSpecifier gets the full image specifier for the deployment.
-// The specifier is based on the registry and the image digest.
+// The specifier is based on the image and the digest.
 func (o *Options) GetImageSpecifier() string {
-	deploymentName := fmt.Sprintf("%s@%s", o.Registry, o.Digest)
+	deploymentName := fmt.Sprintf("%s@%s", o.Image, o.Digest)
 
 	return deploymentName
 }
