@@ -48,9 +48,11 @@ func GetAllOptionSources(program string, args []string, configFileName string) (
 	}
 
 	configOpts = &sad.Options{}
-	err = configOpts.FromJSON(configFileName)
-	if err != nil {
-		return nil, nil, nil, "", err
+	if configFileName != "" {
+		err = configOpts.FromJSON(configFileName)
+		if err != nil {
+			return nil, nil, nil, "", err
+		}
 	}
 
 	return commandLineOpts, environmentOpts, configOpts, "", nil
@@ -107,14 +109,14 @@ func loadOptions() (commandLineOpts *sad.Options, environmentOpts *sad.Options, 
 
 	if err != nil {
 		if err.Error() == sad.FindFilePathRecursiveFileNotFoundErrorMessage {
-			fmt.Println("Could not find a config file, skipping...")
+			fmt.Print("Could not find a config file, skipping... ")
 		} else {
 			fmt.Println("Error finding config file:", err)
 			os.Exit(1)
 		}
+	} else {
+		fmt.Print("Found config file: ", configFilePath, "... ")
 	}
-
-	fmt.Print("Found config file: ", configFilePath, "... ")
 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
 	if err != nil {
