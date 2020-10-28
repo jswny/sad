@@ -50,56 +50,27 @@ func (stringOpts *StringOptions) FromOptions(opts *sad.Options) {
 func (stringOpts *StringOptions) SetEnv() {
 	prefix := sad.OptionEnvVarPrefix
 
-	setEnvFromPrefixPostfix(prefix, "REPOSITORY", stringOpts.Registry)
-	setEnvFromPrefixPostfix(prefix, "IMAGE", stringOpts.Image)
-	setEnvFromPrefixPostfix(prefix, "DIGEST", stringOpts.Digest)
-	setEnvFromPrefixPostfix(prefix, "SERVER", stringOpts.Server)
-	setEnvFromPrefixPostfix(prefix, "USERNAME", stringOpts.Username)
-	setEnvFromPrefixPostfix(prefix, "ROOT_DIR", stringOpts.RootDir)
-	setEnvFromPrefixPostfix(prefix, "PRIVATE_KEY", stringOpts.PrivateKey)
-	setEnvFromPrefixPostfix(prefix, "CHANNEL", stringOpts.Channel)
-	setEnvFromPrefixPostfix(prefix, "ENV_VARS", stringOpts.EnvVars)
-	setEnvFromPrefixPostfix(prefix, "DEBUG", stringOpts.Debug)
+	variablesToValues := map[string]string{
+		"REPOSITORY":  stringOpts.Registry,
+		"IMAGE":       stringOpts.Image,
+		"DIGEST":      stringOpts.Digest,
+		"SERVER":      stringOpts.Server,
+		"USERNAME":    stringOpts.Username,
+		"ROOT_DIR":    stringOpts.RootDir,
+		"PRIVATE_KEY": stringOpts.PrivateKey,
+		"CHANNEL":     stringOpts.Channel,
+		"ENV_VARS":    stringOpts.EnvVars,
+		"DEBUG":       stringOpts.Debug,
+	}
+
+	SetEnvVars(variablesToValues, prefix)
 }
 
 // UnsetEnv sets environment variables for all string options.
 // Should be called after SetEnv.
 func (stringOpts *StringOptions) UnsetEnv() {
 	prefix := sad.OptionEnvVarPrefix
-	var envVarPostfix string
-
-	envVarPostfix = "REPOSITORY"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "IMAGE"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "DIGEST"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "SERVER"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "USERNAME"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "ROOT_DIR"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "PRIVATE_KEY"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "CHANNEL"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "PATH"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "ENV_VARS"
-	defer os.Unsetenv(prefix + envVarPostfix)
-
-	envVarPostfix = "DEBUG"
-	defer os.Unsetenv(prefix + envVarPostfix)
+	UnsetEnvVars(envVarNames(), prefix)
 }
 
 // GetTestOpts retrieves a set of random options for testing.
@@ -241,16 +212,27 @@ func ReadFromReader(name string, reader io.Reader, t *testing.T) string {
 	return buffer.String()
 }
 
-// SetEnvVarsWithPrefix sets the environment variables defined by the specified options using the specified prefix.
-func SetEnvVarsWithPrefix(opts *sad.Options, prefix string, content string) {
-	for _, variableName := range opts.EnvVars {
-		os.Setenv(prefix+variableName, content)
+// SetEnvVarsConstant sets all of the environment variables defined by the specified slice using the specified prefix to same the specified value.
+func SetEnvVarsConstant(variableNames []string, prefix string, value string) {
+	variablesToValues := make(map[string]string)
+
+	for _, variableName := range variableNames {
+		variablesToValues[variableName] = value
+	}
+
+	SetEnvVars(variablesToValues, prefix)
+}
+
+// SetEnvVars sets each environment variables defined by the specified slice using the specified prefix to its specified value.
+func SetEnvVars(variablesToValues map[string]string, prefix string) {
+	for variableName, value := range variablesToValues {
+		os.Setenv(prefix+variableName, value)
 	}
 }
 
-// UnsetEnvVarsWithPrefix unsets the environment variables defined by the specified options using the specified prefix.
-func UnsetEnvVarsWithPrefix(opts *sad.Options, prefix string) {
-	for _, variableName := range opts.EnvVars {
+// UnsetEnvVars unsets the environment variables defined by the specified slice using the specified prefix.
+func UnsetEnvVars(variableNames []string, prefix string) {
+	for _, variableName := range variableNames {
 		os.Unsetenv(prefix + variableName)
 	}
 }
@@ -286,6 +268,19 @@ func randString(n int) string {
 	return string(b)
 }
 
-func setEnvFromPrefixPostfix(prefix, postfix, value string) {
-	os.Setenv(prefix+postfix, value)
+func envVarNames() []string {
+	names := []string{
+		"REPOSITORY",
+		"IMAGE",
+		"DIGEST",
+		"SERVER",
+		"USERNAME",
+		"ROOT_DIR",
+		"PRIVATE_KEY",
+		"CHANNEL",
+		"ENV_VARS",
+		"DEBUG",
+	}
+
+	return names
 }

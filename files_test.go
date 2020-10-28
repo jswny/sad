@@ -143,8 +143,8 @@ func TestGetEntitesForDeployment(t *testing.T) {
 	variableContent := "test"
 
 	prefix := sad.DeploymentEnvVarPrefix
-	testutils.SetEnvVarsWithPrefix(opts, prefix, variableContent)
-	defer testutils.UnsetEnvVarsWithPrefix(opts, prefix)
+	testutils.SetEnvVarsConstant(opts.EnvVars, prefix, variableContent)
+	defer testutils.UnsetEnvVars(opts.EnvVars, prefix)
 
 	readerMap, files, err := sad.GetEntitiesForDeployment(tempDirPath, opts)
 

@@ -251,7 +251,7 @@ func TestGetImageSpecifier(t *testing.T) {
 	testutils.CompareStrings("full name", expected, deploymentName, t)
 }
 
-func TestDeploymentGetEnvValues(t *testing.T) {
+func TestGetDeploymentEnvValues(t *testing.T) {
 	opts := sad.Options{
 		EnvVars: []string{
 			"foo",
@@ -262,8 +262,8 @@ func TestDeploymentGetEnvValues(t *testing.T) {
 	content := "test"
 
 	prefix := sad.DeploymentEnvVarPrefix
-	testutils.SetEnvVarsWithPrefix(&opts, prefix, content)
-	defer testutils.UnsetEnvVarsWithPrefix(&opts, prefix)
+	testutils.SetEnvVarsConstant(opts.EnvVars, prefix, content)
+	defer testutils.UnsetEnvVars(opts.EnvVars, prefix)
 
 	envMap, err := opts.GetDeploymentEnvValues()
 
@@ -291,11 +291,11 @@ func TestGetEnvValuesBlank(t *testing.T) {
 	content := "test"
 
 	prefix := sad.DeploymentEnvVarPrefix
-	testutils.SetEnvVarsWithPrefix(&opts, prefix, content)
+	testutils.SetEnvVarsConstant(opts.EnvVars, prefix, content)
 
 	toUnset := opts.EnvVars[0]
 	os.Unsetenv(prefix + toUnset)
-	defer testutils.UnsetEnvVarsWithPrefix(&opts, prefix)
+	defer testutils.UnsetEnvVars(opts.EnvVars, prefix)
 
 	envMap, err := opts.GetDeploymentEnvValues()
 
