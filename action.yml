@@ -2,4 +2,4 @@ name: 'sad'
 description: 'Simple app deployment based on SSH and Docker'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'action.Dockerfile'

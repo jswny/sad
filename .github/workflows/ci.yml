@@ -8,6 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: brpaz/hadolint-action@master
+        with:
+          dockerfile: 'action.Dockerfile'
   hadolint-example:
     name: Hadolint Demo App
     runs-on: ubuntu-latest
