@@ -1,0 +1,9 @@
+linters:
+  enable:
+    - gofmt
+    - golint
+    - godox
+    - godot
+issues:
+  include:
+    - EXC0002

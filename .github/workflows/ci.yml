@@ -1,85 +1,188 @@
 name: CI
 on: [push]
 
+env:
+  GO_VERSION: '^1.15'
+
 jobs:
-  shellcheck:
-    name: ShellCheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
-        env:
-          SHELLCHECK_OPTS: -e SC2029
   hadolint:
     name: Hadolint Action
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: brpaz/hadolint-action@master
-  hadolint-app:
-    name: Hadolint Demo App
+        with:
+          dockerfile: 'Dockerfile'
+  hadolint-example:
+    name: Hadolint Example App
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: brpaz/hadolint-action@master
         with:
-          dockerfile: 'app/Dockerfile'
-  deploy-beta:
+          dockerfile: 'example/Dockerfile'
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    name: Deploy Beta Demo App
-    if: ${{ !contains(github.ref, 'refs/tags') }}
     steps:
       - uses: actions/checkout@v2
-      - uses: docker/build-push-action@v1
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v1
         with:
-          repository: ${{ github.repository }}
-          path: 'app'
-          tag_with_ref: true
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Deploy
-        uses: ./
-        id: deploy
-        with:
-          deploy_server: ${{ secrets.deploy_server }}
-          deploy_username: ${{ secrets.deploy_username }}
-          deploy_root_dir: '/srv'
-          ssh_key: ${{ secrets.ssh_key }}
-          path: 'app'
-          channel: 'beta'
-          debug: ${{ secrets.actions_step_debug }}
-          env_vars: 'FOO,BAR'
-        env:
-          FOO: ${{ secrets.FOO_BETA }}
-          BAR: ${{ secrets.BAR_BETA }}
-          FOO_STABLE: ${{ secrets.FOO_STABLE }}
-          BAR_STABLE: ${{ secrets.BAR_STABLE }}
-  deploy-stable:
+          version: v1.29
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    name: Deploy Stable Demo App
-    if: ${{ contains(github.ref, 'refs/tags') }}
     steps:
       - uses: actions/checkout@v2
-      - uses: docker/build-push-action@v1
+      - name: Setup Go
+        uses: actions/setup-go@v2
         with:
-          repository: ${{ github.repository }}
-          path: 'app'
-          tag_with_ref: true
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          go-version: ${{ env.GO_VERSION }}
+      - name: Get Dependencies
+        run: |
+          go mod download
+          go get github.com/axw/gocov/gocov
+      - name: Run Tests
+        run: go test -v -coverprofile=cover.out ./...
+      - name: Coverage Report
+        run: gocov convert cover.out | gocov report
+      - name: Line Coverage Report
+        run: gocov convert cover.out | gocov annotate -
+  docker-image:
+    name: Docker Image
+    runs-on: ubuntu-latest
+    needs: [lint, test, hadolint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Repo metadata
+        id: repo
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const repo = await github.repos.get(context.repo)
+            return repo.data
+      - name: Prepare
+        id: prep
+        run: |
+          REGISTRY='ghcr.io'
+          DOCKER_IMAGE="${{ github.repository }}"
+          VERSION='noop'
+          CHANNEL='stable'
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ $GITHUB_REF == refs/heads/* ]]; then
+            VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+            if [ "${{ github.event.repository.default_branch }}" = "$VERSION" ]; then
+              VERSION=edge
+            fi
+          elif [[ $GITHUB_REF == refs/pull/* ]]; then
+            VERSION=pr-${{ github.event.number }}
+          fi
+          TAGS="${REGISTRY}/${DOCKER_IMAGE}:${VERSION}"
+          if [[ $VERSION =~ ^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest"
+          fi
+          echo ::set-output name=registry::${REGISTRY}
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+          echo ::set-output name=version::${version}
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=channel::${CHANNEL}
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ steps.prep.outputs.registry }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - name: Build and Push to GitHub Container Registry
+        uses: docker/build-push-action@v2
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          context: 'example'
+          file: 'example/Dockerfile'
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=${{ fromJson(steps.repo.outputs.result).name }}
+            org.opencontainers.image.description=${{ fromJson(steps.repo.outputs.result).description }}
+            org.opencontainers.image.url=${{ fromJson(steps.repo.outputs.result).html_url }}
+            org.opencontainers.image.source=${{ fromJson(steps.repo.outputs.result).html_url }}
+            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ fromJson(steps.repo.outputs.result).license.spdx_id }}
+  deploy-example:
+    name: Deploy Example App
+    runs-on: ubuntu-latest
+    needs: [lint, test, hadolint-example]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        id: prep
+        run: |
+          REGISTRY='ghcr.io'
+          DOCKER_IMAGE="${{ format('{0}-{1}', github.repository, 'example')}}"
+          VERSION='latest'
+          TAGS="$REGISTRY/$DOCKER_IMAGE:$VERSION"
+          CHANNEL='stable'
+          echo ::set-output name=registry::${REGISTRY}
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=channel::${CHANNEL}
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ steps.prep.outputs.registry }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - name: Build and Push to GitHub Container Registry
+        uses: docker/build-push-action@v2
+        id: docker_build
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          context: 'example'
+          file: 'example/Dockerfile'
+          tags: ${{ steps.prep.outputs.tags }}
       - name: Deploy
         uses: ./
-        id: deploy
-        with:
-          deploy_server: ${{ secrets.deploy_server }}
-          deploy_username: ${{ secrets.deploy_username }}
-          deploy_root_dir: '/srv'
-          ssh_key: ${{ secrets.ssh_key }}
-          path: 'app'
-          channel: 'stable'
-          debug: ${{ secrets.actions_step_debug }}
-          env_vars: 'FOO,BAR'
+        if: ${{ github.event_name != 'pull_request' }}
         env:
-          FOO: ${{ secrets.FOO_STABLE }}
-          BAR: ${{ secrets.BAR_STABLE }}
+          SAD_REGISTRY: ${{ steps.prep.outputs.registry }}
+          SAD_IMAGE: ${{ steps.prep.outputs.docker_image }}
+          SAD_SERVER: ${{ secrets.SERVER }}
+          SAD_USERNAME: ${{ secrets.USERNAME }}
+          SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SAD_CHANNEL: ${{ steps.prep.outputs.channel }}
+          SAD_DIGEST: ${{ steps.docker_build.outputs.digest }}
+          SAD_DEPLOY_FOO: ${{ secrets.FOO }}
+          SAD_DEPLOY_BAR: ${{ secrets.BAR }}
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

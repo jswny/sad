@@ -1,7 +1,6 @@
 version: '3'
 services:
   echo:
-    build: .
     image: "${IMAGE}"
     container_name: "${CONTAINER_NAME}"
     environment:

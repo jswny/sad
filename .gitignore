@@ -1,4 +1,10 @@
 # Local environment variables
 .env
-app/.env
-app/deploy.env
+example/.env
+example/deploy.env
+
+# Go build
+sad
+!cmd/sad/
+main
+cover.out

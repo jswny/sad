@@ -1,34 +1,5 @@
 name: 'sad'
 description: 'Simple app deployment based on SSH and Docker'
-inputs:
-  channel:
-    description: 'The deployment channel'
-    required: false
-    default: 'stable'
-  deploy_server:
-    description: 'The SSH-enabled server to deploy to'
-    required: true
-  deploy_username:
-    description: 'The deploy server username to SSH with'
-    required: true
-  deploy_root_dir:
-    description: 'The deploy server root directory to create the deployed repository directory under'
-    required: true
-  ssh_key:
-    description: 'The SSH private key to SSH into the deploy server with'
-    required: true
-  path:
-    description: 'The path to the directory containing your app relative to the current directory of your repository'
-    required: false
-    default: '.'
-  env_vars:
-    description: 'A comma-separated string list of environment variables which will be injected into the app'
-    required: false
-    default: ''
-  debug:
-    description: 'Print extra debugging info (true or false)'
-    required: false
-    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'
