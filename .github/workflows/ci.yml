@@ -68,7 +68,7 @@ jobs:
         run: |
           REGISTRY='ghcr.io'
           DOCKER_IMAGE_NAME="${{ github.repository }}"
-          DOCKER_IMAGE="${REGISTRY}/${DOCKER_IMAGE}"
+          DOCKER_IMAGE="${REGISTRY}/${DOCKER_IMAGE_NAME}"
           VERSION='noop'
           CHANNEL='stable'
           if [[ $GITHUB_REF == refs/tags/* ]]; then
