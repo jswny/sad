@@ -8,6 +8,8 @@ builds:
       - linux
       - windows
       - darwin
+    main: ./cmd/sad/main.go
+    binary: sad
 archives:
   - replacements:
       darwin: Darwin
