@@ -15,6 +15,15 @@ Simple app deployment based on SSH and Docker.
 - **A Docker image** for your app pushed to a registry. [This action](https://github.com/marketplace/actions/build-and-push-docker-images) is recommended. You can also do this manually.
 - **Required configuration** from the supported sources as noted below.
 
+## Installation
+### Installing from Source
+You can build and run Sad from source using the following:
+1. Build with `go build cmd/sad/main.go`
+2. Run with `./main.go`
+
+### Installing from a Release
+You can download Sad binaries by going to the [releases](https://github.com/jswny/sad/releases) for this repository.
+
 ## Example
 An example configuration is provided in the `example/` directory, and an example of a GitHub actions configuration is provided under the `deploy-example` job in the `.github/workflows/ci.yml` file.
 
@@ -74,8 +83,3 @@ Sad supports configuration from the following sources, where you can use one or 
 3. Creates a directory for the deployment on the specified server under the specified root directory using the **deployment name**.
 4. Sends the `.env` file and the `docker-compose.yml` file over SSH to the specified server.
 5.  Brings the app up with Docker Compose in detatched mode. This will automatically restart the app if the image has changed.
-
-## Building from Source
-You can build and run Sad from source using the following:
-1. Build with `go build cmd/sad/main.go`
-2. Run with `./main.go`
