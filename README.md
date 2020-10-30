@@ -18,8 +18,8 @@ Simple app deployment based on SSH and Docker.
 ## Installation
 ### Installing from Source
 You can build and run Sad from source using the following:
-1. Build with `go build cmd/sad/main.go`
-2. Run with `./main.go`
+1. Build with `go build -o sad cmd/sad/main.go`
+2. Run with `./sad`
 
 ### Installing from a Release
 You can download Sad binaries by going to the [releases](https://github.com/jswny/sad/releases) for this repository.
