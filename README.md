@@ -40,6 +40,7 @@ An example configuration is provided in the `example/` directory, and an example
 
 ### Command Line
 1. Run Sad with `sad`
+2. For help, run `sad -help`
 
 ## Configuration
 ### Docker Compose
