@@ -23,6 +23,7 @@ class Sad < Formula
     #
     # The installed folder is not in the path, so use the entire path to any
     # executables being tested: `system "#{bin}/program", "do", "something"`.
-    system "false"
+    # assert_equal "system "#{bin}/sad", "-help", "something"
+    assert_match "Usage of", shell_output("#{bin}/sad -help", 2).strip
   end
 end
