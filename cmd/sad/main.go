@@ -121,6 +121,7 @@ func loadOptions() (commandLineOpts *sad.Options, environmentOpts *sad.Options, 
 	commandLineOpts, environmentOpts, configOpts, commandLineOutput, err := GetAllOptionSources(os.Args[0], os.Args[1:], configFilePath)
 	if err != nil {
 		if commandLineOutput != "" {
+			fmt.Println()
 			fmt.Println(commandLineOutput)
 		}
 		if err == flag.ErrHelp {
