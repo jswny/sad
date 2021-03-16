@@ -51,8 +51,8 @@ jobs:
         run: gocov convert cover.out | gocov report
       - name: Line Coverage Report
         run: gocov convert cover.out | gocov annotate -
-  docker-image:
-    name: Docker Image
+  image:
+    name: Image
     runs-on: ubuntu-latest
     needs: [lint, test, hadolint]
     steps:
