@@ -88,7 +88,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
       - name: Build and Push to GitHub Container Registry
-        id: docker-build
+        id: image-build
         uses: docker/build-push-action@v2
         with:
           push: ${{ github.event_name != 'pull_request' }}
@@ -96,10 +96,12 @@ jobs:
           labels: ${{ steps.image-metadata.outpus.labels }}
           cache-from: type=local,src=${{ env.IMAGE_CACHE_PATH }}
           cache-to: type=local,dest=${{ env.IMAGE_CACHE_PATH }},mode=max
-  deploy-example:
-    name: Deploy Example App
+  image-example:
+    name: Example Image
     runs-on: ubuntu-latest
     needs: [lint, test, hadolint-example]
+    outputs:
+      digest: ${{ steps.image-build.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -142,9 +144,16 @@ jobs:
           labels: ${{ steps.image-metadata.outpus.labels }}
           cache-from: type=local,src=${{ env.IMAGE_CACHE_PATH }}
           cache-to: type=local,dest=${{ env.IMAGE_CACHE_PATH }},mode=max
+  deploy-example:
+    name: Deploy Example
+    runs-on: ubuntu-latest
+    needs: [image-example]
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Deploy
         uses: ./
-        if: ${{ github.event_name != 'pull_request' }}
         env:
           SAD_REGISTRY: ${{ env.CONTAINER_REGISTRY }}
           SAD_IMAGE: ${{ env.IMAGE }}
@@ -152,7 +161,7 @@ jobs:
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SAD_CHANNEL: 'beta'
-          SAD_DIGEST: ${{ steps.image-build.outputs.digest }}
+          SAD_DIGEST: ${{ needs.image-example.outputs.digest }}
           SAD_DEPLOY_FOO: ${{ secrets.FOO }}
           SAD_DEPLOY_BAR: ${{ secrets.BAR }}
   release:
