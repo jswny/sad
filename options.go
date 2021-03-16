@@ -79,6 +79,7 @@ func (o *Options) Merge(other *Options) {
 func (o *Options) MergeDefaults() {
 	defaults := Options{
 		Channel: "beta",
+		RootDir: "/",
 		Debug:   false,
 	}
 

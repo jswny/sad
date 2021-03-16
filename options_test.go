@@ -69,6 +69,7 @@ func TestOptionsMergeDefaults(t *testing.T) {
 	opts := sad.Options{}
 
 	expectedOpts.Channel = ""
+	expectedOpts.RootDir = ""
 
 	err := testutils.CloneOptions(&expectedOpts, &opts)
 	if err != nil {
@@ -78,6 +79,7 @@ func TestOptionsMergeDefaults(t *testing.T) {
 	opts.MergeDefaults()
 
 	expectedOpts.Channel = "beta"
+	expectedOpts.RootDir = "/"
 
 	testutils.CompareOpts(expectedOpts, opts, t)
 }
