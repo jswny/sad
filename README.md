@@ -60,18 +60,18 @@ Sad supports configuration from the following sources, where you can use one or 
 3. Config file; in a JSON configuration file named `.sad.json`. This configuration file can be located anywhere under the directory the directory from which you are running Sad.
 
 ### Configuration Options
-| Name | Description | Optional? | Command Line Flag | Environment Variable | JSON Config File Entry |
-|-|-|-|-|-|-|
-| **Registry** | The container registry where the image is stored | Yes (defaults to Docker Hub) | `-registry ghcr.io` | `SAD_REGISTRY=ghcr.io` | `"registry": "ghcr.io"` |
-| **Image** | The name of the Docker image (just the image name, no tag or digest) | No | `-image foo` | `SAD_IMAGE=foo` | `"image": "foo"` |
-| **Digest** | The immutable image digest | No | `-digest sha256:abc123` | `SAD_DIGEST=` | `"digest"` |
-| **Server** | The server to deploy to | No | `-server 1.2.3.4` | `SAD_SERVER=1.2.3.4` | `"server": "1.2.3.4"` |
-| **Username** | The username to SSH with for the server | No | `-username foo` | `SAD_USERNAME=FOO` | `"username": "foo"` |
-| **RootDir** | The root directory for which deployments should be created under | No | `-root-dir foo` | `SAD_ROOT_DIR=/srv` | `"rootDir": "/srv"` |
-| **PrivateKey** | The base64 encoded PEM block RSA private key (this should start with `-----BEGIN RSA PRIVATE KEY-----` before being encoded) | No | `-private-key abc123` | `SAD_PRIVATE_KEY=abc123` | `"privateKey": "abc123"` |
-| **Channel** | The deployment channel | No | `-channel beta` | `SAD_CHANNEL=beta` | `"channel": "beta"` |
-| **EnvVars** | The names of the environment variables to be pulled from the environment and injected into the deployment | Yes (defaults to empty array) | `-env-vars foo,bar` | `SAD_ENV_VARS=foo,bar` | `"envVars": ["foo", "bar"]` |
-| **Debug** | Whether or not to add extra debugging info | Yes (defaults to `false`) | `-debug` | `SAD_DEBUG=true` | `"debug": true` |
+| Name | Description | Optional? | Default | Command Line Flag | Environment Variable | JSON Config File Entry |
+|-|-|-|-|-|-|-|
+| **Registry** | The container registry where the image is stored | Yes | Docker Hub | `-registry ghcr.io` | `SAD_REGISTRY=ghcr.io` | `"registry": "ghcr.io"` |
+| **Image** | The name of the Docker image (just the image name, no tag or digest) | No | | `-image foo` | `SAD_IMAGE=foo` | `"image": "foo"` |
+| **Digest** | The immutable image digest | No | | `-digest sha256:abc123` | `SAD_DIGEST=` | `"digest"` |
+| **Server** | The server to deploy to | No | | `-server 1.2.3.4` | `SAD_SERVER=1.2.3.4` | `"server": "1.2.3.4"` |
+| **Username** | The username to SSH with for the server | No | | `-username foo` | `SAD_USERNAME=FOO` | `"username": "foo"` |
+| **RootDir** | The root directory for which deployments should be created under | No | | `-root-dir foo` | `SAD_ROOT_DIR=/srv` | `"rootDir": "/srv"` |
+| **PrivateKey** | The base64 encoded PEM block RSA private key (this should start with `-----BEGIN RSA PRIVATE KEY-----` before being encoded) | No | | `-private-key abc123` | `SAD_PRIVATE_KEY=abc123` | `"privateKey": "abc123"` |
+| **Channel** | The deployment channel | No | | `-channel beta` | `SAD_CHANNEL=beta` | `"channel": "beta"` |
+| **EnvVars** | The names of the environment variables to be pulled from the environment and injected into the deployment | Yes | None | `-env-vars foo,bar` | `SAD_ENV_VARS=foo,bar` | `"envVars": ["foo", "bar"]` |
+| **Debug** | Whether or not to add extra debugging info | Yes | `false` | `-debug` | `SAD_DEBUG=true` | `"debug": true` |
 
 ## Terminology
 - **Deployment name**: The name of the deployment, which is based on the image and the channel.
