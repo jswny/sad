@@ -8,7 +8,7 @@ env:
 
 jobs:
   hadolint:
-    name: Hadolint Action
+    name: Hadolint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
