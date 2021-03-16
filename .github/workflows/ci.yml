@@ -146,7 +146,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         env:
           SAD_REGISTRY: ${{ steps.prep.outputs.registry }}
-          SAD_IMAGE: ${{ steps.prep.outputs.docker_image_name }}
+          SAD_IMAGE: ${{ github.repository }}
           SAD_SERVER: ${{ secrets.SERVER }}
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
