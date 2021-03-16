@@ -5,6 +5,7 @@ env:
   GO_VERSION: '^1.15'
   CONTAINER_REGISTRY: 'ghcr.io'
   IMAGE_CACHE_PATH: '/tmp/.buildx-cache'
+  IMAGE: ${{ github.repository }}-example
 
 jobs:
   hadolint:
@@ -106,7 +107,7 @@ jobs:
         id: image-metadata
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: ${{ env.CONTAINER_REGISTRY }}/${{ github.repository }}-example
+          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE }}
           tag-semver: |
             {{version}}
             {{major}}.{{minor}}
@@ -145,12 +146,12 @@ jobs:
         uses: ./
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          SAD_REGISTRY: ${{ steps.prep.outputs.registry }}
-          SAD_IMAGE: ${{ github.repository }}
+          SAD_REGISTRY: ${{ env.CONTAINER_REGISTRY }}
+          SAD_IMAGE: ${{ env.IMAGE }}
           SAD_SERVER: ${{ secrets.SERVER }}
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SAD_CHANNEL: ${{ steps.prep.outputs.channel }}
+          SAD_CHANNEL: 'beta'
           SAD_DIGEST: ${{ steps.image-build.outputs.digest }}
           SAD_DEPLOY_FOO: ${{ secrets.FOO }}
           SAD_DEPLOY_BAR: ${{ secrets.BAR }}
