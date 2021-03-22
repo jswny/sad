@@ -4,6 +4,7 @@ on: [push]
 env:
   GO_VERSION: '^1.15'
   PYTHON_VERSION: '3.9'
+  NODE_VERSION: '14'
   CONTAINER_REGISTRY: 'ghcr.io'
   IMAGE_CACHE_PATH: '/tmp/.buildx-cache'
   IMAGE: ${{ github.repository }}-example
@@ -48,6 +49,19 @@ jobs:
         run: pip install yamllint
       - name: Run YAML Lint
         run: yamllint -f github --strict .
+  lint-json:
+    name: Lint JSON
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install JSON Lint
+        run: npm install -g jsonlint
+      - name: Run JSON Lint
+        run: find . -type f -name '*.json' -exec jsonlint --quiet --compact {} \;
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -162,7 +176,7 @@ jobs:
   deploy-example:
     name: Deploy Example
     runs-on: ubuntu-latest
-    needs: [image-example, lint-yaml]
+    needs: [image-example, lint-yaml, lint-json]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Checkout
@@ -182,7 +196,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [lint, lint-yaml, test]
+    needs: [lint, lint-yaml, lint-json, test]
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
     steps:
       - name: Checkout
