@@ -10,6 +10,19 @@ env:
   IMAGE: ${{ github.repository }}-example
 
 jobs:
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Prettier
+        run: npm install -g prettier
+      - name: Run Prettier
+        run: prettier --check .
   hadolint:
     name: Hadolint
     runs-on: ubuntu-latest
