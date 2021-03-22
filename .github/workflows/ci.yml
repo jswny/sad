@@ -2,11 +2,11 @@ name: CI
 on: [push]
 
 env:
-  GO_VERSION: '^1.15'
-  PYTHON_VERSION: '3.9'
-  NODE_VERSION: '14'
-  CONTAINER_REGISTRY: 'ghcr.io'
-  IMAGE_CACHE_PATH: '/tmp/.buildx-cache'
+  GO_VERSION: "^1.15"
+  PYTHON_VERSION: "3.9"
+  NODE_VERSION: "14"
+  CONTAINER_REGISTRY: "ghcr.io"
+  IMAGE_CACHE_PATH: "/tmp/.buildx-cache"
   IMAGE: ${{ github.repository }}-example
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: brpaz/hadolint-action@master
         with:
-          dockerfile: 'Dockerfile'
+          dockerfile: "Dockerfile"
   hadolint-example:
     name: Hadolint Example App
     runs-on: ubuntu-latest
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: brpaz/hadolint-action@master
         with:
-          dockerfile: 'example/Dockerfile'
+          dockerfile: "example/Dockerfile"
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -179,8 +179,8 @@ jobs:
         id: image-build
         uses: docker/build-push-action@v2
         with:
-          context: 'example'
-          file: 'example/Dockerfile'
+          context: "example"
+          file: "example/Dockerfile"
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.image-metadata.outputs.tags }}
           labels: ${{ steps.image-metadata.outpus.labels }}
@@ -202,7 +202,7 @@ jobs:
           SAD_SERVER: ${{ secrets.SERVER }}
           SAD_USERNAME: ${{ secrets.USERNAME }}
           SAD_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SAD_CHANNEL: 'beta'
+          SAD_CHANNEL: "beta"
           SAD_DIGEST: ${{ needs.image-example.outputs.digest }}
           SAD_DEPLOY_FOO: ${{ secrets.FOO }}
           SAD_DEPLOY_BAR: ${{ secrets.BAR }}
