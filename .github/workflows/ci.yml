@@ -3,6 +3,7 @@ on: [push]
 
 env:
   GO_VERSION: '^1.15'
+  PYTHON_VERSION: '3.9'
   CONTAINER_REGISTRY: 'ghcr.io'
   IMAGE_CACHE_PATH: '/tmp/.buildx-cache'
   IMAGE: ${{ github.repository }}-example
@@ -33,6 +34,20 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.32
+  lint-yaml:
+    name: Lint YAML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install YAML Lint
+        run: pip install yamllint
+      - name: Run YAML Lint
+        run: yamllint -f github --strict .
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -147,7 +162,7 @@ jobs:
   deploy-example:
     name: Deploy Example
     runs-on: ubuntu-latest
-    needs: [image-example]
+    needs: [image-example, lint-yaml]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Checkout
@@ -167,7 +182,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint, lint-yaml, test]
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
     steps:
       - name: Checkout
