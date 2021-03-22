@@ -3,6 +3,7 @@ on: [push]
 
 env:
   GO_VERSION: '^1.15'
+  PYTHON_VERSION: '3.9'
   CONTAINER_REGISTRY: 'ghcr.io'
   IMAGE_CACHE_PATH: '/tmp/.buildx-cache'
   IMAGE: ${{ github.repository }}-example
