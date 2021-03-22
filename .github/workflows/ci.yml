@@ -46,7 +46,7 @@ jobs:
       - name: Install YAML Lint
         run: pip install yamllint
       - name: Run YAML Lint
-        run: yamllint .
+        run: yamllint -f github --strict .
   test:
     name: Test
     runs-on: ubuntu-latest
