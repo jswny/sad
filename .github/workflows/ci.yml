@@ -33,6 +33,20 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.32
+  lint-yaml:
+    name: Lint YAML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install YAML Lint
+        run: pip install yamllint
+      - name: Run YAML Lint
+        run: yamllint .
   test:
     name: Test
     runs-on: ubuntu-latest
