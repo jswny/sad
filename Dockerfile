@@ -1,12 +1,12 @@
 FROM golang:1.15.3-alpine3.12
 
 # Pinned versions
-ARG OPENSSL_VERSION='1.1.1j-r0'
-ARG OPENSSH_VERSION='8.3_p1-r1'
+ARG OPENSSL_VERSION='1.1.1'
+ARG OPENSSH_VERSION='8.3'
 
 RUN apk add --no-cache \
-  openssl=${OPENSSL_VERSION} \
-  openssh=${OPENSSH_VERSION}
+  openssl=~${OPENSSL_VERSION} \
+  openssh=~${OPENSSH_VERSION}
 
 WORKDIR /go/src/app
 
