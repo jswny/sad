@@ -3,7 +3,7 @@ on: [push]
 
 env:
   go-version: "^1.15"
-  golangci-version: "v1.32"
+  golangci-version: "v1.38"
   python-version: "3.9"
   node-version: "14"
   container-registry: "ghcr.io"
