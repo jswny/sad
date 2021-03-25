@@ -23,6 +23,7 @@ jobs:
         run: npm install -g prettier
       - name: Run Prettier
         run: prettier --check .
+
   hadolint:
     name: Hadolint
     runs-on: ubuntu-latest
@@ -31,6 +32,7 @@ jobs:
       - uses: brpaz/hadolint-action@master
         with:
           dockerfile: "Dockerfile"
+
   hadolint-example:
     name: Hadolint Example App
     runs-on: ubuntu-latest
@@ -39,6 +41,7 @@ jobs:
       - uses: brpaz/hadolint-action@master
         with:
           dockerfile: "example/Dockerfile"
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -48,6 +51,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.32
+
   lint-yaml:
     name: Lint YAML
     runs-on: ubuntu-latest
@@ -62,6 +66,7 @@ jobs:
         run: pip install yamllint
       - name: Run YAML Lint
         run: yamllint -f github --strict .
+
   lint-json:
     name: Lint JSON
     runs-on: ubuntu-latest
@@ -75,6 +80,7 @@ jobs:
         run: npm install -g jsonlint
       - name: Run JSON Lint
         run: find . -type f -name '*.json' -exec jsonlint --quiet --compact {} \;
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -94,6 +100,7 @@ jobs:
         run: gocov convert cover.out | gocov report
       - name: Line Coverage Report
         run: gocov convert cover.out | gocov annotate -
+
   image:
     name: Image
     runs-on: ubuntu-latest
@@ -138,6 +145,7 @@ jobs:
           labels: ${{ steps.image-metadata.outputs.labels }}
           cache-from: type=local,src=${{ env.image-cache-path }}
           cache-to: type=local,dest=${{ env.image-cache-path }},mode=max
+
   image-example:
     name: Example Image
     runs-on: ubuntu-latest
@@ -186,6 +194,7 @@ jobs:
           labels: ${{ steps.image-metadata.outpus.labels }}
           cache-from: type=local,src=${{ env.image-cache-path }}
           cache-to: type=local,dest=${{ env.image-cache-path }},mode=max
+
   deploy-example:
     name: Deploy Example
     runs-on: ubuntu-latest
@@ -206,6 +215,7 @@ jobs:
           SAD_DIGEST: ${{ needs.image-example.outputs.digest }}
           SAD_DEPLOY_FOO: ${{ secrets.FOO }}
           SAD_DEPLOY_BAR: ${{ secrets.BAR }}
+
   release:
     name: Release
     runs-on: ubuntu-latest
