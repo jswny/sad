@@ -45,7 +45,11 @@ An example configuration is provided in the `example/` directory, and an example
 
 ### GitHub Actions
 
-1. Include this action in your workflow.
+1. Include this action in your workflow by one of the supported methods:
+
+   - Include it as a regular action: `jswny/sad@v3.0.0`
+   - Include it as a Docker image to prevent having to build the image each time the action is run: `uses: docker://ghcr.io/jswny/sad:v3.0.0`
+
 2. Pass in any configuration which hasn't been provided by the configuration file source as environment variables into the action. Command line configuration is not supported by the action.
 3. Make sure the Action is only triggered on the appropriate events using [`jobs.<job_id>.if`](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idif).
 
